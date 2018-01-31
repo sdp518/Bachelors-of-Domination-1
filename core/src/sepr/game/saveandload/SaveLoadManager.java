@@ -3,7 +3,6 @@ package sepr.game.saveandload;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.lwjgl.Sys;
 import sepr.game.GameScreen;
 import sepr.game.Main;
 import sepr.game.Player;
@@ -19,30 +18,15 @@ public class SaveLoadManager {
     private static String SAVE_FILE_PATH = "";
     private static int currentSaveID = -1;
     private static int numberOfSaves = 0;
+    private static GameState loadedState;
 
-    private Boolean loadedSave = false;
-
-    /*
-        saves: [
-            {
-                id: 0,
-                players: [
-                    {
-                        ...
-                    }
-                ],
-                map: [
-                    {
-                        ...
-                    }
-                ]
-            }
-        ]
-     */
+    private static Boolean loadedSave;
 
     public SaveLoadManager(final Main main, GameScreen gameScreen) {
         this.main = main;
         this.gameScreen = gameScreen;
+
+        loadedSave = false;
 
         String home = System.getProperty("user.home");
 
@@ -51,7 +35,9 @@ public class SaveLoadManager {
 
         this.SAVE_FILE_PATH = path;
 
-        if(!directoryExists){
+        if(directoryExists) {
+            LoadFromFile();
+        } else {
             File file = new File(path);
             try {
                 file.getParentFile().mkdirs();
@@ -80,7 +66,19 @@ public class SaveLoadManager {
 
         try {
             Object obj = parser.parse(new FileReader(SAVE_FILE_PATH));
-            JSONObject jsonObject = (JSONObject)obj;
+            JSONObject loadProperties = (JSONObject)obj;
+
+            this.numberOfSaves = Integer.parseInt(loadProperties.get("Saves").toString());
+
+            JSONObject gameStateJSON = (JSONObject)loadProperties.get("GameState"); // TODO Allow for more than one save
+
+
+            JSONifier jifier = new JSONifier();
+            jifier.SetStateJSON(gameStateJSON);
+            GameState gameState = jifier.getStateFromJSON();
+
+            this.loadedState = gameState;
+
         } catch (FileNotFoundException e){
             e.printStackTrace();
         } catch (IOException e){
@@ -93,11 +91,19 @@ public class SaveLoadManager {
     }
 
     public boolean LoadSaveByID(int id){
-        return false; // TODO this should return a save configuration type
+        return false;
     }
 
-    public boolean SaveToFile(){
-        return false;
+    public boolean SaveToFile(JSONObject newSave){
+        try {
+            FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
+            fileWriter.write(newSave.toJSONString());
+            fileWriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     public boolean SaveByID(int id){
@@ -174,16 +180,11 @@ public class SaveLoadManager {
         newSave.put("Saves", this.numberOfSaves);
         newSave.put("CurrentSaveID", this.currentSaveID);
 
-        JSONifier jifier = new JSONifier(gameState);
+        JSONifier jifier = new JSONifier();
+        jifier.SetState(gameState);
         newSave.put("GameState", jifier.getJSONGameState());
 
-        try {
-            FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
-            fileWriter.write(newSave.toJSONString());
-            fileWriter.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SaveToFile(newSave);
 
         return false;
     }
