@@ -37,6 +37,7 @@ public class SaveLoadManager {
 
         if(directoryExists) {
             LoadFromFile();
+            LoadSaveByID(0); // TODO testing only
         } else {
             File file = new File(path);
             try {
@@ -87,11 +88,13 @@ public class SaveLoadManager {
             e.printStackTrace();
         }
 
-        return false;
+        return true;
     }
 
     public boolean LoadSaveByID(int id){
-        return false;
+
+
+        return true;
     }
 
     public boolean SaveToFile(JSONObject newSave){
@@ -186,7 +189,7 @@ public class SaveLoadManager {
 
         SaveToFile(newSave);
 
-        return false;
+        return true;
     }
 
     /**

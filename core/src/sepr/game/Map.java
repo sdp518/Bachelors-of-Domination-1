@@ -49,6 +49,12 @@ public class Map{
         this.allocateSectors(players, allocateNeutralPlayer);
     }
 
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, HashMap<Integer, Sector> sectors){
+        this(players, allocateNeutralPlayer);
+
+        this.sectors = sectors;
+    }
+
     /**
      * converts a space seperated string of integers to an integer array
      *

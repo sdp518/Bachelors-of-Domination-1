@@ -108,7 +108,7 @@ public class JSONifier {
 
         gameState.currentPlayerPointer = (int)(long)(Long)this.saveState.get("CurrentPlayerPointer");
 
-        return null;
+        return gameState;
     }
 
     public JSONObject getJSONGameState(){

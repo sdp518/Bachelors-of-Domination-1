@@ -76,6 +76,20 @@ public class GameScreen implements Screen, InputProcessor{
         this.keysDown.put(Input.Keys.S, false);
     }
 
+    public GameScreen(Main main, TurnPhaseType currentPhase, HashMap<TurnPhaseType, Phase> phases, Map map, HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, long turnTimeStart, List<Integer> turnOrder, int currentPlayerPointer){
+        this(main);
+
+        this.currentPhase = currentPhase;
+        this.phases = phases;
+        this.map = map;
+        this.players = players;
+        this.turnTimerEnabled = turnTimerEnabled;
+        this.maxTurnTime = maxTurnTime;
+        this.turnTimeStart = turnTimeStart;
+        this.turnOrder = turnOrder;
+        this.currentPlayerPointer = currentPlayerPointer;
+    }
+
     /**
      * sets up a new game
      * start game must be called before the game is ready to be played

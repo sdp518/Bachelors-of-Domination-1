@@ -58,6 +58,12 @@ public class Sector {
         this.allocated = false;
     }
 
+    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated) {
+        this(id, ownerId, fileName, sectorTexture, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor);
+        
+        this.allocated = false;
+    }
+
     /**
      *
      * @return this sectors unique id

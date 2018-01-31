@@ -32,6 +32,12 @@ public class Player {
         this.playerName = playerName;
     }
 
+    public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int troopsToAllocate){
+        this(id, collegeName, sectorColour, playerType, playerName);
+
+        this.troopsToAllocate = troopsToAllocate;
+    }
+
     /**
      * @param id player's unique identifier
      * @param collegeName display name for this player
