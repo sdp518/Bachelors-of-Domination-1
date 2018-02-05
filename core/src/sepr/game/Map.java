@@ -27,7 +27,7 @@ import static com.badlogic.gdx.graphics.g3d.particles.ParticleChannels.Color;
 public class Map{
     private HashMap<Integer, Sector> sectors; // mapping of sector ID to the sector object
     private List<UnitChangeParticle> particles; // list of active particle effects displaying the changes to the amount of units on a sector
-    private PVC proViceChancellor = new PVC((float)0.5,3);
+    private PVC proViceChancellor = new PVC((float)0.1,3);
 
     private BitmapFont font; // font for rendering sector unit data
     private GlyphLayout layout = new GlyphLayout();
@@ -194,26 +194,11 @@ public class Map{
      * spawns the PVC
      */
 
-    public void spawnPVC(Stage stage) {
+    public void spawnPVC(Stage stage ,int defendingSectorId) {
         Random rand = new Random();
-        ArrayList<Sector> avaliableSectors = new ArrayList<Sector>();
-        Sector chosenSector;
-
-        for (Sector x : sectors.values()) {
-            if (x.getOwnerId() == 5 && !x.isDecor()) {
-                avaliableSectors.add(x);
-            }
-        }
-
-        if (avaliableSectors.isEmpty()) {
-            chosenSector = sectors.get(rand.nextInt(sectors.size())); //if all sectors are occupied then choose a random for sector for the PVC
-        } else {
-            chosenSector = avaliableSectors.get(rand.nextInt(avaliableSectors.size())); //place PVC on an unallocated sector
-        }
-
-        chosenSector.setIsPVCTile(true);
+        sectors.get(defendingSectorId).setIsPVCTile(true);
         DialogFactory.PVCSpawnedMessage(stage);
-        chosenSector.changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+        sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
 
     }
 
@@ -282,7 +267,7 @@ public class Map{
                 sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.YELLOW);
             }
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
-
+            if(ShouldPVCSpawn()) {spawnPVC(stage, defendingSectorId);}
 
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
