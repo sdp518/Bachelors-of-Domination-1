@@ -53,7 +53,7 @@ public class Map{
         font = WidgetFactory.getFontSmall();
 
         particles = new ArrayList<UnitChangeParticle>();
-        this.allocateSectors2(players, allocateNeutralPlayer);
+        this.allocateSectors(players, allocateNeutralPlayer);
     }
 
     /**
@@ -189,47 +189,6 @@ public class Map{
 
      */
 
-
-    public void allocateSectors2(HashMap<Integer, Player> players, boolean allocateNeutralPlayer) {
-        if (players.size() == 0) {
-            throw new RuntimeException("Cannot allocate sectors to 0 players");
-        }
-
-        // set any default neutral sectors to the neutral player
-        if (allocateNeutralPlayer) {
-            allocateNeutralSectors(players);
-        }
-
-        List<Integer> sectorIdsRandOrder = new ArrayList<Integer>(getSectorIds()); // list of sector ids
-        Boolean sectorNotAssgined = true;
-
-        for (Player x : players.values()) {
-            sectorNotAssgined = true;
-            if (!(x.getId() == 4 || x.getId() == 5)) {
-                while (sectorNotAssgined) {
-                    Collections.shuffle(sectorIdsRandOrder); // randomise the order sectors ids are stored so allocation order is randomised
-                    Sector startSector = getSectorById(sectorIdsRandOrder.get(0));
-                    if (!startSector.isAllocated()) {
-                        if (!startSector.isDecor()) {
-                            startSector.setOwner(x);
-                            sectorNotAssgined = false;
-                            sectorIdsRandOrder.remove(0);
-                        }
-
-                    }
-                }
-            }
-        }
-
-        for (Integer i : sectorIdsRandOrder)
-        {
-            if (!getSectorById(i).isAllocated() && !getSectorById(i).isDecor()) {
-                getSectorById(i).setOwner(players.get(GameScreen.UNASSIGNED_ID));
-            }
-        }
-    }
-
-
     public boolean ShouldPVCSpawn()
     {
 
@@ -276,7 +235,7 @@ public class Map{
      * @param defendersLost amount of units lost on the defenfing sector
      * @param attacker the player who is carrying out the attack
      * @param defender the player who is being attacked
-     * @param unAssigned the neutral player
+     * @param neturalPlayer the neutral player
      * @param stage the stage to draw any dialogs to
      * @return true if attack successful else false
      * @throws IllegalArgumentException if the amount of attackers lost exceeds the amount of attackers
@@ -284,7 +243,7 @@ public class Map{
      */
 
 
-    public boolean attackSector(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player unAssigned, Stage stage) {
+    public boolean attackSector(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player neturalPlayer, Stage stage) {
         if (sectors.get(attackingSectorId).getUnitsInSector() < attackersLost) {
             throw new IllegalArgumentException("Cannot loose more attackers than are on the sector: Attackers " + sectors.get(attackingSectorId).getUnitsInSector() + "     Attackers Lost " + attackersLost);
         }
@@ -302,11 +261,11 @@ public class Map{
          * - Not all defenders killed, not all attackers killed     -->     both sides loose troops, no dialog to display
          * */
         if (sectors.get(attackingSectorId).getUnitsInSector() == 0) { // attacker lost all troops
-            DialogFactory.sectorOwnerChangeDialog(attacker.getPlayerName(), unAssigned.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
-            sectors.get(attackingSectorId).setOwner(unAssigned);
+            DialogFactory.sectorOwnerChangeDialog(attacker.getPlayerName(), neturalPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
+            sectors.get(attackingSectorId).setOwner(neturalPlayer);
             if (sectors.get(defendingSectorId).getUnitsInSector() == 0) { // both players wiped each other out
-                DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), unAssigned.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
-                sectors.get(defendingSectorId).setOwner(unAssigned);
+                DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), neturalPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
+                sectors.get(defendingSectorId).setOwner(neturalPlayer);
             }
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() > 1) { // territory conquered
@@ -332,8 +291,8 @@ public class Map{
 
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
-            DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), unAssigned.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
-            sectors.get(defendingSectorId).setOwner(unAssigned);
+            DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), neturalPlayer.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
+            sectors.get(defendingSectorId).setOwner(neturalPlayer);
         }
         return true;
     }

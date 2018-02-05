@@ -93,7 +93,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.players = players;
         this.turnOrder = new ArrayList<Integer>();
         for (Integer i : players.keySet()) {
-            if ((players.get(i).getPlayerType() != PlayerType.NEUTRAL_AI) && (players.get(i).getPlayerType() != PlayerType.UN_ASSGINED)) { // don't add the neutral player or unassigned to the turn order
+            if ((players.get(i).getPlayerType() != PlayerType.NEUTRAL_AI)) { // don't add the neutral player or unassigned to the turn order
                 this.turnOrder.add(i);
             }
         }
