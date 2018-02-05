@@ -103,7 +103,7 @@ public class PhaseMovement extends Phase {
 
                 // cancel attack
             }
-            else if(defendingSector.getUnitsInSector() == 0 && defendingSector.getOwnerId() == 5){
+            else {
                 moveTroops();
             }
             // reset attack
@@ -164,11 +164,11 @@ public class PhaseMovement extends Phase {
         if (sectorId != -1) { // If selected a sector
 
             Sector selected = gameScreen.getMap().getSectorById(sectorId); // Current sector
-            boolean notAlreadySelected = this.attackingSector == null && this.defendingSector == null; // T/F if the attack sequence is complete
+            //boolean notAlreadySelected = this.attackingSector == null && this.defendingSector == null; // T/F if the attack sequence is complete
 
             if (this.attackingSector != null && this.defendingSector == null) { // If its the second selection in the attack phase
 
-                if (this.attackingSector.isAdjacentTo(selected) && selected.getOwnerId() != this.currentPlayer.getId()) { // check the player does not own the defending sector and that it is adjacent
+                if (this.attackingSector.isAdjacentTo(selected)) { // check the player does not own the defending sector and that it is adjacent
                     this.arrowHeadPosition.set(worldCoord.x, worldCoord.y); // Finalise the end position of the arrow
                     this.defendingSector = selected;
 
@@ -177,7 +177,7 @@ public class PhaseMovement extends Phase {
                     this.attackingSector = null;
                 }
 
-            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector() > 1 && notAlreadySelected) { // First selection, is owned by the player and has enough troops
+            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector() > 1) { // First selection, is owned by the player and has enough troops
                 this.attackingSector = selected;
                 this.arrowTailPosition.set(worldCoord.x, worldCoord.y); // set arrow tail position
             } else {
