@@ -85,9 +85,9 @@ public class GameScreen implements Screen, InputProcessor{
     public GameScreen(Main main, TurnPhaseType currentPhase, Map map, HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, long turnTimeStart, List<Integer> turnOrder, int currentPlayerPointer){
         this(main);
 
-        this.currentPhase = currentPhase;
-
         setUpPhases();
+
+        this.currentPhase = currentPhase;
 
         this.map = map;
         this.players = players;
@@ -96,6 +96,8 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnTimeStart = turnTimeStart;
         this.turnOrder = turnOrder;
         this.currentPlayerPointer = currentPlayerPointer;
+
+        this.phases.get(this.currentPhase).enterPhase(getCurrentPlayer());
     }
 
     /**
