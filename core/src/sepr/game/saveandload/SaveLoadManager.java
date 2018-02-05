@@ -1,15 +1,21 @@
 package sepr.game.saveandload;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.lwjgl.Sys;
 import sepr.game.GameScreen;
 import sepr.game.Main;
+import sepr.game.Map;
 import sepr.game.Player;
 import sepr.game.Sector;
 
 import java.io.*;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.*;
 
 public class SaveLoadManager {
     private Main main;
@@ -37,7 +43,6 @@ public class SaveLoadManager {
 
         if(directoryExists) {
             LoadFromFile();
-            LoadSaveByID(0); // TODO testing only
         } else {
             File file = new File(path);
             try {
@@ -91,8 +96,51 @@ public class SaveLoadManager {
         return true;
     }
 
-    public boolean LoadSaveByID(int id){
+    public Map MapFromMapState(GameState.MapState mapState, HashMap<Integer, Player> players, HashMap<Integer, Sector> sectors){
+        Map map = new Map(players, false, sectors);
 
+        return map;
+    }
+
+    public HashMap<Integer, Player> PlayersFromPlayerState(GameState.PlayerState[] playerStates){
+        HashMap<Integer, Player> players = new HashMap<Integer, Player>();
+
+        for (GameState.PlayerState player : playerStates){
+            players.put(player.hashMapPosition, new Player(player.id, player.collegeName, new Color(player.sectorColour.r, player.sectorColour.g, player.sectorColour.b, player.sectorColour.a), player.playerType, player.playerName, player.troopsToAllocate));
+        }
+
+        return players;
+    }
+
+    public HashMap<Integer, Sector> SectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players){
+        HashMap<Integer, Sector> sectors = new HashMap<Integer, Sector>();
+
+        for (GameState.SectorState sector : sectorStates){
+            Pixmap map = new Pixmap(Gdx.files.internal(sector.texturePath));
+
+            Color color = new Color(0, 0, 0, 1);
+
+            for (java.util.Map.Entry<Integer, Player> player : players.entrySet()){
+                if (player.getValue().getId() == sector.ownerId){
+                    color = player.getValue().getSectorColour();
+                }
+            }
+
+            sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color));
+        }
+
+        return sectors;
+    }
+
+    public boolean LoadSaveByID(int id){
+        HashMap<Integer, Player> players = PlayersFromPlayerState(loadedState.playerStates);
+        HashMap<Integer, Sector> sectors = SectorsFromSectorState(loadedState.mapState.sectorStates, players);
+
+        Map loadedMap = MapFromMapState(loadedState.mapState, players, sectors);
+
+        GameScreen gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
+
+        this.main.setGameScreenFromLoad(gameScreen);
 
         return true;
     }
@@ -127,7 +175,7 @@ public class SaveLoadManager {
 
         int i = 0;
 
-        for (Map.Entry<Integer, Sector> sector : mapState.sectors.entrySet()){
+        for (java.util.Map.Entry<Integer, Sector> sector : mapState.sectors.entrySet()){
             Integer key = sector.getKey();
             Sector value = sector.getValue();
 
@@ -139,6 +187,7 @@ public class SaveLoadManager {
             sectorState.unitsInSector = value.getUnitsInSector();
             sectorState.reinforcementsProvided = value.getReinforcementsProvided();
             sectorState.college = value.getCollege();
+            sectorState.texturePath = value.getTexturePath();
             sectorState.neutral = value.isNeutral();
             sectorState.adjacentSectorIds = value.getAdjacentSectorIds();
             sectorState.sectorCentreX = value.getSectorCentreX();
@@ -160,7 +209,7 @@ public class SaveLoadManager {
 
         i = 0;
 
-        for (Map.Entry<Integer, Player> player : gameState.players.entrySet()) {
+        for (java.util.Map.Entry<Integer, Player> player : gameState.players.entrySet()) {
             Integer key = player.getKey();
             Player value = player.getValue();
 

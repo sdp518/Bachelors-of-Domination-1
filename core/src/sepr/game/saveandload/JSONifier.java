@@ -51,6 +51,7 @@ public class JSONifier {
             gameState.mapState.sectorStates[i].unitsInSector = (int)(long)(Long)sector.get("UnitsInSector");
             gameState.mapState.sectorStates[i].reinforcementsProvided = (int)(long)(Long)sector.get("ReinforcementsProvided");
             gameState.mapState.sectorStates[i].college = (String)sector.get("College");
+            gameState.mapState.sectorStates[i].texturePath = (String)sector.get("TexturePath");
             gameState.mapState.sectorStates[i].neutral = (Boolean)sector.get("Neutral");
 
             JSONArray adjacentSectors = (JSONArray)sector.get("AdjacentSectorIDs");
@@ -130,6 +131,7 @@ public class JSONifier {
             sectorState.put("UnitsInSector", sector.unitsInSector);
             sectorState.put("ReinforcementsProvided", sector.reinforcementsProvided);
             sectorState.put("College", sector.college);
+            sectorState.put("TexturePath", sector.texturePath);
             sectorState.put("Neutral", sector.neutral);
 
             JSONArray adjSectors = new JSONArray();

@@ -58,6 +58,12 @@ public class Main extends Game implements ApplicationListener {
 		gameScreen.startGame();
 	}
 
+	public void setGameScreenFromLoad(GameScreen screen){
+	    this.gameScreen = screen;
+	    this.gameScreen.setGameSetupFromLoad();
+	    this.setScreen(this.gameScreen);
+    }
+
 	/**
 	 * change the screen currently being displayed to the options screen
 	 */
@@ -115,5 +121,10 @@ public class Main extends Game implements ApplicationListener {
 	public void SaveGame(){
         this.saveLoadManager.SaveByID(this.saveLoadManager.GetCurrentSaveID()); // TODO get next id/current id
     }
+
+    public void LoadGame(){
+	    this.saveLoadManager.LoadFromFile();
+		this.saveLoadManager.LoadSaveByID(0);
+	}
 
 }

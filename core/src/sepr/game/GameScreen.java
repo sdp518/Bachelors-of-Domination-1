@@ -60,7 +60,7 @@ public class GameScreen implements Screen, InputProcessor{
      * sets up rendering objects and key input handling
      * setupGame then start game must be called before a game is ready to be played
      *
-     * @param main used to change screen
+     * @param main used to change screenthis.phases = phases;
      */
 
     public GameScreen(Main main) {
@@ -79,13 +79,16 @@ public class GameScreen implements Screen, InputProcessor{
         this.keysDown.put(Input.Keys.DOWN, false);
         this.keysDown.put(Input.Keys.RIGHT, false);
         this.keysDown.put(Input.Keys.S, false);
+        this.keysDown.put(Input.Keys.L, false);
     }
 
-    public GameScreen(Main main, TurnPhaseType currentPhase, HashMap<TurnPhaseType, Phase> phases, Map map, HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, long turnTimeStart, List<Integer> turnOrder, int currentPlayerPointer){
+    public GameScreen(Main main, TurnPhaseType currentPhase, Map map, HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, long turnTimeStart, List<Integer> turnOrder, int currentPlayerPointer){
         this(main);
 
         this.currentPhase = currentPhase;
-        this.phases = phases;
+
+        setUpPhases();
+
         this.map = map;
         this.players = players;
         this.turnTimerEnabled = turnTimerEnabled;
@@ -101,7 +104,7 @@ public class GameScreen implements Screen, InputProcessor{
      *
      * @param players HashMap of the players in this game
      * @param turnTimerEnabled should players turns be limited
-     * @param maxTurnTime time elapsed in current turn, irrelevant if turn timer not enabled
+     * @param maxTurnTime time elapsed in cthis.phases = phases;urrent turn, irrelevant if turn timer not enabled
      */
     public void setupGame(HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, boolean allocateNeutralPlayer) {
         this.players = players;
@@ -120,13 +123,21 @@ public class GameScreen implements Screen, InputProcessor{
 
         this.map = new Map(this.players, allocateNeutralPlayer); // setup the game map and allocate the sectors
 
+        setUpPhases();
+
+        gameSetup = true; // game is now setup
+    }
+
+    public void setUpPhases(){
         // create the game phases and add them to the phases hashmap
         this.phases = new HashMap<TurnPhaseType, Phase>();
         this.phases.put(TurnPhaseType.REINFORCEMENT, new PhaseReinforce(this));
         this.phases.put(TurnPhaseType.ATTACK, new PhaseAttack(this));
         this.phases.put(TurnPhaseType.MOVEMENT, new PhaseMovement(this));
+    }
 
-        gameSetup = true; // game is now setup
+    public void setGameSetupFromLoad(){
+        gameSetup = true;
     }
 
     /**
@@ -494,6 +505,9 @@ public class GameScreen implements Screen, InputProcessor{
         }
         if (keycode == Input.Keys.S) {
             this.main.SaveGame();
+        }
+        if (keycode == Input.Keys.L) {
+            this.main.LoadGame();
         }
         return true;
     }

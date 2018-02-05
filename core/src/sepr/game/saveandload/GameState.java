@@ -43,6 +43,7 @@ public class GameState {
         public int unitsInSector;
         public int reinforcementsProvided;
         public String college; // name of the college this sector belongs to
+        public String texturePath;
         public boolean neutral; // is this sector a default neutral sector
         public int[] adjacentSectorIds; // ids of sectors adjacent to this one
         public int sectorCentreX; // the centre x coordinate of this sector, relative to the sectorTexture
