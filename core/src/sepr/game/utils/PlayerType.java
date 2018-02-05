@@ -7,7 +7,6 @@ public enum PlayerType {
     NONE("NONE"),
     HUMAN("HUMAN PLAYER"),
     NEUTRAL_AI("NEUTAL A.I.");
-
     private final String shortCode;
 
     PlayerType(String code){

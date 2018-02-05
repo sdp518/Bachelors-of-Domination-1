@@ -28,7 +28,7 @@ import static com.badlogic.gdx.graphics.g3d.particles.ParticleChannels.Color;
 public class Map{
     private HashMap<Integer, Sector> sectors; // mapping of sector ID to the sector object
     private List<UnitChangeParticle> particles; // list of active particle effects displaying the changes to the amount of units on a sector
-    private PVC proViceChancellor = new PVC((float)0.5,3);
+    private PVC proViceChancellor = new PVC((float)0.1,3);
 
     private BitmapFont font; // font for rendering sector unit data
     private GlyphLayout layout = new GlyphLayout();
@@ -110,7 +110,7 @@ public class Map{
         Texture sectorTexture = new Texture("mapData/" + sectorData[1]);
         Pixmap sectorPixmap = new Pixmap(Gdx.files.internal("mapData/" + sectorData[1]));
         String displayName = sectorData[2];
-        int unitsInSector = 0;
+        int unitsInSector = 3 + random.nextInt(3);
         int reinforcementsProvided = Integer.parseInt(sectorData[4]);
         String college = sectorData[5];
         boolean neutral = Boolean.parseBoolean(sectorData[6]);
@@ -184,11 +184,6 @@ public class Map{
         }
     }
 
-    /**
-     * calls the pvc class to see if the PVC tile should spawn
-     * @return true if the PVC will spawn on a tile
-
-     */
 
     public boolean ShouldPVCSpawn()
     {
@@ -200,10 +195,11 @@ public class Map{
      * spawns the PVC
      */
 
-    public void spawnPVC(Stage stage, int defendingSectorId) {
+    public void spawnPVC(Stage stage ,int defendingSectorId) {
         Random rand = new Random();
         sectors.get(defendingSectorId).setIsPVCTile(true);
         DialogFactory.PVCSpawnedMessage(stage);
+        sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
 
 
     }
@@ -221,7 +217,7 @@ public class Map{
      * @param defendersLost amount of units lost on the defenfing sector
      * @param attacker the player who is carrying out the attack
      * @param defender the player who is being attacked
-     * @param neturalPlayer the neutral player
+     * @param netrualPlayer the neutral player
      * @param stage the stage to draw any dialogs to
      * @return true if attack successful else false
      * @throws IllegalArgumentException if the amount of attackers lost exceeds the amount of attackers
@@ -229,7 +225,7 @@ public class Map{
      */
 
 
-    public boolean attackSector(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player neturalPlayer, Stage stage) {
+    public boolean attackSector(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player netrualPlayer, Stage stage) {
         if (sectors.get(attackingSectorId).getUnitsInSector() < attackersLost) {
             throw new IllegalArgumentException("Cannot loose more attackers than are on the sector: Attackers " + sectors.get(attackingSectorId).getUnitsInSector() + "     Attackers Lost " + attackersLost);
         }
@@ -247,11 +243,11 @@ public class Map{
          * - Not all defenders killed, not all attackers killed     -->     both sides loose troops, no dialog to display
          * */
         if (sectors.get(attackingSectorId).getUnitsInSector() == 0) { // attacker lost all troops
-            DialogFactory.sectorOwnerChangeDialog(attacker.getPlayerName(), neturalPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
-            sectors.get(attackingSectorId).setOwner(neturalPlayer);
+            DialogFactory.sectorOwnerChangeDialog(attacker.getPlayerName(), netrualPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
+            sectors.get(attackingSectorId).setOwner(netrualPlayer);
             if (sectors.get(defendingSectorId).getUnitsInSector() == 0) { // both players wiped each other out
-                DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), neturalPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
-                sectors.get(defendingSectorId).setOwner(neturalPlayer);
+                DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), netrualPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
+                sectors.get(defendingSectorId).setOwner(netrualPlayer);
             }
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() > 1) { // territory conquered
@@ -273,12 +269,12 @@ public class Map{
                 sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.YELLOW);
             }
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
-            if(ShouldPVCSpawn()) {spawnPVC(stage,defendingSectorId);}
+            if(ShouldPVCSpawn()) {spawnPVC(stage, defendingSectorId);}
 
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
-            DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), neturalPlayer.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
-            sectors.get(defendingSectorId).setOwner(neturalPlayer);
+            DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), netrualPlayer.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
+            sectors.get(defendingSectorId).setOwner(netrualPlayer);
         }
         return true;
     }
