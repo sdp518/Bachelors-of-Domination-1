@@ -126,7 +126,6 @@ public class GameScreen implements Screen, InputProcessor{
         }
         this.turnTimeStart = System.currentTimeMillis(); // set turn start time to current rime
         turnNumber = 0; // sets the initial turn to 0
-        if(map.ShouldPVCSpawn()){map.spawnPVC(phases.get(currentPhase));}; //checks if the PVC could spawn on the first turn
         this.phases.get(currentPhase).enterPhase(getCurrentPlayer());
         resetCameraPosition();
     }
@@ -222,8 +221,6 @@ public class GameScreen implements Screen, InputProcessor{
                 break;
             case MOVEMENT:
                 currentPhase = TurnPhaseType.REINFORCEMENT;
-
-                if(map.ShouldPVCSpawn()) {map.spawnPVC(phases.get(currentPhase));}
 
                 nextPlayer(); // nextPhase called during final phase of a player's turn so goto next player
 
