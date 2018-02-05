@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class GameScreen implements Screen, InputProcessor{
     public static final int NEUTRAL_PLAYER_ID = 4;
-    public static final int UNASSIGNED_ID = 5;
+
 
     private Main main; // main stored for switching between screens
 
@@ -93,7 +93,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.players = players;
         this.turnOrder = new ArrayList<Integer>();
         for (Integer i : players.keySet()) {
-            if ((players.get(i).getPlayerType() != PlayerType.NEUTRAL_AI) && (players.get(i).getPlayerType() != PlayerType.UN_ASSGINED)) { // don't add the neutral player or unassigned to the turn order
+            if ((players.get(i).getPlayerType() != PlayerType.NEUTRAL_AI)) { // don't add the neutral player or unassigned to the turn order
                 this.turnOrder.add(i);
             }
         }
