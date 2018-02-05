@@ -18,10 +18,10 @@ public class PhaseReinforce extends Phase {
     void enterPhase(Player player) {
         super.enterPhase(player);
 
-        currentPlayer.addTroopsToAllocate(5); // players get a basic reinforcement of 5 troops every turn
+        currentPlayer.addTroopsToAllocate(1); // players get a basic reinforcement of 5 troops every turn
         if (player.getOwnsPVC())  // assigns a bonus of two troops if they own the PVC tile
         {
-            currentPlayer.addTroopsToAllocate(2);
+            currentPlayer.addTroopsToAllocate(1);
 
         }
 

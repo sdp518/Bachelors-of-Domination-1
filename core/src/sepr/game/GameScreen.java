@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class GameScreen implements Screen, InputProcessor{
     public static final int NEUTRAL_PLAYER_ID = 4;
-    public static final int UNASSIGNED_ID = 5;
+
 
     private Main main; // main stored for switching between screens
 
@@ -112,7 +112,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.players = players;
         this.turnOrder = new ArrayList<Integer>();
         for (Integer i : players.keySet()) {
-            if ((players.get(i).getPlayerType() != PlayerType.NEUTRAL_AI) && (players.get(i).getPlayerType() != PlayerType.UN_ASSGINED)) { // don't add the neutral player or unassigned to the turn order
+            if ((players.get(i).getPlayerType() != PlayerType.NEUTRAL_AI)) { // don't add the neutral player or unassigned to the turn order
                 this.turnOrder.add(i);
             }
         }
@@ -153,7 +153,7 @@ public class GameScreen implements Screen, InputProcessor{
         }
         this.turnTimeStart = System.currentTimeMillis(); // set turn start time to current rime
         turnNumber = 0; // sets the initial turn to 0
-        if(map.ShouldPVCSpawn()){map.spawnPVC(phases.get(currentPhase));}; //checks if the PVC could spawn on the first turn
+        //if(map.ShouldPVCSpawn()){map.spawnPVC(phases.get(currentPhase));}; //checks if the PVC could spawn on the first turn
         this.phases.get(currentPhase).enterPhase(getCurrentPlayer());
         resetCameraPosition();
     }
@@ -250,7 +250,7 @@ public class GameScreen implements Screen, InputProcessor{
             case MOVEMENT:
                 currentPhase = TurnPhaseType.REINFORCEMENT;
 
-                if(map.ShouldPVCSpawn()) {map.spawnPVC(phases.get(currentPhase));}
+                //if(map.ShouldPVCSpawn()) {map.spawnPVC(phases.get(currentPhase));}
 
                 nextPlayer(); // nextPhase called during final phase of a player's turn so goto next player
 

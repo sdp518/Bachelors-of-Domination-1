@@ -57,13 +57,6 @@ public class Player {
         return new Player(id, GameSetupScreen.CollegeName.UNI_OF_YORK, Color.GRAY, PlayerType.NEUTRAL_AI, "THE NEUTRAL PLAYER");
     }
 
-    /**
-     * @param id player's unique identifier
-     */
-    public static Player createUnassginedPlayer(int id) {
-        return new Player(id, GameSetupScreen.CollegeName.UNI_OF_YORK, Color.WHITE, PlayerType.UN_ASSGINED, "UN ASSINGED TILE");
-    }
-
 
     /**
      * @return  if the player owns the PVC tile

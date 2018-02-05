@@ -153,9 +153,7 @@ public class DialogFactory {
      * @param stage to draw the box onto
      */
     public static void allocateUnitsDialog(Integer maxAllocation, final int[] allocation, String sectorName, Stage stage) {
-        final Slider slider = new Slider(1, maxAllocation, 1, false, DialogFactory.skin);
-        slider.getStyle().knob.setMinHeight(30);
-        slider.getStyle().knob.setBottomHeight(30);
+        final Slider slider = new Slider(0, maxAllocation, 1, false, DialogFactory.skin);
         final Label sliderValue = new Label("1", DialogFactory.skin);
         slider.addListener(new ChangeListener() {
             @Override
@@ -198,7 +196,7 @@ public class DialogFactory {
      * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
     public static void attackDialog(int maxAttackers, int defenders, final int[] attackers, Stage stage) {
-        final Slider slider = new Slider(1, maxAttackers, 1, false, DialogFactory.skin);
+        final Slider slider = new Slider(0, maxAttackers, 1, false, DialogFactory.skin);
         slider.setValue(maxAttackers);
         final Label sliderValue = new Label(maxAttackers + "", DialogFactory.skin); // label showing the value of the slider
         slider.addListener(new ChangeListener() {
@@ -250,7 +248,7 @@ public class DialogFactory {
      * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
     public static void moveDialog(int maxAttackers, int defenders, final int[] attackers, Stage stage) {
-        final Slider slider = new Slider(1, maxAttackers, 1, false, DialogFactory.skin);
+        final Slider slider = new Slider(0, maxAttackers, 1, false, DialogFactory.skin);
         slider.setValue(maxAttackers);
         final Label sliderValue = new Label(maxAttackers + "", DialogFactory.skin); // label showing the value of the slider
         slider.addListener(new ChangeListener() {
