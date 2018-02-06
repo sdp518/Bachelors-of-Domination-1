@@ -6,7 +6,7 @@ package sepr.game.utils;
 public enum PlayerType {
     NONE("NONE"),
     HUMAN("HUMAN PLAYER"),
-    NEUTRAL_AI("NEUTAL A.I.");
+    NEUTRAL_AI("NEUTRAL A.I.");
     private final String shortCode;
 
     PlayerType(String code){

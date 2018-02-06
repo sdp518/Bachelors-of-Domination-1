@@ -33,6 +33,7 @@ public class GameState {
         public int troopsToAllocate;
         public Color sectorColour;
         public PlayerType playerType;
+        public boolean ownsPVC;
     }
 
     public class SectorState {

@@ -34,10 +34,11 @@ public class Player {
         this.OwnsPVC = false;
     }
 
-    public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int troopsToAllocate){
+    public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int troopsToAllocate, boolean ownsPVC){
         this(id, collegeName, sectorColour, playerType, playerName);
 
         this.troopsToAllocate = troopsToAllocate;
+        this.setOwnsPVC(ownsPVC);
     }
 
     /**

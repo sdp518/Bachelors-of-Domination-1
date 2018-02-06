@@ -127,4 +127,8 @@ public class Main extends Game implements ApplicationListener {
 		this.saveLoadManager.LoadSaveByID(0);
 	}
 
+	public boolean HasLoadedSaves(){
+		return this.saveLoadManager.savesToLoad;
+	}
+
 }

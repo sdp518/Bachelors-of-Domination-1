@@ -21,6 +21,7 @@ public class GameStateJSON {
         public int troopsToAllocate;
         public ColorJSON sectorColour;
         public String playerType;
+        public boolean ownsPVC;
     }
 
     public class SectorHashMapJSON {

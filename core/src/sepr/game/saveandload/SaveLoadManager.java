@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.*;
 
 public class SaveLoadManager {
+    public boolean savesToLoad = false;
+
     private Main main;
     private GameScreen gameScreen;
 
@@ -42,6 +44,7 @@ public class SaveLoadManager {
         this.SAVE_FILE_PATH = path;
 
         if(directoryExists) {
+            savesToLoad = true;
             LoadFromFile();
         } else {
             File file = new File(path);
@@ -106,7 +109,7 @@ public class SaveLoadManager {
         HashMap<Integer, Player> players = new HashMap<Integer, Player>();
 
         for (GameState.PlayerState player : playerStates){
-            players.put(player.hashMapPosition, new Player(player.id, player.collegeName, new Color(player.sectorColour.r, player.sectorColour.g, player.sectorColour.b, player.sectorColour.a), player.playerType, player.playerName, player.troopsToAllocate));
+            players.put(player.hashMapPosition, new Player(player.id, player.collegeName, new Color(player.sectorColour.r, player.sectorColour.g, player.sectorColour.b, player.sectorColour.a), player.playerType, player.playerName, player.troopsToAllocate, player.ownsPVC));
         }
 
         return players;
@@ -221,6 +224,7 @@ public class SaveLoadManager {
             playerState.troopsToAllocate = value.getTroopsToAllocate();
             playerState.sectorColour = value.getSectorColour();
             playerState.playerType = value.getPlayerType();
+            playerState.ownsPVC = value.getOwnsPVC();
 
             gameState.playerStates[i] = playerState;
             i++;
