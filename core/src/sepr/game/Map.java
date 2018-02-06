@@ -57,6 +57,12 @@ public class Map{
         this.allocateSectors(players, allocateNeutralPlayer);
     }
 
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, HashMap<Integer, Sector> sectors){
+        this(players, allocateNeutralPlayer);
+
+        this.sectors = sectors;
+    }
+
     /**
      * converts a space seperated string of integers to an integer array
      *
@@ -107,7 +113,8 @@ public class Map{
         int sectorId = Integer.parseInt(sectorData[0]);
         int ownerId = -1;
         String filename = "mapData/" + sectorData[1];
-        Texture sectorTexture = new Texture("mapData/" + sectorData[1]);
+        String texturePath = "mapData/" + sectorData[1];
+        Texture sectorTexture = new Texture(texturePath);
         Pixmap sectorPixmap = new Pixmap(Gdx.files.internal("mapData/" + sectorData[1]));
         String displayName = sectorData[2];
         int unitsInSector = 3 + random.nextInt(3);
@@ -119,7 +126,7 @@ public class Map{
         int sectorY = Integer.parseInt(sectorData[9]);
         boolean decor = Boolean.parseBoolean(sectorData[10]);
 
-        return new Sector(sectorId, ownerId, filename, sectorTexture, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectors, sectorX, sectorY, decor);
+        return new Sector(sectorId, ownerId, filename, sectorTexture, texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectors, sectorX, sectorY, decor);
     }
 
     /**

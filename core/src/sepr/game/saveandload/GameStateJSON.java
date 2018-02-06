@@ -21,6 +21,7 @@ public class GameStateJSON {
         public int troopsToAllocate;
         public ColorJSON sectorColour;
         public String playerType;
+        public boolean ownsPVC;
     }
 
     public class SectorHashMapJSON {
@@ -40,6 +41,7 @@ public class GameStateJSON {
         public int unitsInSector;
         public int reinforcementsProvided;
         public String college; // name of the college this sector belongs to
+        public String texturePath;
         public boolean neutral; // is this sector a default neutral sector
         public int[] adjacentSectorIds; // ids of sectors adjacent to this one
         public String sectorTexture;

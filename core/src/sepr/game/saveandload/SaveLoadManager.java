@@ -1,48 +1,40 @@
 package sepr.game.saveandload;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.lwjgl.Sys;
 import sepr.game.GameScreen;
 import sepr.game.Main;
+import sepr.game.Map;
 import sepr.game.Player;
 import sepr.game.Sector;
 
 import java.io.*;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.*;
 
 public class SaveLoadManager {
+    public boolean savesToLoad = false;
+
     private Main main;
     private GameScreen gameScreen;
 
     private static String SAVE_FILE_PATH = "";
     private static int currentSaveID = -1;
     private static int numberOfSaves = 0;
+    private static GameState loadedState;
 
-    private Boolean loadedSave = false;
-
-    /*
-        saves: [
-            {
-                id: 0,
-                players: [
-                    {
-                        ...
-                    }
-                ],
-                map: [
-                    {
-                        ...
-                    }
-                ]
-            }
-        ]
-     */
+    private static Boolean loadedSave;
 
     public SaveLoadManager(final Main main, GameScreen gameScreen) {
         this.main = main;
         this.gameScreen = gameScreen;
+
+        loadedSave = false;
 
         String home = System.getProperty("user.home");
 
@@ -51,7 +43,10 @@ public class SaveLoadManager {
 
         this.SAVE_FILE_PATH = path;
 
-        if(!directoryExists){
+        if(directoryExists) {
+            savesToLoad = true;
+            LoadFromFile();
+        } else {
             File file = new File(path);
             try {
                 file.getParentFile().mkdirs();
@@ -80,7 +75,19 @@ public class SaveLoadManager {
 
         try {
             Object obj = parser.parse(new FileReader(SAVE_FILE_PATH));
-            JSONObject jsonObject = (JSONObject)obj;
+            JSONObject loadProperties = (JSONObject)obj;
+
+            this.numberOfSaves = Integer.parseInt(loadProperties.get("Saves").toString());
+
+            JSONObject gameStateJSON = (JSONObject)loadProperties.get("GameState"); // TODO Allow for more than one save
+
+
+            JSONifier jifier = new JSONifier();
+            jifier.SetStateJSON(gameStateJSON);
+            GameState gameState = jifier.getStateFromJSON();
+
+            this.loadedState = gameState;
+
         } catch (FileNotFoundException e){
             e.printStackTrace();
         } catch (IOException e){
@@ -89,15 +96,68 @@ public class SaveLoadManager {
             e.printStackTrace();
         }
 
-        return false;
+        return true;
+    }
+
+    public Map MapFromMapState(GameState.MapState mapState, HashMap<Integer, Player> players, HashMap<Integer, Sector> sectors){
+        Map map = new Map(players, false, sectors);
+
+        return map;
+    }
+
+    public HashMap<Integer, Player> PlayersFromPlayerState(GameState.PlayerState[] playerStates){
+        HashMap<Integer, Player> players = new HashMap<Integer, Player>();
+
+        for (GameState.PlayerState player : playerStates){
+            players.put(player.hashMapPosition, new Player(player.id, player.collegeName, new Color(player.sectorColour.r, player.sectorColour.g, player.sectorColour.b, player.sectorColour.a), player.playerType, player.playerName, player.troopsToAllocate, player.ownsPVC));
+        }
+
+        return players;
+    }
+
+    public HashMap<Integer, Sector> SectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players){
+        HashMap<Integer, Sector> sectors = new HashMap<Integer, Sector>();
+
+        for (GameState.SectorState sector : sectorStates){
+            Pixmap map = new Pixmap(Gdx.files.internal(sector.texturePath));
+
+            Color color = new Color(0, 0, 0, 1);
+
+            for (java.util.Map.Entry<Integer, Player> player : players.entrySet()){
+                if (player.getValue().getId() == sector.ownerId){
+                    color = player.getValue().getSectorColour();
+                }
+            }
+
+            sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color));
+        }
+
+        return sectors;
     }
 
     public boolean LoadSaveByID(int id){
-        return false; // TODO this should return a save configuration type
+        HashMap<Integer, Player> players = PlayersFromPlayerState(loadedState.playerStates);
+        HashMap<Integer, Sector> sectors = SectorsFromSectorState(loadedState.mapState.sectorStates, players);
+
+        Map loadedMap = MapFromMapState(loadedState.mapState, players, sectors);
+
+        GameScreen gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
+
+        this.main.setGameScreenFromLoad(gameScreen);
+
+        return true;
     }
 
-    public boolean SaveToFile(){
-        return false;
+    public boolean SaveToFile(JSONObject newSave){
+        try {
+            FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
+            fileWriter.write(newSave.toJSONString());
+            fileWriter.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     public boolean SaveByID(int id){
@@ -118,7 +178,7 @@ public class SaveLoadManager {
 
         int i = 0;
 
-        for (Map.Entry<Integer, Sector> sector : mapState.sectors.entrySet()){
+        for (java.util.Map.Entry<Integer, Sector> sector : mapState.sectors.entrySet()){
             Integer key = sector.getKey();
             Sector value = sector.getValue();
 
@@ -130,6 +190,7 @@ public class SaveLoadManager {
             sectorState.unitsInSector = value.getUnitsInSector();
             sectorState.reinforcementsProvided = value.getReinforcementsProvided();
             sectorState.college = value.getCollege();
+            sectorState.texturePath = value.getTexturePath();
             sectorState.neutral = value.isNeutral();
             sectorState.adjacentSectorIds = value.getAdjacentSectorIds();
             sectorState.sectorCentreX = value.getSectorCentreX();
@@ -151,7 +212,7 @@ public class SaveLoadManager {
 
         i = 0;
 
-        for (Map.Entry<Integer, Player> player : gameState.players.entrySet()) {
+        for (java.util.Map.Entry<Integer, Player> player : gameState.players.entrySet()) {
             Integer key = player.getKey();
             Player value = player.getValue();
 
@@ -163,6 +224,7 @@ public class SaveLoadManager {
             playerState.troopsToAllocate = value.getTroopsToAllocate();
             playerState.sectorColour = value.getSectorColour();
             playerState.playerType = value.getPlayerType();
+            playerState.ownsPVC = value.getOwnsPVC();
 
             gameState.playerStates[i] = playerState;
             i++;
@@ -174,18 +236,13 @@ public class SaveLoadManager {
         newSave.put("Saves", this.numberOfSaves);
         newSave.put("CurrentSaveID", this.currentSaveID);
 
-        JSONifier jifier = new JSONifier(gameState);
+        JSONifier jifier = new JSONifier();
+        jifier.SetState(gameState);
         newSave.put("GameState", jifier.getJSONGameState());
 
-        try {
-            FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
-            fileWriter.write(newSave.toJSONString());
-            fileWriter.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SaveToFile(newSave);
 
-        return false;
+        return true;
     }
 
     /**

@@ -18,6 +18,7 @@ public class Sector {
     private boolean neutral; // is this sector a default neutral sector
     private int[] adjacentSectorIds; // ids of sectors adjacent to this one
     private Texture sectorTexture;
+    private String texturePath;
     private Pixmap sectorPixmap; // the pixel data of this sectors texture
     private int sectorCentreX; // the centre x coordinate of this sector, relative to the sectorTexture
     private int sectorCentreY; //the centre y coordinate of this sector, relative to the sectorTexture
@@ -41,7 +42,7 @@ public class Sector {
      * @param sectorCentreY ycoord of sector centre
      * @param decor false if a sector is accessible to a player and true if sector is decorative
      */
-    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor) {
+    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor) {
         this.id = id;
         this.ownerId = ownerId;
         this.displayName = displayName;
@@ -51,12 +52,24 @@ public class Sector {
         this.neutral = neutral;
         this.adjacentSectorIds = adjacentSectorIds;
         this.sectorTexture = sectorTexture;
+        this.texturePath = texturePath;
         this.sectorPixmap = sectorPixmap;
         this.sectorCentreX = sectorCentreX;
         this.sectorCentreY = 1080 - sectorCentreY;
         this.decor = decor;
         this.fileName = fileName;
         this.allocated = false;
+    }
+
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color) {
+        this(id, ownerId, fileName, new Texture(texturePath), texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor);
+        
+        this.allocated = allocated;
+        this.sectorCentreY = sectorCentreY;
+
+        if(!isDecor()){this.changeSectorColor(color);
+            this.changeSectorColor(color);
+        }
     }
 
     /**
@@ -255,5 +268,9 @@ public class Sector {
 
     public int[] getAdjacentSectorIds() {
         return this.adjacentSectorIds;
+    }
+
+    public String getTexturePath() {
+        return texturePath;
     }
 }
