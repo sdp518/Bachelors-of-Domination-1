@@ -92,7 +92,7 @@ public class JSONifier {
             JSONObject colour = (JSONObject)player.get("SectorColour");
             gameState.playerStates[k].sectorColour = new Color((float)(double)(Double)colour.get("R"),(float)(double)(Double)colour.get("G"),(float)(double)(Double)colour.get("B"),(float)(double)(Double)colour.get("A"));
             gameState.playerStates[k].playerType = PlayerType.fromString((String)player.get("PlayerType"));
-            gameState.playerStates[k].ownsPVC = (boolean)(Boolean)player.get("OwnsPVC");
+//            gameState.playerStates[k].ownsPVC = (boolean)(Boolean)player.get("OwnsPVC");
 
             k++;
         }
