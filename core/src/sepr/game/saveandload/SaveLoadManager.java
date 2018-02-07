@@ -44,7 +44,6 @@ public class SaveLoadManager {
         this.SAVE_FILE_PATH = path;
 
         if(directoryExists) {
-            savesToLoad = true;
             LoadFromFile();
         } else {
             File file = new File(path);
@@ -79,15 +78,19 @@ public class SaveLoadManager {
 
             this.numberOfSaves = Integer.parseInt(loadProperties.get("Saves").toString());
 
-            JSONObject gameStateJSON = (JSONObject)loadProperties.get("GameState"); // TODO Allow for more than one save
+            if(this.numberOfSaves > 0){
+                JSONObject gameStateJSON = (JSONObject)loadProperties.get("GameState"); // TODO Allow for more than one save
 
 
-            JSONifier jifier = new JSONifier();
-            jifier.SetStateJSON(gameStateJSON);
-            GameState gameState = jifier.getStateFromJSON();
+                JSONifier jifier = new JSONifier();
+                jifier.SetStateJSON(gameStateJSON);
+                GameState gameState = jifier.getStateFromJSON();
 
-            this.loadedState = gameState;
-
+                this.loadedState = gameState;
+                this.savesToLoad = true;
+            }else{
+                this.savesToLoad = false;
+            }
         } catch (FileNotFoundException e){
             e.printStackTrace();
         } catch (IOException e){
@@ -263,6 +266,7 @@ public class SaveLoadManager {
      */
     public int GetNextSaveID(){
         this.currentSaveID++;
+        this.numberOfSaves++;
 
         return this.currentSaveID;
     }
