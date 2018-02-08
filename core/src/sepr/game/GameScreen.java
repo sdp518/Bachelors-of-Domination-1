@@ -1,6 +1,7 @@
 package sepr.game;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -25,7 +26,7 @@ import java.util.List;
 public class GameScreen implements Screen, InputProcessor{
     public static final int NEUTRAL_PLAYER_ID = 4;
 
-
+    public AudioManager Audio = AudioManager.getInstance();
     private Main main; // main stored for switching between screens
 
     private TurnPhaseType currentPhase = TurnPhaseType.REINFORCEMENT; // set initial phase to the reinforcement phase
@@ -96,7 +97,6 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnTimeStart = turnTimeStart;
         this.turnOrder = turnOrder;
         this.currentPlayerPointer = currentPlayerPointer;
-
         this.phases.get(this.currentPhase).enterPhase(getCurrentPlayer());
     }
 
@@ -109,6 +109,7 @@ public class GameScreen implements Screen, InputProcessor{
      * @param maxTurnTime time elapsed in cthis.phases = phases;urrent turn, irrelevant if turn timer not enabled
      */
     public void setupGame(HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, boolean allocateNeutralPlayer) {
+        Audio.loadSounds(); //loads the sounds into memory
         this.players = players;
         this.turnOrder = new ArrayList<Integer>();
         for (Integer i : players.keySet()) {

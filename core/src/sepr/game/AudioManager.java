@@ -15,7 +15,15 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.lwjgl.Sys;
 
-public class AudioManager extends AssetManager { //
+
+
+
+/**
+ * Usage -- Audio.get('path to file', Sound.class).play() // this will play the sound
+ */
+
+
+public class AudioManager extends AssetManager {
     private static AudioManager instance = null;
     protected AudioManager() {
         // Exists only to defeat instantiation.
@@ -31,7 +39,7 @@ public class AudioManager extends AssetManager { //
     public void loadSounds() {
         this.load("sound/Allocation/Colin_Insuffiecient Funds.wav", Sound.class);
         this.load("sound/Allocation/Colin_Insuffiecient Funds.wav", Sound.class);
-        this.load("sound/Allocation/Colin_What do allocation and the empty set have in common.wav", Sound.class);
+        this.load("sound/Allocation/Colin_EmptySet.wav", Sound.class);
         this.finishLoading();
     }
 
