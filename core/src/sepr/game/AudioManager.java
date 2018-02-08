@@ -1,6 +1,7 @@
 package sepr.game;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SoundLoader;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.backends.lwjgl.audio.Mp3;
@@ -14,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.lwjgl.Sys;
 
-public class AudioManager  { //
+public class AudioManager extends AssetManager { //
     private static AudioManager instance = null;
     protected AudioManager() {
         // Exists only to defeat instantiation.
@@ -27,10 +28,21 @@ public class AudioManager  { //
     }
 
 
-    public void loadSounds()
-    {
-        Sound Colin_Insufficient_Funds = Gdx.audio.newSound(Gdx.files.internal("sound/Allocation/Colin_Insuffiecient Funds.wav"));
-        Sound Colin_Not_enough_gang_members = Gdx.audio.newSound(Gdx.files.internal("sound/Allocation/Colin_Insuffiecient Funds.wav"));
-        Sound Colin_What_do_allocation_and_the_empty_set_have_in_common = Gdx.audio.newSound(Gdx.files.internal("sound/Alloation/Colin_What do allocation and the empty set have in common"));
+    public void loadSounds() {
+        this.load("sound/Allocation/Colin_Insuffiecient Funds.wav", Sound.class);
+        this.load("sound/Allocation/Colin_Insuffiecient Funds.wav", Sound.class);
+        this.load("sound/Allocation/Colin_What do allocation and the empty set have in common.wav", Sound.class);
+        this.finishLoading();
     }
+
+    public void updateSounds()
+        {
+            this.update();
+        }
+    public void dispose()
+    {
+        this.dispose();
+    }
+
+
 }
