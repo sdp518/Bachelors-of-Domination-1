@@ -29,6 +29,7 @@ public class AudioManager extends AssetManager {
         this.load(filePath, Music.class);
         this.finishLoading();
         this.get(filePath, Music.class).play(); //plays the music
+        this.get(filePath,Music.class).setVolume(0.5f);
         this.get(filePath, Music.class).setLooping(true); //sets looping
 
     }
