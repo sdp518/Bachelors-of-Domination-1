@@ -1,8 +1,11 @@
 package sepr.game;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,7 +41,7 @@ public class GameSetupScreen implements Screen{
     private Main main; // main stored so that screen can be changed
     private Stage stage; // stage for drawing the UI to
     private Table table; // table for laying out the UI components
-
+    private AudioManager Audio = AudioManager.getInstance();
     private final int MAX_NUMBER_OF_PLAYERS = 4; // maximum number of players that cna be in a game
 
     private Label[] playerTypes; // array of player types, index n -> player n's type
@@ -112,7 +115,7 @@ public class GameSetupScreen implements Screen{
         this.table.setDebug(false); // enable table drawing for ui debug
 
         this.collegeTableBackground = new Texture("uiComponents/Game-Setup-Name-Box.png");
-
+        this.Audio.loadMusic("sound/IntroMusic/introMusic.mp3"); //load the introMusic
         this.setupUi();
     }
 
@@ -481,6 +484,8 @@ public class GameSetupScreen implements Screen{
         HashMap<Integer, Player> x = generatePlayerHashmaps();
 
         int MAX_TURN_TIME = 120;
+        Audio.disposeMusic("sound/IntroMusic/introMusic.mp3");
+        Audio.loadMusic("sound/Gameplay Music/wind.mp3"); //loads and plays the gamePlay music
         main.setGameScreen(x, turnTimerSwitch.isChecked(), MAX_TURN_TIME, neutralPlayerSwitch.isChecked());
     }
 

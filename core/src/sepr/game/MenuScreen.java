@@ -1,5 +1,6 @@
 package sepr.game;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -46,6 +47,7 @@ public class MenuScreen implements Screen {
         this.stage.addActor(table);
         this.table.setDebug(false); // enable table drawing for ui debug
         this.setupUi();
+
     }
 
     /**

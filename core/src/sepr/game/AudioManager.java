@@ -1,19 +1,8 @@
 package sepr.game;
 
-import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SoundLoader;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.backends.lwjgl.audio.Mp3;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import org.lwjgl.Sys;
+import com.badlogic.gdx.audio.Music;
 
 
 
@@ -35,9 +24,19 @@ public class AudioManager extends AssetManager {
         return instance;
     }
 
+    public void loadMusic(String filePath){
+
+        this.load(filePath, Music.class);
+        this.finishLoading();
+        this.get(filePath, Music.class).play(); //plays the music
+        this.get(filePath, Music.class).setLooping(true); //sets looping
+
+    }
+
 
     public void loadSounds() {
 
+        this.load("sound/Other/click.mp3", Sound.class);
 
         this.load("sound/Allocation/Colin_Insuffiecient_Gangmembers.wav", Sound.class);
         this.load("sound/Allocation/Colin_EmptySet.wav", Sound.class);
@@ -54,10 +53,6 @@ public class AudioManager extends AssetManager {
         this.load("sound/Invalid Move/Colin_Your_request_does_not_pass_easily_through_my_mind.wav", Sound.class);
         this.load("sound/Invalid Move/Colin_You_would_find_more_success_trying_to_invert_a_singular_matrix.wav", Sound.class);
         this.load("sound/Invalid Move/Colin_Your_actions_are_questionable.wav", Sound.class);
-
-
-
-
 
         this.load("sound/Minigame/Colin_That_was_a_poor_performance.wav", Sound.class);
 
@@ -77,10 +72,15 @@ public class AudioManager extends AssetManager {
         this.finishLoading();
     }
 
+    public void disposeMusic(String filePath){
+        this.get(filePath, Music.class).dispose(); // remove the introMusic from memory to to increase performance
+    }
+
     public void updateSounds()
         {
             this.update();
         }
+
     public void dispose()
     {
         this.dispose();
