@@ -1,6 +1,7 @@
 package sepr.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,6 +14,8 @@ import java.util.Random;
  * handles input, updating and rendering for the attack phase
  */
 public class PhaseAttack extends Phase{
+
+    public AudioManager Audio = AudioManager.getInstance();
 
     private TextureRegion arrow; // TextureRegion for rendering attack visualisation
     private Sector attackingSector; // Stores the sector being used to attack in the attack phase (could store as ID and lookup object each time to save memory)
@@ -88,6 +91,45 @@ public class PhaseAttack extends Phase{
         int attackersLost = (int)(attackers * propAttackersLost);
         int defendersLost = (int)(defenders * propDefendersLost);
 
+        if(attackersLost > defendersLost){
+            // Poor Move
+            int voice = random.nextInt(3);
+
+            switch (voice){
+                case 0:
+                    Audio.get("sound/Invalid Move/Colin_Your_actions_are_questionable.wav", Sound.class).play();
+                    break;
+                case 1:
+                    Audio.get("sound/Battle Phrases/Colin_Seems_Risky_To_Me.wav", Sound.class).play();
+                    break;
+                case 2:
+                    break;
+            }
+        } else {
+            // Good move
+            int voice = random.nextInt(5);
+
+            switch (voice){
+                case 0:
+                    Audio.get("sound/Battle Phrases/Colin_An_Unlikely_Victory.wav", Sound.class).play();
+                    break;
+                case 1:
+                    Audio.get("sound/Battle Phrases/Colin_Far_better_than_I_expected.wav", Sound.class).play();
+                    break;
+                case 2:
+                    Audio.get("sound/Battle Phrases/Colin_I_couldnt_have_done_it_better_myself.wav", Sound.class).play();
+                    break;
+                case 3:
+                    Audio.get("sound/Battle Phrases/Colin_Multiplying_by_the_identity_matrix_is_more_fasinating_than_your_last_move.wav", Sound.class).play();
+                    break;
+                case 4:
+                    Audio.get("sound/Battle Phrases/Colin_Well_Done.wav", Sound.class).play();
+                    break;
+                case 5:
+                    break;
+            }
+        }
+
         // apply the attack to the map
         if (gameScreen.getMap().attackSector(attackingSector.getId(), defendingSector.getId(), attackersLost, defendersLost, gameScreen.getPlayerById(attackingSector.getOwnerId()), gameScreen.getPlayerById(defendingSector.getOwnerId()), gameScreen.getPlayerById(gameScreen.NEUTRAL_PLAYER_ID), this)) {
 
@@ -108,6 +150,22 @@ public class PhaseAttack extends Phase{
             }
 
             else if(defendingSector.getUnitsInSector() == 0 ){
+                int voice = random.nextInt(3);
+
+                switch (voice){
+                    case 0:
+                        Audio.get("sound/Invalid Move/Colin_Your_request_does_not_pass_easily_through_my_mind.wav", Sound.class).play();
+                        break;
+                    case 1:
+                        Audio.get("sound/Invalid Move/Colin_You_would_find_more_success_trying_to_invert_a_singular_matrix.wav", Sound.class).play();
+                        break;
+                    case 2:
+                        Audio.get("sound/Invalid Move/Colin_Your_actions_are_questionable.wav", Sound.class).play();
+                        break;
+                    case 3:
+                        break;
+                }
+
 
                 DialogFactory.InvalidAttack(this);
             }
