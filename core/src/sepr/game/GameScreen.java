@@ -14,9 +14,11 @@ import org.lwjgl.Sys;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * main class for controlling the game
@@ -57,6 +59,8 @@ public class GameScreen implements Screen, InputProcessor{
 
     private int turnNumber;
 
+    private Random random;
+
     /**
      * sets up rendering objects and key input handling
      * setupGame then start game must be called before a game is ready to be played
@@ -81,6 +85,8 @@ public class GameScreen implements Screen, InputProcessor{
         this.keysDown.put(Input.Keys.RIGHT, false);
         this.keysDown.put(Input.Keys.S, false);
         this.keysDown.put(Input.Keys.L, false);
+
+        this.random = new Random();
     }
 
     public GameScreen(Main main, TurnPhaseType currentPhase, Map map, HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, long turnTimeStart, List<Integer> turnOrder, int currentPlayerPointer){
@@ -303,6 +309,8 @@ public class GameScreen implements Screen, InputProcessor{
         if (playerIdsToRemove.size() > 0) { // if there are any players to remove
             turnOrder.removeAll(playerIdsToRemove);
 
+            Audio.get("sound/Minigame/Colin_That_was_a_poor_performance.wav", Sound.class).play();
+
             String[] playerNames = new String[playerIdsToRemove.size()]; // array of names of players who have been removed
             for (int i = 0; i < playerIdsToRemove.size(); i++) {
                 playerNames[i] = players.get(playerIdsToRemove.get(i)).getPlayerName();
@@ -326,6 +334,27 @@ public class GameScreen implements Screen, InputProcessor{
             DialogFactory.gameOverDialog(players.get(NEUTRAL_PLAYER_ID).getPlayerName(), players.get(NEUTRAL_PLAYER_ID).getCollegeName().getCollegeName(), main, phases.get(currentPhase));
 
         } else if (turnOrder.size() == 1){ // winner is player id at index 0 in turn order
+            int voice = random.nextInt(4);
+
+            switch (voice){
+                case 0:
+                    Audio.get("sound/Victory/Colin_Congratulations.wav", Sound.class).play();
+                    break;
+                case 1:
+                    Audio.get("sound/Victory/Colin_Congratulations_your_grandson_would_be_proud_of_you.wav", Sound.class).play();
+                    break;
+                case 2:
+                    Audio.get("sound/Victory/Colin_Well_Done.wav", Sound.class).play();
+                    break;
+                case 3:
+                    Audio.get("sound/Victory/Colin_You_are_victorious.wav", Sound.class).play();
+                    break;
+                case 4:
+                    break;
+            }
+
+            Audio.get("", Sound.class).play();
+            
             int winnerId = turnOrder.get(0); // winner will be the only player in the turn order list
             DialogFactory.gameOverDialog(players.get(winnerId).getPlayerName(), players.get(winnerId).getCollegeName().getCollegeName(), main, phases.get(currentPhase));
 
