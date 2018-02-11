@@ -28,7 +28,7 @@ import static com.badlogic.gdx.graphics.g3d.particles.ParticleChannels.Color;
 public class Map{
     private HashMap<Integer, Sector> sectors; // mapping of sector ID to the sector object
     private List<UnitChangeParticle> particles; // list of active particle effects displaying the changes to the amount of units on a sector
-    private PVC proViceChancellor = new PVC((float)0.1,3);
+    private PVC proViceChancellor;
 
     private BitmapFont font; // font for rendering sector unit data
     private GlyphLayout layout = new GlyphLayout();
@@ -59,7 +59,12 @@ public class Map{
 
     public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, HashMap<Integer, Sector> sectors){
         this(players, allocateNeutralPlayer);
+        this.sectors = sectors;
+    }
 
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor){
+        this(players, allocateNeutralPlayer);
+        this.proViceChancellor = proViceChancellor;
         this.sectors = sectors;
     }
 
@@ -203,10 +208,11 @@ public class Map{
      */
 
     public void spawnPVC(Stage stage ,int defendingSectorId) {
-        Random rand = new Random();
+
         sectors.get(defendingSectorId).setIsPVCTile(true);
         DialogFactory.PVCSpawnedMessage(stage);
         sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+        proViceChancellor.startMiniGame();
 
 
     }

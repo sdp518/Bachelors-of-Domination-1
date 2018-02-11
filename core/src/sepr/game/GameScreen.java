@@ -32,7 +32,7 @@ public class GameScreen implements Screen, InputProcessor{
     private Main main; // main stored for switching between screens
 
     private TurnPhaseType currentPhase = TurnPhaseType.REINFORCEMENT; // set initial phase to the reinforcement phase
-
+    private PVC ProViceChancellor;
     private HashMap<TurnPhaseType, Phase> phases; // hashmap for storing the three phases of the game
 
     private SpriteBatch gameplayBatch; // sprite batch for rendering the game to
@@ -129,8 +129,8 @@ public class GameScreen implements Screen, InputProcessor{
 
         this.turnTimerEnabled = turnTimerEnabled;
         this.maxTurnTime = maxTurnTime;
-
-        this.map = new Map(this.players, allocateNeutralPlayer); // setup the game map and allocate the sectors
+        this.ProViceChancellor = new PVC((float)1.0,1,this);
+        this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor); // setup the game map and allocate the sectors
 
         setUpPhases();
 

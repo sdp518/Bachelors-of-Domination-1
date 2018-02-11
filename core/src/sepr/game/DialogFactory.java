@@ -365,6 +365,7 @@ public class DialogFactory {
             protected void result(Object object) {
                 if (object.toString().equals("0")){ // yes pressed : quit the minigame
                     miniGameScreen.endMiniGame();
+
                 }
             }
         };
@@ -377,7 +378,8 @@ public class DialogFactory {
     public static void miniGameOverDialog(final Main main, Stage stage, final GameScreen gameScreen, int troops) {
         Dialog dialog = new Dialog("Game Completed", DialogFactory.skin) {
             protected void result(Object object) {
-                main.setScreen(gameScreen); // change to menu screen when ok button is pressed
+                main.LoadGameScreen();  // change to menu screen when ok button is pressed
+                //main.setScreen(gameScreen);
             }
         };
         dialog.text("Minigame complete!\nYou have received " + troops + " additional troops");

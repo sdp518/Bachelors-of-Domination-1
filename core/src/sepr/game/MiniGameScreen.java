@@ -178,6 +178,7 @@ public class MiniGameScreen implements Screen {
             score = 0;
             DialogFactory.basicDialogBox("Game Over!", "You receive 0 additional troops!", stage);
             endMiniGame();
+
         }
     }
 
@@ -214,6 +215,7 @@ public class MiniGameScreen implements Screen {
     public void endMiniGame() {
         player.addTroopsToAllocate(score);
         DialogFactory.miniGameOverDialog(main, stage, gameScreen, score);
+
     }
 
     @Override

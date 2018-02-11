@@ -116,7 +116,6 @@ public class Main extends Game implements ApplicationListener {
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		super.render();
 	}
 
@@ -142,4 +141,8 @@ public class Main extends Game implements ApplicationListener {
 		return this.saveLoadManager.savesToLoad;
 	}
 
+	public void LoadGameScreen(){
+		this.setScreen(gameScreen);
+	}
 }
+

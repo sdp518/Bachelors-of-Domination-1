@@ -13,6 +13,7 @@ public class PVC {
                                 // 0 = 0% ; 1 = 100%
     private float PVCBonus; //the bonus the pvc gives
     private boolean PVCSpawned = false;
+    private GameScreen gameScreen;
 
     /**
      * creates a player object with the specified properties
@@ -22,10 +23,11 @@ public class PVC {
      */
 
 
-    public PVC(float spawnChance, int PVCBonus)
+    public PVC(float spawnChance, int PVCBonus, GameScreen gameScreen)
     {
         this.spawnChance = spawnChance;
         this.PVCBonus = PVCBonus;
+        this.gameScreen = gameScreen;
     }
 
     public boolean PVCSpawn()
@@ -42,7 +44,10 @@ public class PVC {
         return false;
     }
 
+    public void startMiniGame(){
 
+        gameScreen.openMiniGame();
+    }
 
 
     public float getSpawnChance() {
