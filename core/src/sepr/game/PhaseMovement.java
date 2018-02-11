@@ -18,8 +18,8 @@ public class PhaseMovement extends Phase {
 
 
     private TextureRegion arrow; // TextureRegion for rendering attack visualisation
-    private Sector attackingSector; // Stores the sector being used to attack in the attack phase (could store as ID and lookup object each time to save memory)
-    private Sector defendingSector; // Stores the sector being attacked in the attack phase (could store as ID and lookup object each time to save memory)
+    private Sector fromSector; // Stores the sector being used to attack in the attack phase (could store as ID and lookup object each time to save memory)
+    private Sector toSector; // Stores the sector being attacked in the attack phase (could store as ID and lookup object each time to save memory)
     private int[] numOfAttackers;
 
     private Vector2 arrowTailPosition; // Vector x,y for the base of the arrow
@@ -31,8 +31,8 @@ public class PhaseMovement extends Phase {
         super(gameScreen, TurnPhaseType.MOVEMENT);
 
         this.arrow = new TextureRegion(new Texture(Gdx.files.internal("uiComponents/arrow.png")));
-        this.attackingSector = null;
-        this.defendingSector = null;
+        this.fromSector = null;
+        this.toSector = null;
 
         this.arrowHeadPosition = new Vector2();
         this.arrowTailPosition = new Vector2();
@@ -65,16 +65,16 @@ public class PhaseMovement extends Phase {
      * @throws RuntimeException if the attacking sector or defending sector are set to null
      */
     private void getNumberOfAttackers() throws RuntimeException {
-        if (attackingSector == null || defendingSector == null) {
+        if (fromSector == null || toSector == null) {
             throw new RuntimeException("Cannot execute attack unless both an attacking and defending sector have been selected");
         }
         numOfAttackers = new int[1];
         numOfAttackers[0] = -1;
-        DialogFactory.moveDialog(attackingSector.getUnitsInSector(), defendingSector.getUnitsInSector(), numOfAttackers, this);
+        DialogFactory.moveDialog(fromSector.getUnitsInSector(), toSector.getUnitsInSector(), numOfAttackers, this);
     }
 
     /**
-     * carries out attack once number of attackers has been set using the dialog
+     * carries out movement once number of troops has been set using the dialog
      */
     private void moveTroops() {
 
@@ -82,8 +82,8 @@ public class PhaseMovement extends Phase {
         int defendersLost = numOfAttackers[0];
 
 
-        // apply the attack to the map
-        if (gameScreen.getMap().moveTroops(attackingSector.getId(), defendingSector.getId(), attackersLost, defendersLost, gameScreen.getPlayerById(attackingSector.getOwnerId()), gameScreen.getPlayerById(defendingSector.getOwnerId()), gameScreen.getPlayerById(gameScreen.NEUTRAL_PLAYER_ID), this)) {
+        // apply the movement to the map
+        if (gameScreen.getMap().moveTroops(fromSector.getId(), toSector.getId(), attackersLost, defendersLost, gameScreen.getPlayerById(fromSector.getOwnerId()), gameScreen.getPlayerById(toSector.getOwnerId()), gameScreen.getPlayerById(gameScreen.NEUTRAL_PLAYER_ID), this)) {
 
 
             updateTroopReinforcementLabel();
@@ -97,7 +97,7 @@ public class PhaseMovement extends Phase {
     public void phaseAct() {
 
 
-        if (attackingSector != null && defendingSector != null && numOfAttackers[0] != -1) {
+        if (fromSector != null && toSector != null && numOfAttackers[0] != -1) {
 
             if (numOfAttackers[0] == 0) {
 
@@ -107,8 +107,8 @@ public class PhaseMovement extends Phase {
                 moveTroops();
             }
             // reset attack
-            attackingSector = null;
-            defendingSector = null;
+            fromSector = null;
+            toSector = null;
             numOfAttackers = null;
         }
     }
@@ -120,11 +120,11 @@ public class PhaseMovement extends Phase {
      */
     @Override
     public void visualisePhase(SpriteBatch batch) {
-        if (this.attackingSector != null) { // If attacking
+        if (this.fromSector != null) { // If attacking
             Vector2 screenCoords = gameScreen.screenToWorldCoords(Gdx.input.getX(), Gdx.input.getY());
-            if (this.defendingSector == null) { // In mid attack
+            if (this.toSector == null) { // In mid attack
                 generateArrow(batch, this.arrowTailPosition.x, this.arrowTailPosition.y, screenCoords.x, screenCoords.y);
-            } else if (this.defendingSector != null) { // Attack confirmed
+            } else if (this.toSector != null) { // Attack confirmed
                 generateArrow(batch, this.arrowTailPosition.x, this.arrowTailPosition.y, this.arrowHeadPosition.x, this.arrowHeadPosition.y);
             }
         }
@@ -133,8 +133,8 @@ public class PhaseMovement extends Phase {
     @Override
     public void endPhase() {
         super.endPhase();
-        attackingSector = null;
-        defendingSector = null;
+        fromSector = null;
+        toSector = null;
     }
 
     @Override
@@ -164,29 +164,29 @@ public class PhaseMovement extends Phase {
         if (sectorId != -1) { // If selected a sector
 
             Sector selected = gameScreen.getMap().getSectorById(sectorId); // Current sector
-            //boolean notAlreadySelected = this.attackingSector == null && this.defendingSector == null; // T/F if the attack sequence is complete
 
-            if (this.attackingSector != null && this.defendingSector == null) { // If its the second selection in the attack phase
 
-                if (this.attackingSector.isAdjacentTo(selected)) { // check the player does not own the defending sector and that it is adjacent
+            if (this.fromSector != null && this.toSector == null) { // If its the second selection in the attack phase
+
+                if (this.fromSector.isAdjacentTo(selected) && selected.getOwnerId() == this.currentPlayer.getId()) { // check the player does owns the defending sector and that it is adjacent
                     this.arrowHeadPosition.set(worldCoord.x, worldCoord.y); // Finalise the end position of the arrow
-                    this.defendingSector = selected;
+                    this.toSector = selected;
 
                     getNumberOfAttackers(); // attacking and defending sector selected so find out how many units the player wants to attack with
                 } else { // cancel attack as selected defending sector cannot be attack: may not be adjacent or may be owned by the attacker
-                    this.attackingSector = null;
+                    this.fromSector = null;
                 }
 
             } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector() > 1) { // First selection, is owned by the player and has enough troops
-                this.attackingSector = selected;
+                this.fromSector = selected;
                 this.arrowTailPosition.set(worldCoord.x, worldCoord.y); // set arrow tail position
             } else {
-                this.attackingSector = null;
-                this.defendingSector = null;
+                this.fromSector = null;
+                this.toSector = null;
             }
         } else { // mouse pressed and not hovered over a sector to attack therefore cancel any attack in progress
-            this.attackingSector = null;
-            this.defendingSector = null;
+            this.fromSector = null;
+            this.toSector = null;
         }
 
         return true;
