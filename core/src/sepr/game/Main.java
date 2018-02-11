@@ -4,8 +4,10 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import sepr.game.saveandload.SaveLoadManager;
+import sepr.game.utils.PlayerType;
 
 import java.util.HashMap;
 
@@ -15,6 +17,7 @@ import java.util.HashMap;
  * main game class used for controlling what screen is currently being displayed
  */
 public class Main extends Game implements ApplicationListener {
+	private MiniGameScreen miniGameScreen;
 	private MenuScreen menuScreen;
 	private GameScreen gameScreen;
 	private OptionsScreen optionsScreen;
@@ -29,6 +32,7 @@ public class Main extends Game implements ApplicationListener {
 		new WidgetFactory(); // setup widget factory for generating UI components
 		new DialogFactory(); // setup dialog factory for generating dialogs
 
+		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
 		this.menuScreen = new MenuScreen(this);
 		this.gameScreen = new GameScreen(this);
 		this.optionsScreen = new OptionsScreen(this);
@@ -38,6 +42,13 @@ public class Main extends Game implements ApplicationListener {
 		applyPreferences();
 
 		this.setMenuScreen();
+	}
+
+	public void setMiniGameScreen() {
+		//miniGameScreen.setupGame(gameScreen.getPlayerById(gameScreen.getCurrentPlayerPointer()));
+		miniGameScreen.setupGame(new Player(0, GameSetupScreen.CollegeName.ALCUIN, new Color(), PlayerType.HUMAN, "test"));
+		this.setScreen(miniGameScreen);
+		miniGameScreen.startGame();
 	}
 
 	public void setMenuScreen() {
