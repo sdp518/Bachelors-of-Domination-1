@@ -273,4 +273,29 @@ public class DialogFactory {
         dialog.button("Ok", "0");
         dialog.show(stage);
     }
+
+    public static void leaveMiniGameDialog(final MiniGameScreen miniGameScreen, Stage stage) {
+        Dialog dialog = new Dialog("Continue?", DialogFactory.skin) {
+            protected void result(Object object) {
+                if (object.toString().equals("0")){ // yes pressed : quit the minigame
+                    miniGameScreen.endMiniGame();
+                }
+            }
+        };
+        dialog.text("Would you like to keep playing or quit now? (One incorrect answer loses all bonuses!)");
+        dialog.button("Keep playing", "1");
+        dialog.button("Quit", "0");
+        dialog.show(stage);
+    }
+
+    public static void miniGameOverDialog(final Main main, Stage stage, final GameScreen gameScreen, int troops) {
+        Dialog dialog = new Dialog("Game Completed", DialogFactory.skin) {
+            protected void result(Object object) {
+                main.setScreen(gameScreen); // change to menu screen when ok button is pressed
+            }
+        };
+        dialog.text("Minigame complete!\nYou have received " + troops + " additional troops");
+        dialog.button("Ok", "0");
+        dialog.show(stage);
+    }
 }

@@ -60,6 +60,7 @@ public class MenuScreen implements Screen {
         final TextButton startGameBtn = WidgetFactory.genBasicButton("START NEW GAME");
         final TextButton loadGameBtn = WidgetFactory.genBasicButton("LOAD GAME");
         final TextButton optionsBtn = WidgetFactory.genBasicButton("OPTIONS");
+        final TextButton miniGameBtn = WidgetFactory.genBasicButton("MINIGAME");
 
         /* Create sub-table for all the menu buttons */
         Table btnTable = new Table();
@@ -74,6 +75,10 @@ public class MenuScreen implements Screen {
         btnTable.row();
         btnTable.left();
         btnTable.add(optionsBtn).height(60).width(420).pad(30);
+
+        btnTable.row();
+        btnTable.left();
+        btnTable.add(miniGameBtn).height(60).width(420).pad(30);
 
         startGameBtn.addListener(new ChangeListener() {
             @Override
@@ -95,6 +100,14 @@ public class MenuScreen implements Screen {
                 main.setOptionsScreen();
             }
         });
+
+        miniGameBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                main.setMiniGameScreen();
+            }
+        });
+
 
         /* Sub-table complete */
         return btnTable;

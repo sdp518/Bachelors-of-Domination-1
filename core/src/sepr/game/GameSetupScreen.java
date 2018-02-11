@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import javafx.util.Pair;
 import sepr.game.utils.PlayerType;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
