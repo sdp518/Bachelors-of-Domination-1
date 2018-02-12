@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.lwjgl.Sys;
+
 import java.util.Arrays;
 
 public class MiniGameScreen implements Screen {
@@ -40,10 +42,8 @@ public class MiniGameScreen implements Screen {
     private int currentValue = -1; // -1 is designated at invalid
 
     public MiniGameScreen(Main main, GameScreen gameScreen) {
-        Gdx.app.log("MiniGameScreen", "attached");
         this.main = main;
         this.gameScreen = gameScreen;
-
         this.stage = new Stage() {
             @Override
             public boolean keyUp(int keyCode) {
@@ -141,7 +141,6 @@ public class MiniGameScreen implements Screen {
      * Starts the game by showing all the values for a set amount of time and then hiding them
      */
     public void startGame() {
-        Gdx.app.log("MiniGameScreen", Arrays.toString(locations)); // debugging
 
         Timer.schedule(new Timer.Task(){
             @Override
@@ -162,7 +161,7 @@ public class MiniGameScreen implements Screen {
      * @param value number of the pressed button
      */
     public void buttonClicked(int value) {
-        Gdx.app.log("clicked", Integer.toString(value));
+
         /* If at start of choosing a pair, nothing currently selected */
         if (currentValue == -1) {
             currentValue = value;
@@ -215,12 +214,12 @@ public class MiniGameScreen implements Screen {
     public void endMiniGame() {
         player.addTroopsToAllocate(score);
         DialogFactory.miniGameOverDialog(main, stage, gameScreen, score);
+        this.dispose();
 
     }
 
     @Override
     public void show() {
-        Gdx.app.log("GameScreen", "show called");
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -233,7 +232,6 @@ public class MiniGameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log("GameScreen", "resizing");
         this.stage.getViewport().update(width, height, true);
     }
 

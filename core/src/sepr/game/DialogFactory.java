@@ -285,15 +285,6 @@ public class DialogFactory {
         dialog.show(stage);
     }
 
-    /**
-     * creates a dialog box displaying informing the player that the PVC has spawned
-     *
-     * @param stage to draw the box onto
-     */
-    public static void InvalidAttack(Stage stage) {
-        basicDialogBox("Invalid Attack","You cannot attack an empty tile, move troops to it in the movement phase",stage);
-    }
-
 
 
     /**
@@ -344,21 +335,15 @@ public class DialogFactory {
      * @param stage to draw the box onto
      */
     public static void TakenOverPVCDialogue(Stage stage) {
-        basicDialogBox("Pro Vice Chancellor tile captured","Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 2 bonus troops per turn from this tile",stage);
+        basicDialogBox("Pro Vice Chancellor tile captured","Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 1 bonus troop per turn from this sector",stage);
     }
-
 
     /**
-     * creates a dialog box displaying informing the player that the PVC has spawned
+     * creates a dialog box asking if the player wants to exit the mini game
      *
      * @param stage to draw the box onto
+     * @param miniGameScreen the mini game screen where the dialog will be shown
      */
-    public static void PVCSpawnedMessage(Stage stage) {
-        basicDialogBox("Pro Vice Chancellor has spawned on a random Tile","Find the PVC to get a bonus and unlock the mini-game",stage);
-    }
-
-
-
 
     public static void leaveMiniGameDialog(final MiniGameScreen miniGameScreen, Stage stage) {
         Dialog dialog = new Dialog("Continue?", DialogFactory.skin) {
@@ -378,8 +363,9 @@ public class DialogFactory {
     public static void miniGameOverDialog(final Main main, Stage stage, final GameScreen gameScreen, int troops) {
         Dialog dialog = new Dialog("Game Completed", DialogFactory.skin) {
             protected void result(Object object) {
-                main.LoadGameScreen();  // change to menu screen when ok button is pressed
-                //main.setScreen(gameScreen);
+                main.setScreen(gameScreen);  // change to menu screen when ok button is pressed
+                gameScreen.resetCameraPosition();
+
             }
         };
         dialog.text("Minigame complete!\nYou have received " + troops + " additional troops");

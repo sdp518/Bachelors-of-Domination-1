@@ -147,7 +147,6 @@ public class Map{
     }
 
 
-
     /**
      * allocates sectors in the map to the players in a semi-random fashion
      * if there is a neutral player then the default neutral sectors are allocated to them
@@ -210,12 +209,14 @@ public class Map{
     public void spawnPVC(Stage stage ,int defendingSectorId) {
 
         sectors.get(defendingSectorId).setIsPVCTile(true);
-        DialogFactory.PVCSpawnedMessage(stage);
+        DialogFactory.TakenOverPVCDialogue(stage);
         sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+        proViceChancellor.setPVCSpawned(true);
         proViceChancellor.startMiniGame();
 
 
     }
+
 
     /**
      * processes an attack from one sector to another
@@ -278,11 +279,14 @@ public class Map{
             {
                 defender.setOwnsPVC(false);
                 attacker.setOwnsPVC(true);
-                DialogFactory.TakenOverPVCDialogue(stage);
-                sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.YELLOW);
+                sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+                proViceChancellor.startMiniGame();
+
             }
+            if(ShouldPVCSpawn() && !proViceChancellor.isPVCSpawned()) {System.out.println("check2");spawnPVC(stage, defendingSectorId);}
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
-            if(ShouldPVCSpawn()) {spawnPVC(stage, defendingSectorId);}
+
+
 
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it

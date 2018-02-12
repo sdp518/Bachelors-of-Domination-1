@@ -147,9 +147,6 @@ public class PhaseAttack extends Phase{
 
             if (numOfAttackers[0] == 0) {
                 // cancel attack
-            }
-
-            else if(defendingSector.getUnitsInSector() == 0 ){
                 int voice = random.nextInt(3);
 
                 switch (voice){
@@ -165,10 +162,8 @@ public class PhaseAttack extends Phase{
                     case 3:
                         break;
                 }
-
-
-                DialogFactory.InvalidAttack(this);
             }
+
             else {
                     executeAttack();
                 }

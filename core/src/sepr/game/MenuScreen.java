@@ -100,7 +100,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        
+
         /* Sub-table complete */
         return btnTable;
     }
