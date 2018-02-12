@@ -33,6 +33,8 @@ public class SaveLoadManager {
 
     private static Boolean loadedSave; // Whether a save has been loaded
 
+    public SaveLoadManager(){ }
+
     /**
      * Initializes the SaveLoadManager
      * @param main Main class
