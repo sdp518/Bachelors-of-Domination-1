@@ -283,7 +283,7 @@ public class Map{
                 proViceChancellor.startMiniGame();
 
             }
-            if(ShouldPVCSpawn() && !proViceChancellor.isPVCSpawned()) {System.out.println("check2");spawnPVC(stage, defendingSectorId);}
+            if(ShouldPVCSpawn() && !proViceChancellor.isPVCSpawned()) {spawnPVC(stage, defendingSectorId);}
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
 
 
