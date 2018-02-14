@@ -1,23 +1,47 @@
 package sepr.game.saveandload;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import sepr.game.GameSetupScreen;
-import sepr.game.Player;
+import com.badlogic.gdx.graphics.GL20;
+import javafx.print.PageLayout;
+import org.junit.*;
+import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.model.InitializationError;
+import org.lwjgl.Sys;
+import org.mockito.Mockito;
+import org.mockito.Mockito.*;
+import sepr.game.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
-public class SaveLoadManagerTest {
+public class SaveLoadManagerTest implements ApplicationListener {
     public SaveLoadManager saveLoadManager;
     public GameState gameState;
+
+    private static HeadlessApplicationConfiguration application;
+
+    public SaveLoadManagerTest() throws InitializationError {
+        HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
+
+        new HeadlessApplication(this, conf);
+    }
+
+    @BeforeClass
+    public static void init() {
+
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -27,7 +51,7 @@ public class SaveLoadManagerTest {
         gameState.mapState = gameState.new MapState();
 
 
-        gameState.mapState.sectorStates = new GameState.SectorState[5];
+        gameState.mapState.sectorStates = new GameState.SectorState[4];
 
         for (int i = 0; i < 4; i++){
             GameState.SectorState sectorState = gameState.new SectorState();
@@ -39,7 +63,7 @@ public class SaveLoadManagerTest {
             sectorState.unitsInSector = i;
             sectorState.reinforcementsProvided = i;
             sectorState.college = "DERWENT";
-            sectorState.texturePath = "uiComponents/menuBackground.png";
+            sectorState.texturePath = "assets/uiComponents/menuBackground.png";
             sectorState.neutral = true;
             sectorState.adjacentSectorIds = new int[3];
             sectorState.adjacentSectorIds[0] = 1;
@@ -48,7 +72,7 @@ public class SaveLoadManagerTest {
             sectorState.sectorCentreX = i;
             sectorState.sectorCentreY = i;
             sectorState.decor = false;
-            sectorState.fileName = "uiComponents/menuBackground.png";
+            sectorState.fileName = "assets/uiComponents/menuBackground.png";
             sectorState.allocated = false;
 
             gameState.mapState.sectorStates[i] = sectorState;
@@ -91,6 +115,11 @@ public class SaveLoadManagerTest {
         gameState = null;
     }
 
+    @AfterClass
+    public static void cleanUp() {
+        application = null;
+    }
+
     @Test
     public void mapFromMapState() {
     }
@@ -121,6 +150,38 @@ public class SaveLoadManagerTest {
 
     @Test
     public void sectorsFromSectorState() {
+        HashMap<Integer, Player> playerHashMap = new HashMap<Integer, Player>();
+        HashMap<Integer, Sector> sectorHashMap = this.saveLoadManager.SectorsFromSectorState(this.gameState.mapState.sectorStates, playerHashMap, true);
+        
+        int index = 0;
+
+        for (java.util.Map.Entry<Integer, Sector> sectorEntry : sectorHashMap.entrySet()){
+            Integer key = sectorEntry.getKey();
+            Sector value = sectorEntry.getValue();
+            
+            assertTrue("Sector ID", value.getId() == index);
+            assertTrue("Sector Owner ID", value.getOwnerId() == index);
+            assertTrue("Sector Display Name", value.getDisplayName().equalsIgnoreCase(Integer.toString(index)));
+            assertTrue("Units In Sector", value.getUnitsInSector() == index);
+            assertTrue("Reinforcements Provided", value.getReinforcementsProvided() == index);
+            assertTrue("Sector College", value.getCollege() == "DERWENT");
+            assertTrue("Sector Texture Path", value.getTexturePath().equalsIgnoreCase("assets/uiComponents/menuBackground.png"));
+            assertTrue("Sector Is Neutral", value.isNeutral() == true);
+
+            for (int i = 0; i < value.getAdjacentSectorIds().length; i++){
+                assertTrue(value.getAdjacentSectorIds()[i] == i + 1);
+            }
+
+            assertTrue("Sector Centre X", value.getSectorCentreX() == index);
+            assertTrue("Sector Centre Y", value.getSectorCentreY() == index);
+
+            assertTrue("Sector Is Decor", value.isDecor() == false);
+            assertTrue("Sector FileName", value.getFileName() == "assets/uiComponents/menuBackground.png");
+            assertTrue("Sector Is Allocated", value.isAllocated() == false);
+
+            index++;
+        }
+
     }
 
     @Test
@@ -129,5 +190,35 @@ public class SaveLoadManagerTest {
 
     @Test
     public void getNextSaveID() {
+    }
+
+    @Override
+    public void create() {
+
+    }
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void render() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }

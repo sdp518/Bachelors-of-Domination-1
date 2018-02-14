@@ -1,6 +1,9 @@
 package sepr.game;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,7 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 /**
  * class for specifying properties of a sector that is part of a map
  */
-public class Sector {
+public class Sector implements ApplicationListener {
     private int id;
     private int ownerId;
     private String displayName;
@@ -70,6 +73,29 @@ public class Sector {
         if(!isDecor()){this.changeSectorColor(color);
             this.changeSectorColor(color);
         }
+    }
+
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test){
+        HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
+
+        new HeadlessApplication(this, conf);
+
+        this.id = id;
+        this.ownerId = ownerId;
+        this.displayName = displayName;
+        this.unitsInSector = unitsInSector;
+        this.reinforcementsProvided = reinforcementsProvided;
+        this.college = college;
+        this.neutral = neutral;
+        this.adjacentSectorIds = adjacentSectorIds;
+        this.sectorTexture = sectorTexture;
+        this.texturePath = texturePath;
+        this.sectorPixmap = sectorPixmap;
+        this.sectorCentreX = sectorCentreX;
+        this.sectorCentreY = sectorCentreY;
+        this.decor = decor;
+        this.fileName = fileName;
+        this.allocated = allocated;
     }
 
     /**
@@ -272,5 +298,35 @@ public class Sector {
 
     public String getTexturePath() {
         return texturePath;
+    }
+
+    @Override
+    public void create() {
+
+    }
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void render() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }
