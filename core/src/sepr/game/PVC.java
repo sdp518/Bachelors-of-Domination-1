@@ -35,7 +35,7 @@ public class PVC {
     {
         Random rand = new Random();
         Float randomValue = rand.nextFloat();
-        if(randomValue <= spawnChance && (PVCSpawned == false) )
+        if(randomValue <= spawnChance && (!PVCSpawned))
         {
 
             return true;

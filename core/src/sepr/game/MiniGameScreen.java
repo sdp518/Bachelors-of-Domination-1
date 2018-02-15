@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import org.lwjgl.Sys;
 
 import java.util.Arrays;
 
@@ -36,12 +35,12 @@ public class MiniGameScreen implements Screen {
     private Player player; // player to allocate gang members to at the end of the minigame
 
     private int[] locations = new int[MAX_CARDS]; // array to contain random locations of values
-    TextButton[] textButtons = new TextButton[MAX_CARDS]; // array to contain all buttons
+    private TextButton[] textButtons = new TextButton[MAX_CARDS]; // array to contain all buttons
 
     private int score; // score equates to additional gang members at the end of the minigame
-    private int currentValue = -1; // -1 is designated at invalid
+    private int currentValue = -1; // -1 is designated as invalid
 
-    public MiniGameScreen(Main main, GameScreen gameScreen) {
+    MiniGameScreen(Main main, GameScreen gameScreen) {
         this.main = main;
         this.gameScreen = gameScreen;
         this.stage = new Stage() {
@@ -67,8 +66,8 @@ public class MiniGameScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 TextButton buttonUsed = (TextButton)event.getListenerActor();
-                int value = Integer.parseInt(buttonUsed.getName()); // value of button is equal to its name
-                buttonClicked(value);
+                String location = buttonUsed.getName(); // name of button equal to its location in textButtons
+                buttonClicked(location);
                 return true;
             }
         };
@@ -138,7 +137,8 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
-     * Starts the game by showing all the values for a set amount of time and then hiding them
+     * Starts the game by showing all the values for a set amount of time and then hiding them.
+     * Activates buttons once hidden
      */
     public void startGame() {
 
@@ -146,7 +146,7 @@ public class MiniGameScreen implements Screen {
             @Override
             public void run() {
                 for (int i = 0; i < MAX_CARDS; i++) {
-                    textButtons[i].setName(Integer.toString(locations[i])); // activates buttons
+                    textButtons[i].setName(Integer.toString(i)); // activates buttons
                     textButtons[i].setText(""); // hides button values
                 }
             }
@@ -156,22 +156,42 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
+     * Helpful and clean way of translating button location into button value
+     *
+     * @param location index in textButtons of the target button
+     * @return the value of the target button, or -1 if button is invalid (if location is -1)
+     */
+    private int getValueAtLocation(String location) {
+        if (location.equals("-1")) {
+            return -1;
+        }
+        else {
+            return locations[Integer.parseInt(location)];
+        }
+    }
+
+    /**
      * Handles the possible outcomes of a button being pressed
      *
-     * @param value number of the pressed button
+     * @param location index in textButtons of the pressed button
      */
-    public void buttonClicked(int value) {
+    private void buttonClicked(String location) {
+        /* Gets the value of the clicked button */
+        int value = getValueAtLocation(location);
 
         /* If at start of choosing a pair, nothing currently selected */
         if (currentValue == -1) {
             currentValue = value;
+            textButtons[Integer.parseInt(location)].setName("-1"); // first button becomes invalid
         }
+
         /* If correct */
         else if (value == currentValue) {
             score += 1;
             currentValue = -1;
             pairFound(value);
         }
+
         /* If incorrect */
         else {
             score = 0;
@@ -182,30 +202,20 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
-     * Handles a pair being correctly chosen, removes the pair and asks the user if they would like to continue
+     * Removes a pair of values and asks the user if they would like to continue playing
      *
      * @param value number of the pair that has been found
      */
-    public void pairFound(int value) {
-        removePair(value);
-        DialogFactory.leaveMiniGameDialog(this, stage);
-    }
-
-    /**
-     * Removes the 2 buttons with the given value from play
-     *
-     * @param value number of the buttons to be removed
-     */
-    public void removePair(int value) {
+    private void pairFound(int value) {
         for (int i = 0; i < MAX_CARDS; i++) {
             if (locations[i] == value) {
                 textButtons[i].setName("-1"); // makes button invalid
                 textButtons[i].setText(""); // hides button
             }
         }
-    }
 
-    /*  */
+        DialogFactory.leaveMiniGameDialog(this, stage);
+    }
 
     /**
      * Correctly ends the minigame by giving the appropriate number of troops to the player
@@ -237,21 +247,17 @@ public class MiniGameScreen implements Screen {
 
     @Override
     public void pause() {
-        Gdx.app.log("GameScreen", "pause called");
     }
 
     @Override
     public void resume() {
-        Gdx.app.log("GameScreen", "resume called");
     }
 
     @Override
     public void hide() {
-        Gdx.app.log("GameScreen", "hide called");
     }
 
     @Override
     public void dispose() {
-
     }
 }
