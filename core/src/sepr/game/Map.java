@@ -122,7 +122,7 @@ public class Map{
         Texture sectorTexture = new Texture(texturePath);
         Pixmap sectorPixmap = new Pixmap(Gdx.files.internal("mapData/" + sectorData[1]));
         String displayName = sectorData[2];
-        int unitsInSector = 3 + random.nextInt(3);
+        int unitsInSector = 5 + random.nextInt(15);
         int reinforcementsProvided = Integer.parseInt(sectorData[4]);
         String college = sectorData[5];
         boolean neutral = Boolean.parseBoolean(sectorData[6]);
