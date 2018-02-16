@@ -4,15 +4,20 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
 
-
+import java.util.ArrayList;
 
 
 /**
- * Usage -- Audio.get('path to file', Sound.class).play() // this will play the sound
+ * Usage -- Audio.get('path to file', Sound.class).play(AudioManager.GlobalFXvolume) // this will play the sound
  */
 
 
 public class AudioManager extends AssetManager {
+
+    public static float GlobalFXvolume = 1;
+    public static float GlobalMusicVolume = 1;
+
+    public static ArrayList<String> currentPlayingMusic = new ArrayList<String>();
     private static AudioManager instance = null;
     protected AudioManager() {
         // Exists only to defeat instantiation.
@@ -29,7 +34,8 @@ public class AudioManager extends AssetManager {
         this.load(filePath, Music.class);
         this.finishLoading();
         this.get(filePath, Music.class).play(); //plays the music
-        this.get(filePath,Music.class).setVolume(0.5f);
+        currentPlayingMusic.add(filePath);
+        this.get(filePath,Music.class).setVolume(AudioManager.GlobalMusicVolume);
         this.get(filePath, Music.class).setLooping(true); //sets looping
 
     }
@@ -76,6 +82,13 @@ public class AudioManager extends AssetManager {
     public void disposeMusic(String filePath){
         this.get(filePath, Music.class).dispose(); // remove the introMusic from memory to to increase performance
     }
+
+    public void setMusicVolume(){
+        for(String x : currentPlayingMusic){
+            this.get(x, Music.class).setVolume(GlobalMusicVolume);
+        }
+    }
+
 
     public void updateSounds()
         {
