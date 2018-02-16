@@ -183,13 +183,16 @@ public class MiniGameScreen implements Screen {
         if (currentValue == -1) {
             currentValue = value;
             textButtons[Integer.parseInt(location)].setName("-1"); // first button becomes invalid
+            textButtons[Integer.parseInt(location)].setText(Integer.toString(getValueAtLocation(location)));
         }
 
         /* If correct */
         else if (value == currentValue) {
             score += 1;
             currentValue = -1;
-            pairFound(value);
+            textButtons[Integer.parseInt(location)].setName("-1");
+            textButtons[Integer.parseInt(location)].setText(Integer.toString(getValueAtLocation(location)));
+            pairFound();
         }
 
         /* If incorrect */
@@ -203,17 +206,8 @@ public class MiniGameScreen implements Screen {
 
     /**
      * Removes a pair of values and asks the user if they would like to continue playing
-     *
-     * @param value number of the pair that has been found
      */
-    private void pairFound(int value) {
-        for (int i = 0; i < MAX_CARDS; i++) {
-            if (locations[i] == value) {
-                textButtons[i].setName("-1"); // makes button invalid
-                textButtons[i].setText(""); // hides button
-            }
-        }
-
+    private void pairFound() {
         DialogFactory.leaveMiniGameDialog(this, stage);
     }
 
