@@ -94,7 +94,9 @@ public class Sector {
 
 
         this.ownerId = player.getId();
-        this.changeSectorColor(player.getSectorColour());
+        if(!this.isPVCTile){
+            this.changeSectorColor(player.getSectorColour());
+        }
         this.allocated = true;
     }
 
