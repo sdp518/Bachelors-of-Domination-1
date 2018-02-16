@@ -24,6 +24,7 @@ public class Main extends Game implements ApplicationListener {
 	private GameSetupScreen gameSetupScreen;
 	private SaveLoadManager saveLoadManager;
 
+
 	/**
 	 * Setup the screens and set the first screen as the menu
 	 */
