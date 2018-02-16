@@ -70,7 +70,7 @@ public class PhaseMovement extends Phase {
         }
         numOfAttackers = new int[1];
         numOfAttackers[0] = -1;
-        DialogFactory.moveDialog(fromSector.getUnitsInSector(), toSector.getUnitsInSector(), numOfAttackers, this);
+        DialogFactory.moveDialog(fromSector.getUnitsInSector(), numOfAttackers, this);
     }
 
     /**

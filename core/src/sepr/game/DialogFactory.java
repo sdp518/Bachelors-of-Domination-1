@@ -266,12 +266,12 @@ public class DialogFactory {
      * if player cancels the attackers[0] = 0 to signify the attack has been cancelled
      *
      * @param maxAttackers max number of attackers the player chooses to attack with
-     * @param defenders how many units are defending
      * @param attackers 1 index array for setting number of troops the player has chosen to attack with: [0] number of troops player has set to attack with
      * @param stage to display the dialog on
      * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
-    public static void moveDialog(int maxAttackers, int defenders, final int[] attackers, Stage stage) {
+    public static void moveDialog(int maxAttackers, final int[] attackers, Stage stage) {
+        maxAttackers --; // leave at least one troop on the tile
         final Slider slider = new Slider(0, maxAttackers, 1, false, DialogFactory.skin);
         slider.setValue(maxAttackers);
         final Label sliderValue = new Label(maxAttackers + "", DialogFactory.skin); // label showing the value of the slider
