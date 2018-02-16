@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -40,14 +37,15 @@ public class MiniGameScreen implements Screen {
     private int score; // score equates to additional gang members at the end of the minigame
     private int currentValue = -1; // -1 is designated as invalid
 
-    MiniGameScreen(Main main, GameScreen gameScreen) {
+    MiniGameScreen(final Main main, final GameScreen gameScreen) {
         this.main = main;
         this.gameScreen = gameScreen;
         this.stage = new Stage() {
             @Override
             public boolean keyUp(int keyCode) {
                 if (keyCode == Input.Keys.ESCAPE) { // ask player if they would like to exit the game if they press escape
-                    DialogFactory.exitProgramDialogBox(stage);
+                    DialogFactory.exitMinigame(stage,gameScreen,main);
+
                 }
                 return super.keyUp(keyCode);
             }
@@ -113,6 +111,12 @@ public class MiniGameScreen implements Screen {
                 DialogFactory.exitProgramDialogBox(stage);}
 
         })).colspan(2);
+
+
+        for (int i = 0; i < MAX_CARDS; i++) {
+            textButtons[i].setTouchable(Touchable.disabled);
+            textButtons[i].setName(Integer.toString(i)); // activates buttons
+        }
     }
 
     public void setupGame(Player player) {
@@ -146,7 +150,7 @@ public class MiniGameScreen implements Screen {
             @Override
             public void run() {
                 for (int i = 0; i < MAX_CARDS; i++) {
-                    textButtons[i].setName(Integer.toString(i)); // activates buttons
+                    textButtons[i].setTouchable(Touchable.enabled);
                     textButtons[i].setText(""); // hides button values
                 }
             }
