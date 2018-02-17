@@ -1,6 +1,8 @@
 package sepr.game;
 
+import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -195,25 +197,23 @@ public class Map{
         }
     }
 
+    /**
+     * calls the PVCSpawn method in the PVC class to randomly decide if the PVC should spawn
+     * @return a boolean deciding if the PVC should spawn
+     */
 
-    public boolean ShouldPVCSpawn()
-    {
-
-        return proViceChancellor.PVCSpawn();
-    }
+    public boolean ShouldPVCSpawn() { return proViceChancellor.PVCSpawn(); }
 
     /**
-     * spawns the PVC
+     * spawns the PVC tile and sets the colour to gold
      */
 
     public void spawnPVC(Stage stage ,int defendingSectorId) {
-
-        sectors.get(defendingSectorId).setIsPVCTile(true);
+        sectors.get(defendingSectorId).setIsPVCTile(true); //set the taken over tile to be the PVC tile
         DialogFactory.TakenOverPVCDialogue(stage);
         sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
         proViceChancellor.setPVCSpawned(true);
         proViceChancellor.startMiniGame();
-
 
     }
 
@@ -265,6 +265,7 @@ public class Map{
             }
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() > 1) { // territory conquered
+
             unitsToMove = new int[3];
             unitsToMove[0] = -1;
             unitsToMove[1] = attackingSectorId;
@@ -297,11 +298,23 @@ public class Map{
     }
 
 
-    public Boolean moveTroops(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player unAssigned, Stage stage){
+    /**
+     * processes a movement from one sector to another
+     * sets up drawing particle effects showing changes in amount of units in a sector
+     * sets up movement of units after conquering a sector
+     *
+     * @param attackingSectorId id of the sector the attack is coming from
+     * @param defendingSectorId id of the defending sector
+     * @param attackersLost amount of units lost on the attacking sector
+     * @param defendersLost amount of units lost on the defenfing sector
+     * @param attacker the player who is carrying out the attack
+     * @return true if attack successful else false
+     **/
+    public Boolean moveTroops(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker){
 
         addUnitsToSectorAnimated(attackingSectorId, -attackersLost); // apply amount of attacking units lost
         addUnitsToSectorAnimated(defendingSectorId, defendersLost); // apply amount of defending units lost
-        sectors.get(defendingSectorId).setOwner(attacker);
+        //sectors.get(defendingSectorId).setOwner(attacker);
 
         return true;
     }

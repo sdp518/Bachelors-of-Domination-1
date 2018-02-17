@@ -76,14 +76,14 @@ public class PhaseMovement extends Phase {
     /**
      * carries out movement once number of troops has been set using the dialog
      */
-    private void moveTroops() {
+    private void executeMoveTroops() {
 
         int attackersLost = numOfAttackers[0];
         int defendersLost = numOfAttackers[0];
 
 
         // apply the movement to the map
-        if (gameScreen.getMap().moveTroops(fromSector.getId(), toSector.getId(), attackersLost, defendersLost, gameScreen.getPlayerById(fromSector.getOwnerId()), gameScreen.getPlayerById(toSector.getOwnerId()), gameScreen.getPlayerById(gameScreen.NEUTRAL_PLAYER_ID), this)) {
+        if (gameScreen.getMap().moveTroops(fromSector.getId(), toSector.getId(), attackersLost, defendersLost, gameScreen.getPlayerById(fromSector.getOwnerId()))) {
 
 
             updateTroopReinforcementLabel();
@@ -104,7 +104,7 @@ public class PhaseMovement extends Phase {
                 // cancel attack
             }
             else {
-                moveTroops();
+                executeMoveTroops();
             }
             // reset attack
             fromSector = null;
