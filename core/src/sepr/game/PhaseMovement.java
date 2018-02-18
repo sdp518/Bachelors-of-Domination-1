@@ -11,7 +11,6 @@ import sepr.game.utils.TurnPhaseType;
 public class PhaseMovement extends PhaseAttackMove {
 
 
-
     public PhaseMovement(GameScreen gameScreen) {
         super(gameScreen, TurnPhaseType.MOVEMENT);
 
@@ -41,7 +40,7 @@ public class PhaseMovement extends PhaseAttackMove {
 
 
         // apply the movement to the map
-        if (gameScreen.getMap().moveTroops(attackingSector.getId(), defendingSector.getId(), attackersLost, defendersLost, gameScreen.getPlayerById(attackingSector.getOwnerId()))) {
+        if (gameScreen.getMap().moveTroops(attackingSector.getId(), defendingSector.getId(), attackersLost, defendersLost)) {
 
 
             updateTroopReinforcementLabel();
@@ -49,7 +48,7 @@ public class PhaseMovement extends PhaseAttackMove {
     }
 
     /**
-     * process an attack if one is being carried out
+     * process a movement if one is being carried out
      */
     @Override
     public void phaseAct() {
@@ -60,8 +59,7 @@ public class PhaseMovement extends PhaseAttackMove {
             if (numOfAttackers[0] == 0) {
 
                 // cancel attack
-            }
-            else {
+            } else {
                 executeMoveTroops();
             }
             // reset attack
@@ -87,20 +85,20 @@ public class PhaseMovement extends PhaseAttackMove {
 
         Vector2 worldCoord = gameScreen.screenToWorldCoords(screenX, screenY);
 
-        int sectorId = gameScreen.getMap().detectSectorContainsPoint((int)worldCoord.x, (int)worldCoord.y);
+        int sectorId = gameScreen.getMap().detectSectorContainsPoint((int) worldCoord.x, (int) worldCoord.y);
         if (sectorId != -1) { // If selected a sector
 
             Sector selected = gameScreen.getMap().getSectorById(sectorId); // Current sector
 
 
-            if (this.attackingSector != null && this.defendingSector == null) { // If its the second selection in the attack phase
+            if (this.attackingSector != null && this.defendingSector == null) { // If its the second selection in the movement phase
 
                 if (this.attackingSector.isAdjacentTo(selected) && selected.getOwnerId() == this.currentPlayer.getId()) { // check the player does owns the defending sector and that it is adjacent
                     this.arrowHeadPosition.set(worldCoord.x, worldCoord.y); // Finalise the end position of the arrow
                     this.defendingSector = selected;
 
-                    getNumberOfAttackers(); // attacking and defending sector selected so find out how many units the player wants to attack with
-                } else { // cancel attack as selected defending sector cannot be attack: may not be adjacent or may be owned by the attacker
+                    getNumberOfAttackers(); // attacking and defending sector selected so find out how many units the player wants to move with
+                } else { // cancel the movement as selected defending sector cannot be moved to: may not be adjacent or may be owned by the attacker
                     this.attackingSector = null;
                 }
 
@@ -111,7 +109,7 @@ public class PhaseMovement extends PhaseAttackMove {
                 this.attackingSector = null;
                 this.defendingSector = null;
             }
-        } else { // mouse pressed and not hovered over a sector to attack therefore cancel any attack in progress
+        } else { // mouse pressed and not hovered over a sector to attack therefore cancel any movement in progress
             this.attackingSector = null;
             this.defendingSector = null;
         }

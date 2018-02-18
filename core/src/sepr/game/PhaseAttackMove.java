@@ -50,8 +50,6 @@ public abstract class PhaseAttackMove extends Phase {
         defendingSector = null;
     }
 
-
-
     /**
      * Creates an arrow between coordinates
      *

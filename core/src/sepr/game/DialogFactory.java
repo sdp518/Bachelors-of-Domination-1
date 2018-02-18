@@ -262,11 +262,11 @@ public class DialogFactory {
 
 
     /**
-     * creates a dialog box for the player to select how many troops they want to attack with
+     * creates a dialog box for the player to select how many troops they want to move with
      * if player cancels the attackers[0] = 0 to signify the attack has been cancelled
      *
-     * @param maxAttackers max number of attackers the player chooses to attack with
-     * @param attackers 1 index array for setting number of troops the player has chosen to attack with: [0] number of troops player has set to attack with
+     * @param maxAttackers max number of attackers the player chooses to move
+     * @param attackers 1 index array for setting number of troops the player has chosen to move with: [0] number of troops player has set to move with
      * @param stage to display the dialog on
      * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
@@ -383,6 +383,17 @@ public class DialogFactory {
         dialog.button("Quit", "0");
         dialog.show(stage);
     }
+
+
+    /**
+     * creates a dialog box asking if the player wants to exit the mini game
+     *
+     * @param main  for changing back to the map
+     * @param stage to draw the box onto
+     * @param gameScreen the map screen
+     * @param troops number of troops gained from the mini game
+     */
+
 
     public static void miniGameOverDialog(final Main main, Stage stage, final GameScreen gameScreen, int troops) {
         Dialog dialog = new Dialog("Game Completed", DialogFactory.skin) {

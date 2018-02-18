@@ -1,6 +1,4 @@
 package sepr.game;
-import com.badlogic.gdx.graphics.Color;
-import org.lwjgl.Sys;
 
 import java.util.Random;
 
@@ -16,9 +14,10 @@ public class PVC {
     private GameScreen gameScreen;
 
     /**
-     * creates a player object with the specified properties
+     * creates a PVC object with the specified properties
      *
      * @param spawnChance player's unique identifier
+     * @param gameScreen  used to start the mini game
      */
 
 
@@ -27,24 +26,35 @@ public class PVC {
         this.gameScreen = gameScreen;
     }
 
+
+    /**
+     * @return true or false depending if the random float value is less than the spawn chance
+     */
     public boolean PVCSpawn() {
+
         Random rand = new Random();
         Float randomValue = rand.nextFloat();
         if (randomValue <= spawnChance && (!PVCSpawned)) {
 
             return true;
         }
-
-
         return false;
     }
 
+
+    /**
+     * starts the mini game
+     */
+
     public void startMiniGame() {
 
-        System.out.println("ive been called");
         gameScreen.openMiniGame();
     }
 
+
+    /**
+     * @return if the PVC has been spawned
+     */
 
     public boolean isPVCSpawned() {
         return PVCSpawned;
@@ -52,10 +62,6 @@ public class PVC {
 
     public void setPVCSpawned(boolean value) {
         this.PVCSpawned = value;
-    }
-
-    public GameScreen getGameScreen() {
-        return this.gameScreen;
     }
 
     public float getSpawnChance() {

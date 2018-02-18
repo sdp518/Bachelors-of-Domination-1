@@ -23,9 +23,9 @@ public class MiniGameScreen implements Screen {
 
 
     private static final int MAX_CARDS = 16; // maximum number of cards, must be divisible by 4
-    private static final int NUM_PAIRS = MAX_CARDS/2;
-    private static final int COLS = MAX_CARDS/4;
-    private static final int ROWS = MAX_CARDS/COLS;
+    private static final int NUM_PAIRS = MAX_CARDS / 2;
+    private static final int COLS = MAX_CARDS / 4;
+    private static final int ROWS = MAX_CARDS / COLS;
     private static final float DELAY_TIME = 5; // time in seconds before cards are hidden
 
     private Main main;
@@ -48,7 +48,7 @@ public class MiniGameScreen implements Screen {
             @Override
             public boolean keyUp(int keyCode) {
                 if (keyCode == Input.Keys.ESCAPE) { // ask player if they would like to exit the game if they press escape
-                    DialogFactory.exitMinigame(stage,gameScreen,main);
+                    DialogFactory.exitMinigame(stage, gameScreen, main);
 
                 }
                 return super.keyUp(keyCode);
@@ -67,7 +67,7 @@ public class MiniGameScreen implements Screen {
         InputListener listener = new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                TextButton buttonUsed = (TextButton)event.getListenerActor();
+                TextButton buttonUsed = (TextButton) event.getListenerActor();
                 String location = buttonUsed.getName(); // name of button equal to its location in textButtons
                 buttonClicked(location);
                 return true;
@@ -87,7 +87,7 @@ public class MiniGameScreen implements Screen {
 
         for (int i = 0; i < COLS; i++) {
             for (int j = 0; j < ROWS; j++) {
-                btnTable.add(textButtons[i+(j*COLS)]).height(100).width(100).pad(30);
+                btnTable.add(textButtons[i + (j * COLS)]).height(100).width(100).pad(30);
                 btnTable.right();
             }
             btnTable.row();
@@ -112,7 +112,8 @@ public class MiniGameScreen implements Screen {
         table.add(WidgetFactory.genBottomBar("QUIT", new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                DialogFactory.exitProgramDialogBox(stage);}
+                DialogFactory.exitProgramDialogBox(stage);
+            }
 
         })).colspan(2);
 
@@ -150,7 +151,7 @@ public class MiniGameScreen implements Screen {
      */
     public void startGame() {
 
-        Timer.schedule(new Timer.Task(){
+        Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 for (int i = 0; i < MAX_CARDS; i++) {
@@ -172,8 +173,7 @@ public class MiniGameScreen implements Screen {
     private int getValueAtLocation(String location) {
         if (location.equals("-1")) {
             return -1;
-        }
-        else {
+        } else {
             return locations[Integer.parseInt(location)];
         }
     }
@@ -240,9 +240,8 @@ public class MiniGameScreen implements Screen {
         }
 
 
-
         int voice = random.nextInt(1);
-        switch(voice) {
+        switch (voice) {
             case 0:
                 Audio.get("sound/PVC/Colin_The_PVC_has_been_captured.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                 break;

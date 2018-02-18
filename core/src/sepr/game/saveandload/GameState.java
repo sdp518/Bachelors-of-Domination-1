@@ -1,7 +1,10 @@
 package sepr.game.saveandload;
 
 import com.badlogic.gdx.graphics.Color;
-import sepr.game.*;
+import sepr.game.GameSetupScreen;
+import sepr.game.Map;
+import sepr.game.Player;
+import sepr.game.Sector;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 

@@ -105,7 +105,6 @@ public class Main extends Game implements ApplicationListener {
 		Preferences prefs = Gdx.app.getPreferences(OptionsScreen.PREFERENCES_NAME);
 
 		AudioManager.GlobalFXvolume = prefs.getFloat(OptionsScreen.FX_VOL_PREF);
-		System.out.println(AudioManager.GlobalFXvolume);
 		AudioManager.GlobalMusicVolume = prefs.getFloat(OptionsScreen.MUSIC_VOL_PREF);
 		Audio.setMusicVolume();
 
