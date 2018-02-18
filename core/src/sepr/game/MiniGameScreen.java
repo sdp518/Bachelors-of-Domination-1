@@ -60,6 +60,11 @@ public class MiniGameScreen implements Screen {
         this.table.setDebug(false); // enable table drawing for ui debug
     }
 
+    /**
+     * Sets up a table containing all of the buttons for the minigame
+     *
+     * @return the table containing the buttons
+     */
     private Table setupMenuTable() {
         /* Listener for the buttons, passes the value of the clicked button to the buttonClicked method */
         InputListener listener = new InputListener() {
@@ -95,6 +100,9 @@ public class MiniGameScreen implements Screen {
         return btnTable;
     }
 
+    /**
+     * Sets up the user interface
+     */
     private void setupUi() {
         table.background(new TextureRegionDrawable(new TextureRegion(new Texture("uiComponents/menuBackground.png"))));
 
@@ -115,6 +123,11 @@ public class MiniGameScreen implements Screen {
         })).colspan(2);
     }
 
+    /**
+     * Sets up the game by mapping values to locations and calling the function to set up the UI
+     *
+     * @param player player to be given additional troops at the end of the minigame
+     */
     public void setupGame(Player player) {
         this.player = player;
 
@@ -137,11 +150,10 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
-     * Starts the game by showing all the values for a set amount of time and then hiding them.
-     * Activates buttons once hidden
+     * Starts the game by showing all the values for a set amount of time and then hiding them and enabling the buttons.
      */
     public void startGame() {
-
+        /* Wait for time specified in DELAY_TIME to hide and enable buttons */
         Timer.schedule(new Timer.Task(){
             @Override
             public void run() {
@@ -162,11 +174,18 @@ public class MiniGameScreen implements Screen {
      * @return the value of the target button, or -1 if button is invalid (if location is -1)
      */
     private int getValueAtLocation(String location) {
+        int loc = Integer.parseInt(location); // integer value of location
+        /* If button invalid */
         if (location.equals("-1")) {
             return -1;
         }
-        else {
+        /* If button not marked invalid but in valid range */
+        else if (loc > -1 && loc < MAX_CARDS){
             return locations[Integer.parseInt(location)];
+        }
+        /* If location out of range */
+        else {
+            throw new IllegalArgumentException("location must be -1 or in range of 0 - " + Integer.toString(MAX_CARDS));
         }
     }
 
@@ -179,6 +198,10 @@ public class MiniGameScreen implements Screen {
         /* Gets the value of the clicked button */
         int value = getValueAtLocation(location);
 
+        /* If button invalid */
+        if (value == -1) {
+            return;
+        }
         /* If at start of choosing a pair, nothing currently selected */
         if (currentValue == -1) {
             currentValue = value;
@@ -198,9 +221,8 @@ public class MiniGameScreen implements Screen {
         /* If incorrect */
         else {
             score = 0;
-            DialogFactory.basicDialogBox("Game Over!", "You receive 0 additional troops!", stage);
+            //DialogFactory.basicDialogBox("Game Over!", "You receive 0 additional troops!", stage);
             endMiniGame();
-
         }
     }
 
@@ -208,7 +230,14 @@ public class MiniGameScreen implements Screen {
      * Removes a pair of values and asks the user if they would like to continue playing
      */
     private void pairFound() {
-        DialogFactory.leaveMiniGameDialog(this, stage);
+        /* If all pairs found */
+        if (score == NUM_PAIRS) {
+            endMiniGame();
+        }
+        /* If more pairs still to be found */
+        else {
+            DialogFactory.leaveMiniGameDialog(this, stage);
+        }
     }
 
     /**
