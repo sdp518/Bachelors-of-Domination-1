@@ -3,28 +3,29 @@ package sepr.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import java.util.Arrays;
+import java.util.Random;
 
 public class MiniGameScreen implements Screen {
 
+
     private static final int MAX_CARDS = 16; // maximum number of cards, must be divisible by 4
-    private static final int NUM_PAIRS = MAX_CARDS/2;
-    private static final int COLS = MAX_CARDS/4;
-    private static final int ROWS = MAX_CARDS/COLS;
+    private static final int NUM_PAIRS = MAX_CARDS / 2;
+    private static final int COLS = MAX_CARDS / 4;
+    private static final int ROWS = MAX_CARDS / COLS;
     private static final float DELAY_TIME = 5; // time in seconds before cards are hidden
 
     private Main main;
@@ -32,23 +33,23 @@ public class MiniGameScreen implements Screen {
     private GameScreen gameScreen;
     private Table table; // table for inserting ui widgets into
     private Player player; // player to allocate gang members to at the end of the minigame
+    private AudioManager Audio = AudioManager.getInstance();
 
     private int[] locations = new int[MAX_CARDS]; // array to contain random locations of values
-    TextButton[] textButtons = new TextButton[MAX_CARDS]; // array to contain all buttons
+    private TextButton[] textButtons = new TextButton[MAX_CARDS]; // array to contain all buttons
 
     private int score; // score equates to additional gang members at the end of the minigame
-    private int currentValue = -1; // -1 is designated at invalid
+    private int currentValue = -1; // -1 is designated as invalid
 
-    public MiniGameScreen(Main main, GameScreen gameScreen) {
-        Gdx.app.log("MiniGameScreen", "attached");
+    MiniGameScreen(final Main main, final GameScreen gameScreen) {
         this.main = main;
         this.gameScreen = gameScreen;
-
         this.stage = new Stage() {
             @Override
             public boolean keyUp(int keyCode) {
                 if (keyCode == Input.Keys.ESCAPE) { // ask player if they would like to exit the game if they press escape
-                    DialogFactory.exitProgramDialogBox(stage);
+                    DialogFactory.exitMinigame(stage, gameScreen, main);
+
                 }
                 return super.keyUp(keyCode);
             }
@@ -66,9 +67,9 @@ public class MiniGameScreen implements Screen {
         InputListener listener = new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                TextButton buttonUsed = (TextButton)event.getListenerActor();
-                int value = Integer.parseInt(buttonUsed.getName()); // value of button is equal to its name
-                buttonClicked(value);
+                TextButton buttonUsed = (TextButton) event.getListenerActor();
+                String location = buttonUsed.getName(); // name of button equal to its location in textButtons
+                buttonClicked(location);
                 return true;
             }
         };
@@ -86,7 +87,7 @@ public class MiniGameScreen implements Screen {
 
         for (int i = 0; i < COLS; i++) {
             for (int j = 0; j < ROWS; j++) {
-                btnTable.add(textButtons[i+(j*COLS)]).height(100).width(100).pad(30);
+                btnTable.add(textButtons[i + (j * COLS)]).height(100).width(100).pad(30);
                 btnTable.right();
             }
             btnTable.row();
@@ -111,9 +112,16 @@ public class MiniGameScreen implements Screen {
         table.add(WidgetFactory.genBottomBar("QUIT", new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                DialogFactory.exitProgramDialogBox(stage);}
+                DialogFactory.exitProgramDialogBox(stage);
+            }
 
         })).colspan(2);
+
+
+        for (int i = 0; i < MAX_CARDS; i++) {
+            textButtons[i].setTouchable(Touchable.disabled);
+            textButtons[i].setName(Integer.toString(i)); // activates buttons
+        }
     }
 
     public void setupGame(Player player) {
@@ -138,16 +146,16 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
-     * Starts the game by showing all the values for a set amount of time and then hiding them
+     * Starts the game by showing all the values for a set amount of time and then hiding them.
+     * Activates buttons once hidden
      */
     public void startGame() {
-        Gdx.app.log("MiniGameScreen", Arrays.toString(locations)); // debugging
 
-        Timer.schedule(new Timer.Task(){
+        Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 for (int i = 0; i < MAX_CARDS; i++) {
-                    textButtons[i].setName(Integer.toString(locations[i])); // activates buttons
+                    textButtons[i].setTouchable(Touchable.enabled);
                     textButtons[i].setText(""); // hides button values
                 }
             }
@@ -157,22 +165,44 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
+     * Helpful and clean way of translating button location into button value
+     *
+     * @param location index in textButtons of the target button
+     * @return the value of the target button, or -1 if button is invalid (if location is -1)
+     */
+    private int getValueAtLocation(String location) {
+        if (location.equals("-1")) {
+            return -1;
+        } else {
+            return locations[Integer.parseInt(location)];
+        }
+    }
+
+    /**
      * Handles the possible outcomes of a button being pressed
      *
-     * @param value number of the pressed button
+     * @param location index in textButtons of the pressed button
      */
-    public void buttonClicked(int value) {
-        Gdx.app.log("clicked", Integer.toString(value));
+    private void buttonClicked(String location) {
+        /* Gets the value of the clicked button */
+        int value = getValueAtLocation(location);
+
         /* If at start of choosing a pair, nothing currently selected */
         if (currentValue == -1) {
             currentValue = value;
+            textButtons[Integer.parseInt(location)].setName("-1"); // first button becomes invalid
+            textButtons[Integer.parseInt(location)].setText(Integer.toString(getValueAtLocation(location)));
         }
+
         /* If correct */
         else if (value == currentValue) {
             score += 1;
             currentValue = -1;
-            pairFound(value);
+            textButtons[Integer.parseInt(location)].setName("-1");
+            textButtons[Integer.parseInt(location)].setText(Integer.toString(getValueAtLocation(location)));
+            pairFound();
         }
+
         /* If incorrect */
         else {
             score = 0;
@@ -183,44 +213,48 @@ public class MiniGameScreen implements Screen {
     }
 
     /**
-     * Handles a pair being correctly chosen, removes the pair and asks the user if they would like to continue
-     *
-     * @param value number of the pair that has been found
+     * Removes a pair of values and asks the user if they would like to continue playing
      */
-    public void pairFound(int value) {
-        removePair(value);
+    private void pairFound() {
         DialogFactory.leaveMiniGameDialog(this, stage);
     }
-
-    /**
-     * Removes the 2 buttons with the given value from play
-     *
-     * @param value number of the buttons to be removed
-     */
-    public void removePair(int value) {
-        for (int i = 0; i < MAX_CARDS; i++) {
-            if (locations[i] == value) {
-                textButtons[i].setName("-1"); // makes button invalid
-                textButtons[i].setText(""); // hides button
-            }
-        }
-    }
-
-    /*  */
 
     /**
      * Correctly ends the minigame by giving the appropriate number of troops to the player
      * and switching back to the main game
      */
     public void endMiniGame() {
+        Random random = new Random();
         player.addTroopsToAllocate(score);
         DialogFactory.miniGameOverDialog(main, stage, gameScreen, score);
+
+        if (score == 0) {
+            Timer.schedule(new Timer.Task() { //delay the poor perfomance sound so ti doesnt interfere with the PVC captured sound
+                @Override
+                public void run() {
+
+                    Audio.get("sound/Minigame/Colin_That_was_a_poor_performance.wav", Sound.class).play(AudioManager.GlobalFXvolume);
+                }
+
+            }, 2);
+        }
+
+
+        int voice = random.nextInt(1);
+        switch (voice) {
+            case 0:
+                Audio.get("sound/PVC/Colin_The_PVC_has_been_captured.wav", Sound.class).play(AudioManager.GlobalFXvolume);
+                break;
+            case 1:
+                Audio.get("sound/PVC/Colin_You_have_captured_the_PVC.wav", Sound.class).play(AudioManager.GlobalFXvolume);
+                break;
+        }
+        this.dispose();
 
     }
 
     @Override
     public void show() {
-        Gdx.app.log("GameScreen", "show called");
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -233,27 +267,22 @@ public class MiniGameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log("GameScreen", "resizing");
         this.stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void pause() {
-        Gdx.app.log("GameScreen", "pause called");
     }
 
     @Override
     public void resume() {
-        Gdx.app.log("GameScreen", "resume called");
     }
 
     @Override
     public void hide() {
-        Gdx.app.log("GameScreen", "hide called");
     }
 
     @Override
     public void dispose() {
-
     }
 }

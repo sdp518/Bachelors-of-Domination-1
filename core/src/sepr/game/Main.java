@@ -23,6 +23,8 @@ public class Main extends Game implements ApplicationListener {
 	private OptionsScreen optionsScreen;
 	private GameSetupScreen gameSetupScreen;
 	private SaveLoadManager saveLoadManager;
+	private AudioManager Audio = AudioManager.getInstance();
+
 
 	/**
 	 * Setup the screens and set the first screen as the menu
@@ -32,12 +34,12 @@ public class Main extends Game implements ApplicationListener {
 		new WidgetFactory(); // setup widget factory for generating UI components
 		new DialogFactory(); // setup dialog factory for generating dialogs
 
-		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
 		this.menuScreen = new MenuScreen(this);
 		this.gameScreen = new GameScreen(this);
 		this.optionsScreen = new OptionsScreen(this);
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
+		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
 
 		applyPreferences();
 
@@ -45,8 +47,8 @@ public class Main extends Game implements ApplicationListener {
 	}
 
 	public void setMiniGameScreen() {
-		//miniGameScreen.setupGame(gameScreen.getPlayerById(gameScreen.getCurrentPlayerPointer()));
-		miniGameScreen.setupGame(new Player(0, GameSetupScreen.CollegeName.ALCUIN, new Color(), PlayerType.HUMAN, "test"));
+		miniGameScreen = new MiniGameScreen(this,gameScreen);
+		miniGameScreen.setupGame(gameScreen.getPlayerById(gameScreen.getCurrentPlayerPointer()));
 		this.setScreen(miniGameScreen);
 		miniGameScreen.startGame();
 	}
@@ -102,6 +104,10 @@ public class Main extends Game implements ApplicationListener {
 	public void applyPreferences() {
 		Preferences prefs = Gdx.app.getPreferences(OptionsScreen.PREFERENCES_NAME);
 
+		AudioManager.GlobalFXvolume = prefs.getFloat(OptionsScreen.FX_VOL_PREF);
+		AudioManager.GlobalMusicVolume = prefs.getFloat(OptionsScreen.MUSIC_VOL_PREF);
+		Audio.setMusicVolume();
+
 		int screenWidth = prefs.getInteger(OptionsScreen.RESOLUTION_WIDTH_PREF, 1920);
 		int screenHeight = prefs.getInteger(OptionsScreen.RESOLUTION_HEIGHT_PREF, 1080);
 		Gdx.graphics.setWindowedMode(screenWidth, screenHeight);
@@ -141,8 +147,5 @@ public class Main extends Game implements ApplicationListener {
 		return this.saveLoadManager.savesToLoad;
 	}
 
-	public void LoadGameScreen(){
-		this.setScreen(gameScreen);
-	}
 }
 

@@ -1,6 +1,5 @@
 package sepr.game;
 
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -70,7 +69,7 @@ public abstract class Phase extends Stage {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 gameScreen.nextPhase();
-                Audio.get("sound/Other/click.mp3", Sound.class).play(); //plays the music
+                Audio.get("sound/Other/click.mp3", Sound.class).play(AudioManager.GlobalFXvolume); //plays the music
 
             }
         });

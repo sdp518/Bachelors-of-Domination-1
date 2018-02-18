@@ -1,5 +1,4 @@
 package sepr.game;
-import com.badlogic.gdx.graphics.Color;
 
 import java.util.Random;
 
@@ -10,45 +9,60 @@ import java.util.Random;
 public class PVC {
 
     private float spawnChance; //likelihood that the PVC will spawn , between 0 and 1
-                                // 0 = 0% ; 1 = 100%
-    private float PVCBonus; //the bonus the pvc gives
+    // 0 = 0% ; 1 = 100%
     private boolean PVCSpawned = false;
     private GameScreen gameScreen;
 
     /**
-     * creates a player object with the specified properties
+     * creates a PVC object with the specified properties
      *
-     * @param spawnChance       player's unique identifier
-     * @param PVCBonus  display name for this player
+     * @param spawnChance player's unique identifier
+     * @param gameScreen  used to start the mini game
      */
 
 
-    public PVC(float spawnChance, int PVCBonus, GameScreen gameScreen)
-    {
+    public PVC(float spawnChance, GameScreen gameScreen) {
         this.spawnChance = spawnChance;
-        this.PVCBonus = PVCBonus;
         this.gameScreen = gameScreen;
     }
 
-    public boolean PVCSpawn()
-    {
+
+    /**
+     * @return true or false depending if the random float value is less than the spawn chance
+     */
+    public boolean PVCSpawn() {
+
         Random rand = new Random();
         Float randomValue = rand.nextFloat();
-        if(randomValue <= spawnChance && (PVCSpawned == false) )
-        {
-            this.PVCSpawned = true;
+        if (randomValue <= spawnChance && (!PVCSpawned)) {
+
             return true;
         }
-
-
         return false;
     }
 
-    public void startMiniGame(){
+
+    /**
+     * starts the mini game
+     */
+
+    public void startMiniGame() {
 
         gameScreen.openMiniGame();
     }
 
+
+    /**
+     * @return if the PVC has been spawned
+     */
+
+    public boolean isPVCSpawned() {
+        return PVCSpawned;
+    }
+
+    public void setPVCSpawned(boolean value) {
+        this.PVCSpawned = value;
+    }
 
     public float getSpawnChance() {
         return spawnChance;
@@ -57,13 +71,4 @@ public class PVC {
     public void setSpawnChance(float spawnChance) {
         this.spawnChance = spawnChance;
     }
-
-    public float getPVCBonus() {
-        return PVCBonus;
-    }
-
-    public void setPVCBonus(float PVCBonus) {
-        this.PVCBonus = PVCBonus;
-    }
-
 }

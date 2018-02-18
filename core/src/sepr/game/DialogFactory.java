@@ -1,6 +1,8 @@
 package sepr.game;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -67,6 +69,28 @@ public class DialogFactory {
         dialog.button("No", "0");
         dialog.show(stage);
     }
+
+    /**
+     * creates a dialog where the player can confirm if they want to exit the program
+     *
+     * @param stage The stage to draw the box onto
+     */
+    public static void exitMinigame(Stage stage, final GameScreen gameScreen, final Main main) {
+        Dialog dialog = new Dialog("Quit", DialogFactory.skin) {
+            protected void result(Object object) {
+                if (object.toString().equals("1")){ // yes pressed : quit the game
+                    main.setScreen(gameScreen);  // close the program
+                    gameScreen.resetCameraPosition();
+
+                }
+            }
+        };
+        dialog.text("Are you sure you want to exit the mini game?");
+        dialog.button("Yes", "1");
+        dialog.button("No", "0");
+        dialog.show(stage);
+    }
+
 
     /**
      * creates a dialog where the player can confirm if they want to leave the current game
@@ -238,16 +262,16 @@ public class DialogFactory {
 
 
     /**
-     * creates a dialog box for the player to select how many troops they want to attack with
+     * creates a dialog box for the player to select how many troops they want to move with
      * if player cancels the attackers[0] = 0 to signify the attack has been cancelled
      *
-     * @param maxAttackers max number of attackers the player chooses to attack with
-     * @param defenders how many units are defending
-     * @param attackers 1 index array for setting number of troops the player has chosen to attack with: [0] number of troops player has set to attack with
+     * @param maxAttackers max number of attackers the player chooses to move
+     * @param attackers 1 index array for setting number of troops the player has chosen to move with: [0] number of troops player has set to move with
      * @param stage to display the dialog on
      * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
-    public static void moveDialog(int maxAttackers, int defenders, final int[] attackers, Stage stage) {
+    public static void moveDialog(int maxAttackers, final int[] attackers, Stage stage) {
+        maxAttackers --; // leave at least one troop on the tile
         final Slider slider = new Slider(0, maxAttackers, 1, false, DialogFactory.skin);
         slider.setValue(maxAttackers);
         final Label sliderValue = new Label(maxAttackers + "", DialogFactory.skin); // label showing the value of the slider
@@ -283,15 +307,6 @@ public class DialogFactory {
         dialog.button("Ok", "1").padLeft(40).padRight(20).align(Align.center);
 
         dialog.show(stage);
-    }
-
-    /**
-     * creates a dialog box displaying informing the player that the PVC has spawned
-     *
-     * @param stage to draw the box onto
-     */
-    public static void InvalidAttack(Stage stage) {
-        basicDialogBox("Invalid Attack","You cannot attack an empty tile, move troops to it in the movement phase",stage);
     }
 
 
@@ -344,21 +359,15 @@ public class DialogFactory {
      * @param stage to draw the box onto
      */
     public static void TakenOverPVCDialogue(Stage stage) {
-        basicDialogBox("Pro Vice Chancellor tile captured","Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 2 bonus troops per turn from this tile",stage);
+        basicDialogBox("Pro Vice Chancellor tile captured","Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 1 bonus troop per turn from this sector",stage);
     }
-
 
     /**
-     * creates a dialog box displaying informing the player that the PVC has spawned
+     * creates a dialog box asking if the player wants to exit the mini game
      *
      * @param stage to draw the box onto
+     * @param miniGameScreen the mini game screen where the dialog will be shown
      */
-    public static void PVCSpawnedMessage(Stage stage) {
-        basicDialogBox("Pro Vice Chancellor has spawned on a random Tile","Find the PVC to get a bonus and unlock the mini-game",stage);
-    }
-
-
-
 
     public static void leaveMiniGameDialog(final MiniGameScreen miniGameScreen, Stage stage) {
         Dialog dialog = new Dialog("Continue?", DialogFactory.skin) {
@@ -375,11 +384,23 @@ public class DialogFactory {
         dialog.show(stage);
     }
 
+
+    /**
+     * creates a dialog box asking if the player wants to exit the mini game
+     *
+     * @param main  for changing back to the map
+     * @param stage to draw the box onto
+     * @param gameScreen the map screen
+     * @param troops number of troops gained from the mini game
+     */
+
+
     public static void miniGameOverDialog(final Main main, Stage stage, final GameScreen gameScreen, int troops) {
         Dialog dialog = new Dialog("Game Completed", DialogFactory.skin) {
             protected void result(Object object) {
-                main.LoadGameScreen();  // change to menu screen when ok button is pressed
-                //main.setScreen(gameScreen);
+                main.setScreen(gameScreen);  // change to menu screen when ok button is pressed
+                gameScreen.resetCameraPosition();
+
             }
         };
         dialog.text("Minigame complete!\nYou have received " + troops + " additional troops");

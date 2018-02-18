@@ -1,10 +1,7 @@
 package sepr.game;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.Graphics.DisplayMode;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -36,6 +33,7 @@ public class OptionsScreen implements Screen {
     public static final String RESOLUTION_HEIGHT_PREF = "screenHeight";
     public static final String FULLSCREEN_PREF = "fullscreen";
     public static final String COLOURBLIND_PREF = "colourblind";
+
 
     private Main main;
     private Stage stage;
@@ -192,6 +190,7 @@ public class OptionsScreen implements Screen {
      * saves the updated preferences to file
      */
     private void acceptChanges() {
+
         Preferences prefs = Gdx.app.getPreferences(PREFERENCES_NAME);
         prefs.putFloat(MUSIC_VOL_PREF, musicSlider.getPercent());
         prefs.putFloat(FX_VOL_PREF, fxSlider.getPercent());
