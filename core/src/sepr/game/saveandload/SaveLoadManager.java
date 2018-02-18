@@ -31,7 +31,7 @@ public class SaveLoadManager {
     private static int numberOfSaves = 0; // Current number of saves
     private static GameState loadedState; // The state that has just been loaded
 
-    private static Boolean loadedSave; // Whether a save has been loaded
+    private static Boolean loadedSave = false; // Whether a save has been loaded
 
     public SaveLoadManager(){ }
 

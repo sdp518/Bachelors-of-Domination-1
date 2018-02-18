@@ -13,8 +13,6 @@ import org.junit.*;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 import org.lwjgl.Sys;
-import org.mockito.Mockito;
-import org.mockito.Mockito.*;
 import sepr.game.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
@@ -24,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class SaveLoadManagerTest implements ApplicationListener {
     public SaveLoadManager saveLoadManager;
@@ -186,10 +183,12 @@ public class SaveLoadManagerTest implements ApplicationListener {
 
     @Test
     public void getCurrentSaveID() {
+        assertTrue("Current Save ID", saveLoadManager.GetCurrentSaveID() == 0);
     }
 
     @Test
     public void getNextSaveID() {
+        assertTrue("Next Save ID", saveLoadManager.GetNextSaveID() == 1);
     }
 
     @Override
