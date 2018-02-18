@@ -1,38 +1,61 @@
 package sepr.game;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
-
+import java.util.ArrayList;
 
 
 /**
- * Usage -- Audio.get('path to file', Sound.class).play() // this will play the sound
+ * Usage -- Audio.get('path to file', Sound.class).play(AudioManager.GlobalFXvolume) // this will play the sound
  */
 
 
 public class AudioManager extends AssetManager {
-    private static AudioManager instance = null;
+
+    public static float GlobalFXvolume = 1; //Global volume for the sound between 0 and 1
+    public static float GlobalMusicVolume = 1; //Global volume for the music between 0 and 1
+    private static ArrayList<String> currentPlayingMusic = new ArrayList<String>(); //list of playing music
+    private static AudioManager instance = null; // set initial instance to be null
+
+    /**
+     * AudioManager is a singleton class that instantiated using getInstance therefore only one instance of a class is allowed at a time
+     */
+
     protected AudioManager() {
         // Exists only to defeat instantiation.
     }
+
     public static AudioManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new AudioManager();
         }
         return instance;
     }
 
-    public void loadMusic(String filePath){
+
+    /**
+     * loads the music file specified by the filepath into memory and plays it and sets to looping
+     *
+     * @param filePath the filepath of the location of the sound
+     */
+
+    public void loadMusic(String filePath) {
 
         this.load(filePath, Music.class);
         this.finishLoading();
         this.get(filePath, Music.class).play(); //plays the music
-        this.get(filePath,Music.class).setVolume(0.5f);
+        currentPlayingMusic.add(filePath);
+        this.get(filePath, Music.class).setVolume(AudioManager.GlobalMusicVolume);
         this.get(filePath, Music.class).setLooping(true); //sets looping
 
     }
+
+
+    /**
+     * loads all the sound files that are used during game play so they can be played at anytime
+     */
 
 
     public void loadSounds() {
@@ -73,18 +96,27 @@ public class AudioManager extends AssetManager {
         this.finishLoading();
     }
 
-    public void disposeMusic(String filePath){
+
+    /**
+     * remove a sound by memory according to its filepath
+     */
+
+    public void disposeMusic(String filePath) {
         this.get(filePath, Music.class).dispose(); // remove the introMusic from memory to to increase performance
     }
 
-    public void updateSounds()
-        {
-            this.update();
-        }
 
-    public void dispose()
-    {
-        this.dispose();
+    /**
+     * sets the music volume of currently running sounds to the GlobalMusicVolume
+     */
+
+    public void setMusicVolume() {
+
+        for (String x : currentPlayingMusic) {
+            this.get(x, Music.class).setVolume(GlobalMusicVolume);
+
+
+        }
     }
 
 

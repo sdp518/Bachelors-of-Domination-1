@@ -10,11 +10,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.lwjgl.Sys;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +26,7 @@ import java.util.Random;
 public class GameScreen implements Screen, InputProcessor{
     public static final int NEUTRAL_PLAYER_ID = 4;
 
-    public AudioManager Audio = AudioManager.getInstance();
+    public AudioManager Audio = AudioManager.getInstance(); // Access to the AudioManager
     private Main main; // main stored for switching between screens
 
     private TurnPhaseType currentPhase = TurnPhaseType.REINFORCEMENT; // set initial phase to the reinforcement phase
@@ -56,8 +54,6 @@ public class GameScreen implements Screen, InputProcessor{
     private Texture mapBackground; // texture for drawing as a background behind the game
 
     private boolean gameSetup = false; // true once setupGame has been called
-
-    private int turnNumber;
 
     private Random random;
 
@@ -129,7 +125,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         this.turnTimerEnabled = turnTimerEnabled;
         this.maxTurnTime = maxTurnTime;
-        this.ProViceChancellor = new PVC((float)1.0,1,this);
+        this.ProViceChancellor = new PVC((float)1.00,this);
         this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor); // setup the game map and allocate the sectors
 
         setUpPhases();
@@ -159,7 +155,6 @@ public class GameScreen implements Screen, InputProcessor{
             throw new RuntimeException("Cannot start game before it is setup");
         }
         this.turnTimeStart = System.currentTimeMillis(); // set turn start time to current rime
-        turnNumber = 0; // sets the initial turn to 0
         this.phases.get(currentPhase).enterPhase(getCurrentPlayer());
         resetCameraPosition();
     }
@@ -306,7 +301,7 @@ public class GameScreen implements Screen, InputProcessor{
         if (playerIdsToRemove.size() > 0) { // if there are any players to remove
             turnOrder.removeAll(playerIdsToRemove);
 
-            Audio.get("sound/Minigame/Colin_That_was_a_poor_performance.wav", Sound.class).play();
+            Audio.get("sound/Minigame/Colin_That_was_a_poor_performance.wav", Sound.class).play(AudioManager.GlobalFXvolume);
 
             String[] playerNames = new String[playerIdsToRemove.size()]; // array of names of players who have been removed
             for (int i = 0; i < playerIdsToRemove.size(); i++) {
@@ -335,22 +330,22 @@ public class GameScreen implements Screen, InputProcessor{
 
             switch (voice){
                 case 0:
-                    Audio.get("sound/Victory/Colin_Congratulations.wav", Sound.class).play();
+                    Audio.get("sound/Victory/Colin_Congratulations.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                     break;
                 case 1:
-                    Audio.get("sound/Victory/Colin_Congratulations_your_grandson_would_be_proud_of_you.wav", Sound.class).play();
+                    Audio.get("sound/Victory/Colin_Congratulations_your_grandson_would_be_proud_of_you.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                     break;
                 case 2:
-                    Audio.get("sound/Victory/Colin_Well_Done.wav", Sound.class).play();
+                    Audio.get("sound/Victory/Colin_Well_Done.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                     break;
                 case 3:
-                    Audio.get("sound/Victory/Colin_You_are_victorious.wav", Sound.class).play();
+                    Audio.get("sound/Victory/Colin_You_are_victorious.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                     break;
                 case 4:
                     break;
             }
 
-            Audio.get("", Sound.class).play();
+            Audio.get("", Sound.class).play(AudioManager.GlobalFXvolume);
             
             int winnerId = turnOrder.get(0); // winner will be the only player in the turn order list
             DialogFactory.gameOverDialog(players.get(winnerId).getPlayerName(), players.get(winnerId).getCollegeName().getCollegeName(), main, phases.get(currentPhase));
@@ -412,8 +407,8 @@ public class GameScreen implements Screen, InputProcessor{
      * changes the screen currently being displayed to the menu
      */
     public void openMenu() {
-        Audio.disposeMusic("sound/Gameplay Music/wind.mp3");
-        Audio.loadMusic("sound/IntroMusic/introMusic.mp3");
+        Audio.disposeMusic("sound/Gameplay Music/wind.mp3"); //remove game play sounds from memory to save space
+        Audio.loadMusic("sound/IntroMusic/introMusic.mp3"); //load and play main menu music
         main.setMenuScreen();
     }
     /**
@@ -590,10 +585,6 @@ public class GameScreen implements Screen, InputProcessor{
         }
         return true;
     }
-
-    public int getTurnNumber() { return turnNumber; }
-
-    public void setTurnNumber(int turnNumber) { this.turnNumber = turnNumber; }
 
     public TurnPhaseType getCurrentPhase(){
         return this.currentPhase;

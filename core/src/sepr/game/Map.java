@@ -1,31 +1,24 @@
 package sepr.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.particles.ParticleSorter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import javax.swing.plaf.synth.SynthStyle;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import static com.badlogic.gdx.graphics.g3d.particles.ParticleChannels.Color;
-
 /**
  * stores the game map and the sectors within it
  */
-public class Map{
+public class Map {
     private HashMap<Integer, Sector> sectors; // mapping of sector ID to the sector object
     private List<UnitChangeParticle> particles; // list of active particle effects displaying the changes to the amount of units on a sector
     private PVC proViceChancellor;
@@ -44,7 +37,7 @@ public class Map{
      * loads the sector data from the sectorProperties.csv file
      * allocates each sector to the players in the passed players hashmap
      *
-     * @param players hashmap of players who are in the game
+     * @param players               hashmap of players who are in the game
      * @param allocateNeutralPlayer if true then the neutral player should be allocated the default neutral sectors else they should be allocated no sectors
      */
     public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer) {
@@ -57,12 +50,12 @@ public class Map{
         this.allocateSectors(players, allocateNeutralPlayer);
     }
 
-    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, HashMap<Integer, Sector> sectors){
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, HashMap<Integer, Sector> sectors) {
         this(players, allocateNeutralPlayer);
         this.sectors = sectors;
     }
 
-    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor){
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor) {
         this(players, allocateNeutralPlayer);
         this.proViceChancellor = proViceChancellor;
         this.sectors = sectors;
@@ -122,7 +115,7 @@ public class Map{
         Texture sectorTexture = new Texture(texturePath);
         Pixmap sectorPixmap = new Pixmap(Gdx.files.internal("mapData/" + sectorData[1]));
         String displayName = sectorData[2];
-        int unitsInSector = 3 + random.nextInt(3);
+        int unitsInSector = 10 + random.nextInt(15);
         int reinforcementsProvided = Integer.parseInt(sectorData[4]);
         String college = sectorData[5];
         boolean neutral = Boolean.parseBoolean(sectorData[6]);
@@ -136,11 +129,12 @@ public class Map{
 
     /**
      * allocates the default neutral sectors to the neutral player
+     *
      * @param players hashmap of players containing the Neutral Player at key value GameScreen.NEUTRAL_PLAYER_ID
      */
     private void allocateNeutralSectors(HashMap<Integer, Player> players) {
         for (Sector sector : sectors.values()) {
-            if (sector.isNeutral()  && !sector.isDecor()) {
+            if (sector.isNeutral() && !sector.isDecor()) {
                 sector.setOwner(players.get(GameScreen.NEUTRAL_PLAYER_ID));
             }
         }
@@ -150,7 +144,8 @@ public class Map{
     /**
      * allocates sectors in the map to the players in a semi-random fashion
      * if there is a neutral player then the default neutral sectors are allocated to them
-     * @param players the players the sectors are to be allocated to
+     *
+     * @param players               the players the sectors are to be allocated to
      * @param allocateNeutralPlayer should the neutral player be allocated sectors
      * @throws RuntimeException if the players hashmap is empty
      */
@@ -196,24 +191,16 @@ public class Map{
     }
 
 
-    public boolean ShouldPVCSpawn()
-    {
-
-        return proViceChancellor.PVCSpawn();
-    }
-
     /**
-     * spawns the PVC
+     * spawns the PVC tile and sets the colour to gold and then starts the mini game
      */
 
-    public void spawnPVC(Stage stage ,int defendingSectorId) {
-
-        sectors.get(defendingSectorId).setIsPVCTile(true);
+    public void spawnPVC(Stage stage, int defendingSectorId) {
+        sectors.get(defendingSectorId).setIsPVCTile(true); //set the taken over tile to be the PVC tile
         DialogFactory.TakenOverPVCDialogue(stage);
         sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
         proViceChancellor.setPVCSpawned(true);
         proViceChancellor.startMiniGame();
-
 
     }
 
@@ -227,12 +214,12 @@ public class Map{
      *
      * @param attackingSectorId id of the sector the attack is coming from
      * @param defendingSectorId id of the defending sector
-     * @param attackersLost amount of units lost on the attacking sector
-     * @param defendersLost amount of units lost on the defenfing sector
-     * @param attacker the player who is carrying out the attack
-     * @param defender the player who is being attacked
-     * @param netrualPlayer the neutral player
-     * @param stage the stage to draw any dialogs to
+     * @param attackersLost     amount of units lost on the attacking sector
+     * @param defendersLost     amount of units lost on the defenfing sector
+     * @param attacker          the player who is carrying out the attack
+     * @param defender          the player who is being attacked
+     * @param netrualPlayer     the neutral player
+     * @param stage             the stage to draw any dialogs to
      * @return true if attack successful else false
      * @throws IllegalArgumentException if the amount of attackers lost exceeds the amount of attackers
      * @throws IllegalArgumentException if the amount of defenders lost exceeds the amount of attackers
@@ -265,17 +252,17 @@ public class Map{
             }
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() > 1) { // territory conquered
+
             unitsToMove = new int[3];
             unitsToMove[0] = -1;
             unitsToMove[1] = attackingSectorId;
             unitsToMove[2] = defendingSectorId;
 
 
-
             attacker.addTroopsToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
-            if(sectors.get(defendingSectorId).getIsPVCTile()) //if the player takes over PVC tile add PVC bonus
+            if (sectors.get(defendingSectorId).getIsPVCTile()) //if the player takes over PVC tile add PVC bonus
             {
                 defender.setOwnsPVC(false);
                 attacker.setOwnsPVC(true);
@@ -283,10 +270,10 @@ public class Map{
                 proViceChancellor.startMiniGame();
 
             }
-            if(ShouldPVCSpawn() && !proViceChancellor.isPVCSpawned()) {spawnPVC(stage, defendingSectorId);}
+            if (proViceChancellor.PVCSpawn() && !proViceChancellor.isPVCSpawned()) {
+                spawnPVC(stage, defendingSectorId);
+            }
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
-
-
 
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
@@ -297,12 +284,21 @@ public class Map{
     }
 
 
-    public Boolean moveTroops(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player unAssigned, Stage stage){
+    /**
+     * processes a movement from one sector to another
+     * sets up drawing particle effects showing changes in amount of units in a sector
+     * sets up movement of units after conquering a sector
+     *
+     * @param attackingSectorId id of the sector the troops are moving from
+     * @param defendingSectorId id of the sector receiving troops
+     * @param attackersLost     amount of units lost on the sector sending sector
+     * @param defendersLost     amount of units gained on the sector receiving troops
+     * @return true if movement successful else false
+     **/
+    public Boolean moveTroops(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost) {
 
         addUnitsToSectorAnimated(attackingSectorId, -attackersLost); // apply amount of attacking units lost
         addUnitsToSectorAnimated(defendingSectorId, defendersLost); // apply amount of defending units lost
-        sectors.get(defendingSectorId).setOwner(attacker);
-
         return true;
     }
 
@@ -311,7 +307,7 @@ public class Map{
      * adds the specified number of units to this sector and sets up drawing a particle effect showing the addition
      *
      * @param sectorId id of sector to add the units to
-     * @param amount of units to add
+     * @param amount   of units to add
      */
     public void addUnitsToSectorAnimated(int sectorId, int amount) {
         this.sectors.get(sectorId).addUnits(amount);
@@ -336,7 +332,9 @@ public class Map{
     /**
      * @return Set of all SectorIds
      */
-    public Set<Integer> getSectorIds() { return sectors.keySet() ; }
+    public Set<Integer> getSectorIds() {
+        return sectors.keySet();
+    }
 
     /**
      * returns the id of the sector that contains the specified point
@@ -354,7 +352,7 @@ public class Map{
             }
             int pixelValue = sector.getSectorPixmap().getPixel(worldX, worldYInverted); // get pixel value of the point in sector image the mouse is over
             if (pixelValue != -256) { // if pixel is not transparent then it is over the sector
-              if (sector.isDecor()) {
+                if (sector.isDecor()) {
                     continue; // sector is decor so continue checking to see if a non-decor sector contains point
                 } else {
                     return sector.getId(); // return id of sector which is hovered over
@@ -366,9 +364,9 @@ public class Map{
 
     /**
      * carries out the unit movement specified by unitsToMove array
-     *  - unitsToMove[0] : number of units to move
-     *  - unitsToMove[1] : source sector id
-     *  - unitsToMove[2] : target sector id
+     * - unitsToMove[0] : number of units to move
+     * - unitsToMove[1] : source sector id
+     * - unitsToMove[2] : target sector id
      * changes in units on sectors are shown on scren using the UnitChangeParticle
      *
      * @throws IllegalArgumentException if the sector are not both owned by the same player
@@ -403,6 +401,7 @@ public class Map{
 
     /**
      * draws the map and the number of units in each sector and the units change particle effect
+     *
      * @param batch
      */
     public void draw(SpriteBatch batch) {
@@ -415,7 +414,7 @@ public class Map{
                 layout.setText(font, text);
 
                 float overlaySize = 40.0f;
-                batch.draw(troopCountOverlay, sector.getSectorCentreX() - overlaySize / 2 , sector.getSectorCentreY() - overlaySize / 2, overlaySize, overlaySize);
+                batch.draw(troopCountOverlay, sector.getSectorCentreX() - overlaySize / 2, sector.getSectorCentreY() - overlaySize / 2, overlaySize, overlaySize);
                 font.draw(batch, layout, sector.getSectorCentreX() - layout.width / 2, sector.getSectorCentreY() + layout.height / 2);
             }
         }

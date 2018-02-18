@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import sepr.game.utils.TurnPhaseType;
 
-import java.security.PublicKey;
 import java.util.Random;
 
 /**
@@ -27,10 +26,10 @@ public class PhaseReinforce extends Phase {
     void enterPhase(Player player) {
         super.enterPhase(player);
 
-        currentPlayer.addTroopsToAllocate(1); // players get a basic reinforcement of 5 troops every turn
+        currentPlayer.addTroopsToAllocate(5); // players get a basic reinforcement of 5 troops every turn
         if (player.getOwnsPVC())  // assigns a bonus of two troops if they own the PVC tile
         {
-            currentPlayer.addTroopsToAllocate(1);
+            currentPlayer.addTroopsToAllocate(2);
 
         }
 
@@ -84,7 +83,7 @@ public class PhaseReinforce extends Phase {
                 int voice = random.nextInt(2);
 
                 if(voice == 0){
-                    Audio.get("sound/Allocation/Colin_Insuffiecient_Gangmembers.wav", Sound.class).play();
+                    Audio.get("sound/Allocation/Colin_Insuffiecient_Gangmembers.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                 }else{
                     InvalidMove();
                 }
@@ -109,16 +108,16 @@ public class PhaseReinforce extends Phase {
 
         switch (voice){
             case 0:
-                Audio.get("sound/Invalid Move/Colin_Your_request_does_not_pass_easily_through_my_mind.wav", Sound.class).play();
+                Audio.get("sound/Invalid Move/Colin_Your_request_does_not_pass_easily_through_my_mind.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                 break;
             case 1:
-                Audio.get("sound/Invalid Move/Colin_You_would_find_more_success_trying_to_invert_a_singular_matrix.wav", Sound.class).play();
+                Audio.get("sound/Invalid Move/Colin_You_would_find_more_success_trying_to_invert_a_singular_matrix.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                 break;
             case 2:
-                Audio.get("sound/Invalid Move/Colin_Your_actions_are_questionable.wav", Sound.class).play();
+                Audio.get("sound/Invalid Move/Colin_Your_actions_are_questionable.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                 break;
             case 3:
-                Audio.get("sound/Allocation/Colin_EmptySet.wav", Sound.class).play();
+                Audio.get("sound/Allocation/Colin_EmptySet.wav", Sound.class).play(AudioManager.GlobalFXvolume);
                 break;
             case 4:
                 break;

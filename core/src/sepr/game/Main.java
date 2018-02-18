@@ -23,6 +23,8 @@ public class Main extends Game implements ApplicationListener {
 	private OptionsScreen optionsScreen;
 	private GameSetupScreen gameSetupScreen;
 	private SaveLoadManager saveLoadManager;
+	private AudioManager Audio = AudioManager.getInstance();
+
 
 	/**
 	 * Setup the screens and set the first screen as the menu
@@ -101,6 +103,10 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void applyPreferences() {
 		Preferences prefs = Gdx.app.getPreferences(OptionsScreen.PREFERENCES_NAME);
+
+		AudioManager.GlobalFXvolume = prefs.getFloat(OptionsScreen.FX_VOL_PREF);
+		AudioManager.GlobalMusicVolume = prefs.getFloat(OptionsScreen.MUSIC_VOL_PREF);
+		Audio.setMusicVolume();
 
 		int screenWidth = prefs.getInteger(OptionsScreen.RESOLUTION_WIDTH_PREF, 1920);
 		int screenHeight = prefs.getInteger(OptionsScreen.RESOLUTION_HEIGHT_PREF, 1080);

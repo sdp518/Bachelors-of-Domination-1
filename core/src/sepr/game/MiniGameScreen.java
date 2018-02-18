@@ -3,14 +3,12 @@ package sepr.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.RandomXS128;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -19,13 +17,14 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class MiniGameScreen implements Screen {
 
     private static final int MAX_CARDS = 16; // maximum number of cards, must be divisible by 4
-    private static final int NUM_PAIRS = MAX_CARDS/2;
-    private static final int COLS = MAX_CARDS/4;
-    private static final int ROWS = MAX_CARDS/COLS;
+    private static final int NUM_PAIRS = MAX_CARDS / 2;
+    private static final int COLS = MAX_CARDS / 4;
+    private static final int ROWS = MAX_CARDS / COLS;
     private static final float DELAY_TIME = 5; // time in seconds before cards are hidden
 
     private Main main;
@@ -33,6 +32,7 @@ public class MiniGameScreen implements Screen {
     private GameScreen gameScreen;
     private Table table; // table for inserting ui widgets into
     private Player player; // player to allocate gang members to at the end of the minigame
+    private AudioManager Audio = AudioManager.getInstance();
 
     private int[] locations = new int[MAX_CARDS]; // array to contain random locations of values
     private TextButton[] textButtons = new TextButton[MAX_CARDS]; // array to contain all buttons
@@ -40,14 +40,15 @@ public class MiniGameScreen implements Screen {
     private int score; // score equates to additional gang members at the end of the minigame
     private int currentValue = -1; // -1 is designated as invalid
 
-    MiniGameScreen(Main main, GameScreen gameScreen) {
+    MiniGameScreen(final Main main, final GameScreen gameScreen) {
         this.main = main;
         this.gameScreen = gameScreen;
         this.stage = new Stage() {
             @Override
             public boolean keyUp(int keyCode) {
                 if (keyCode == Input.Keys.ESCAPE) { // ask player if they would like to exit the game if they press escape
-                    DialogFactory.exitProgramDialogBox(stage);
+                    DialogFactory.exitMinigame(stage, gameScreen, main);
+
                 }
                 return super.keyUp(keyCode);
             }
@@ -70,7 +71,7 @@ public class MiniGameScreen implements Screen {
         InputListener listener = new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                TextButton buttonUsed = (TextButton)event.getListenerActor();
+                TextButton buttonUsed = (TextButton) event.getListenerActor();
                 String location = buttonUsed.getName(); // name of button equal to its location in textButtons
                 buttonClicked(location);
                 return true;
@@ -90,7 +91,7 @@ public class MiniGameScreen implements Screen {
 
         for (int i = 0; i < COLS; i++) {
             for (int j = 0; j < ROWS; j++) {
-                btnTable.add(textButtons[i+(j*COLS)]).height(100).width(100).pad(30);
+                btnTable.add(textButtons[i + (j * COLS)]).height(100).width(100).pad(30);
                 btnTable.right();
             }
             btnTable.row();
@@ -118,7 +119,8 @@ public class MiniGameScreen implements Screen {
         table.add(WidgetFactory.genBottomBar("QUIT", new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                DialogFactory.exitProgramDialogBox(stage);}
+                DialogFactory.exitProgramDialogBox(stage);
+            }
 
         })).colspan(2);
     }
@@ -154,7 +156,7 @@ public class MiniGameScreen implements Screen {
      */
     public void startGame() {
         /* Wait for time specified in DELAY_TIME to hide and enable buttons */
-        Timer.schedule(new Timer.Task(){
+        Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
                 for (int i = 0; i < MAX_CARDS; i++) {
@@ -221,7 +223,6 @@ public class MiniGameScreen implements Screen {
         /* If incorrect */
         else {
             score = 0;
-            //DialogFactory.basicDialogBox("Game Over!", "You receive 0 additional troops!", stage);
             endMiniGame();
         }
     }
@@ -245,8 +246,31 @@ public class MiniGameScreen implements Screen {
      * and switching back to the main game
      */
     public void endMiniGame() {
+        Random random = new Random();
         player.addTroopsToAllocate(score);
         DialogFactory.miniGameOverDialog(main, stage, gameScreen, score);
+
+        if (score == 0) {
+            Timer.schedule(new Timer.Task() { //delay the poor perfomance sound so ti doesnt interfere with the PVC captured sound
+                @Override
+                public void run() {
+
+                    Audio.get("sound/Minigame/Colin_That_was_a_poor_performance.wav", Sound.class).play(AudioManager.GlobalFXvolume);
+                }
+
+            }, 2);
+        }
+
+
+        int voice = random.nextInt(1);
+        switch (voice) {
+            case 0:
+                Audio.get("sound/PVC/Colin_The_PVC_has_been_captured.wav", Sound.class).play(AudioManager.GlobalFXvolume);
+                break;
+            case 1:
+                Audio.get("sound/PVC/Colin_You_have_captured_the_PVC.wav", Sound.class).play(AudioManager.GlobalFXvolume);
+                break;
+        }
         this.dispose();
 
     }
