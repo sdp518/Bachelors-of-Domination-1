@@ -31,7 +31,9 @@ public class SaveLoadManager {
     private static int numberOfSaves = 0; // Current number of saves
     private static GameState loadedState; // The state that has just been loaded
 
-    private static Boolean loadedSave; // Whether a save has been loaded
+    private static Boolean loadedSave = false; // Whether a save has been loaded
+
+    public SaveLoadManager(){ }
 
     /**
      * Initializes the SaveLoadManager
@@ -148,7 +150,7 @@ public class SaveLoadManager {
      * @param players
      * @return A HashMap of Sectors
      */
-    public HashMap<Integer, Sector> SectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players){
+    public HashMap<Integer, Sector> SectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players, boolean test){
         HashMap<Integer, Sector> sectors = new HashMap<Integer, Sector>();
 
         for (GameState.SectorState sector : sectorStates){
@@ -162,7 +164,7 @@ public class SaveLoadManager {
                 }
             }
 
-            sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color));
+            sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color, test));
         }
 
         return sectors;
@@ -175,7 +177,7 @@ public class SaveLoadManager {
      */
     public boolean LoadSaveByID(int id){
         HashMap<Integer, Player> players = PlayersFromPlayerState(loadedState.playerStates);
-        HashMap<Integer, Sector> sectors = SectorsFromSectorState(loadedState.mapState.sectorStates, players);
+        HashMap<Integer, Sector> sectors = SectorsFromSectorState(loadedState.mapState.sectorStates, players, false);
 
         Map loadedMap = MapFromMapState(loadedState.mapState, players, sectors);
 

@@ -2,6 +2,7 @@ apply plugin: 'java'
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.2.7'
 }
 
 buildscript {
@@ -75,4 +76,20 @@ project(":core") {
 
 tasks.eclipse.doLast {
     delete ".project"
+}
+
+test {
+    useTestNG()
+
+    include 'sepr.game.saveandload/**'
+
+    testLogging.showStandardStreams = true
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + "produced standard out/err: " + err.message)
+    }
 }
