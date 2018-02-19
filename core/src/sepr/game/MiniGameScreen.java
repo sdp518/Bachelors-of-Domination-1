@@ -148,6 +148,7 @@ public class MiniGameScreen implements Screen {
                 }
             }
         }
+        Gdx.app.log("locations:", Arrays.toString(locations));
         setupUi();
     }
 
@@ -179,10 +180,12 @@ public class MiniGameScreen implements Screen {
         int loc = Integer.parseInt(location); // integer value of location
         /* If button invalid */
         if (location.equals("-1")) {
+            Gdx.app.log("getValueAtLocation:", "-1");
             return -1;
         }
         /* If button not marked invalid but in valid range */
         else if (loc > -1 && loc < MAX_CARDS){
+            Gdx.app.log("getValueAtLocation", Integer.toString(locations[Integer.parseInt(location)]));
             return locations[Integer.parseInt(location)];
         }
         /* If location out of range */
@@ -202,10 +205,12 @@ public class MiniGameScreen implements Screen {
 
         /* If button invalid */
         if (value == -1) {
+            Gdx.app.log("buttonClicked:", "invalid");
             return;
         }
         /* If at start of choosing a pair, nothing currently selected */
         if (currentValue == -1) {
+            Gdx.app.log("buttonClicked:", "start of pair");
             currentValue = value;
             textButtons[Integer.parseInt(location)].setName("-1"); // first button becomes invalid
             textButtons[Integer.parseInt(location)].setText(Integer.toString(getValueAtLocation(location)));
@@ -213,6 +218,7 @@ public class MiniGameScreen implements Screen {
 
         /* If correct */
         else if (value == currentValue) {
+            Gdx.app.log("buttonClicked:", "correct match");
             score += 1;
             currentValue = -1;
             textButtons[Integer.parseInt(location)].setName("-1");
@@ -222,6 +228,7 @@ public class MiniGameScreen implements Screen {
 
         /* If incorrect */
         else {
+            Gdx.app.log("buttonClicked:", "incorrect match");
             score = 0;
             endMiniGame();
         }
@@ -251,7 +258,7 @@ public class MiniGameScreen implements Screen {
         DialogFactory.miniGameOverDialog(main, stage, gameScreen, score);
 
         if (score == 0) {
-            Timer.schedule(new Timer.Task() { //delay the poor perfomance sound so ti doesnt interfere with the PVC captured sound
+            Timer.schedule(new Timer.Task() { // delay the poor performance sound so it doesn't interfere with the PVC captured sound
                 @Override
                 public void run() {
 
