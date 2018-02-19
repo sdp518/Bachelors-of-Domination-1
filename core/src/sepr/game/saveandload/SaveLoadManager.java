@@ -153,18 +153,22 @@ public class SaveLoadManager {
     public HashMap<Integer, Sector> SectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players, boolean test){
         HashMap<Integer, Sector> sectors = new HashMap<Integer, Sector>();
 
-        for (GameState.SectorState sector : sectorStates){
+        for (GameState.SectorState sector : sectorStates) {
             Pixmap map = new Pixmap(Gdx.files.internal(sector.texturePath));
 
             Color color = new Color(0, 0, 0, 1);
 
-            for (java.util.Map.Entry<Integer, Player> player : players.entrySet()){
-                if (player.getValue().getId() == sector.ownerId){
+            for (java.util.Map.Entry<Integer, Player> player : players.entrySet()) {
+                if (player.getValue().getId() == sector.ownerId) {
                     color = player.getValue().getSectorColour();
                 }
             }
 
-            sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color, test));
+            if (test) {
+                sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color, test));
+            }else{
+                sectors.put(sector.hashMapPosition, new Sector(sector.id, sector.ownerId, sector.fileName, sector.texturePath, map, sector.displayName, sector.unitsInSector, sector.reinforcementsProvided, sector.college, sector.neutral, sector.adjacentSectorIds, sector.sectorCentreX, sector.sectorCentreY, sector.decor, sector.allocated, color));
+            }
         }
 
         return sectors;

@@ -73,8 +73,8 @@ public class Main extends Game implements ApplicationListener {
 
 	public void setGameScreenFromLoad(GameScreen screen){
 	    this.gameScreen = screen;
-	    this.gameScreen.setGameSetupFromLoad();
 	    this.setScreen(this.gameScreen);
+	    this.gameScreen.startGame();
     }
 
 	/**

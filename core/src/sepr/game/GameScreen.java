@@ -90,6 +90,8 @@ public class GameScreen implements Screen, InputProcessor{
 
         setUpPhases();
 
+        Audio.loadSounds(); //loads the sounds into memory
+
         this.currentPhase = currentPhase;
 
         this.map = map;
@@ -100,6 +102,8 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnOrder = turnOrder;
         this.currentPlayerPointer = currentPlayerPointer;
         this.phases.get(this.currentPhase).enterPhase(getCurrentPlayer());
+        this.ProViceChancellor = new PVC((float)1.00,this);
+        this.gameSetup = true;
     }
 
     /**
@@ -139,10 +143,6 @@ public class GameScreen implements Screen, InputProcessor{
         this.phases.put(TurnPhaseType.REINFORCEMENT, new PhaseReinforce(this));
         this.phases.put(TurnPhaseType.ATTACK, new PhaseAttack(this));
         this.phases.put(TurnPhaseType.MOVEMENT, new PhaseMovement(this));
-    }
-
-    public void setGameSetupFromLoad(){
-        gameSetup = true;
     }
 
     /**
