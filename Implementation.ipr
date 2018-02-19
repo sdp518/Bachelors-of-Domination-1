@@ -319,6 +319,24 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Gradle: net.bytebuddy:byte-buddy-agent:1.4.33">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.4.33/726a5aa27a9a2a2428e96846c4775aaf7c62ec87/byte-buddy-agent-1.4.33.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.4.33/9ace8f5e53234f9eea5d7f37059fd20c6ee28dd4/byte-buddy-agent-1.4.33-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: net.bytebuddy:byte-buddy:1.4.33">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.4.33/911428f94b1efd9b07a59f1ee57eb011c283ed51/byte-buddy-1.4.33.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.4.33/47580b88aba71708e25a9662e8411b34bf1d73f6/byte-buddy-1.4.33-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Gradle: net.java.jinput:jinput-platform:natives-linux:2.0.5">
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/7ff832a6eb9ab6a767f1ade2b548092d0fa64795/jinput-platform-2.0.5-natives-linux.jar!/" />
@@ -422,6 +440,22 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl_util/2.9.2/308d4ebe8d7b240d3490b6a7e0424807ea3ad98b/lwjgl_util-2.9.2-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: org.mockito:mockito-core:2.2.7">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/mockito/mockito-core/2.2.7/mockito-core-2.2.7.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Gradle: org.objenesis:objenesis:2.4">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/2.4/2916b6c96b50c5b3ec4452ed99401db745aabb27/objenesis-2.4.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/2.4/19b316d8da7da3ae2539ee4ee2cf73a1e127fa73/objenesis-2.4-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="org.mockito:mockito-core:2.2.7" type="repository">

@@ -408,8 +408,7 @@ public class Map {
 
         for (Sector sector : sectors.values()) {
             String text = sector.getUnitsInSector() + "";
-            System.out.println(sector.getTexturePath());
-            batch.draw(new Texture(sector.getTexturePath()), 0, 0);
+            batch.draw(sector.getSectorTexture(), 0, 0);
             if (!sector.isDecor()) { // don't need to draw the amount of units on a decor sector
                 layout.setText(font, text);
 
