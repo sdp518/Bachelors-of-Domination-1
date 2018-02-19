@@ -58,7 +58,6 @@ public class Map {
     public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor) {
         this(players, allocateNeutralPlayer);
         this.proViceChancellor = proViceChancellor;
-        this.sectors = sectors;
     }
 
     /**
@@ -213,7 +212,7 @@ public class Map {
      * sets up movement of units after conquering a sector
      *
      * @param attackingSectorId id of the sector the attack is coming from
-     * @param defendingSectorId id of the defending sector
+     * @param defendingSectorId id of the defending sectorthis.sectors = sectors;
      * @param attackersLost     amount of units lost on the attacking sector
      * @param defendersLost     amount of units lost on the defenfing sector
      * @param attacker          the player who is carrying out the attack
@@ -409,7 +408,8 @@ public class Map {
 
         for (Sector sector : sectors.values()) {
             String text = sector.getUnitsInSector() + "";
-            batch.draw(sector.getSectorTexture(), 0, 0);
+            System.out.println(sector.getTexturePath());
+            batch.draw(new Texture(sector.getTexturePath()), 0, 0);
             if (!sector.isDecor()) { // don't need to draw the amount of units on a decor sector
                 layout.setText(font, text);
 

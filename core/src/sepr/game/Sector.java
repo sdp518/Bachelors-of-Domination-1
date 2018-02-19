@@ -54,7 +54,7 @@ public class Sector implements ApplicationListener {
         this.college = college;
         this.neutral = neutral;
         this.adjacentSectorIds = adjacentSectorIds;
-        this.sectorTexture = sectorTexture;
+        this.sectorTexture = new Texture(texturePath);
         this.texturePath = texturePath;
         this.sectorPixmap = sectorPixmap;
         this.sectorCentreX = sectorCentreX;
