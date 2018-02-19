@@ -181,9 +181,9 @@ public class SaveLoadManager {
 
         Map loadedMap = MapFromMapState(loadedState.mapState, players, sectors);
 
-        GameScreen gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
+        this.gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
 
-        this.main.setGameScreenFromLoad(gameScreen);
+        this.main.setGameScreenFromLoad(this.gameScreen);
 
         return true;
     }
