@@ -57,6 +57,11 @@ public class GameScreen implements Screen, InputProcessor{
 
     private Random random;
 
+    // pause menu setup - NEW Assessment 4
+    private boolean timerPaused;
+    private long pauseStartTime;
+    private long pausedTime;
+
     /**
      * sets up rendering objects and key input handling
      * setupGame then start game must be called before a game is ready to be played
@@ -179,12 +184,32 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     /**
+     * MODIFIED Assessment 4
      * gets in seconds the amount of time remaining of the current player's turn
      *
      * @return time remaining in turn in seconds
      */
     private int getTurnTimeRemaining(){
-        return maxTurnTime - (int)((System.currentTimeMillis() - turnTimeStart) / 1000);
+        return maxTurnTime - (int)((System.currentTimeMillis() - (turnTimeStart + pausedTime)) / 1000);
+    }
+
+    /**
+     * NEW Assessment 4
+     * records the time at which the timer was paused
+     */
+    public void pauseTimer(){
+        this.pauseStartTime = System.currentTimeMillis();
+        this.timerPaused = true;
+    }
+
+    /**
+     * NEW Assessment 4
+     * resumes the timer
+     */
+    public void resumeTimer(){
+        pausedTime += (System.currentTimeMillis() - pauseStartTime);
+        pauseStartTime = 0;
+        this.timerPaused = false;
     }
 
     /**
@@ -397,9 +422,11 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     /**
+     * MODIFIED Assessment 4
      * changes the screen currently being displayed to the miniGame
      */
     public void openMiniGame() {
+        this.pauseTimer();
         main.setMiniGameScreen();
     }
 
@@ -481,14 +508,16 @@ public class GameScreen implements Screen, InputProcessor{
         this.gameplayCamera.update();
     }
 
+    // MODIFIED Assessment 4
     @Override
     public void pause() {
-
+        this.pauseTimer();
     }
 
+    // MODIFIED Assessment 4
     @Override
     public void resume() {
-
+        this.resumeTimer();
     }
 
     @Override

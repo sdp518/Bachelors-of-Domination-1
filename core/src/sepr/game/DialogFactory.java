@@ -386,6 +386,7 @@ public class DialogFactory {
 
 
     /**
+     * MODIFIED Assessment 4
      * creates a dialog box asking if the player wants to exit the mini game
      *
      * @param main  for changing back to the map
@@ -393,13 +394,12 @@ public class DialogFactory {
      * @param gameScreen the map screen
      * @param troops number of troops gained from the mini game
      */
-
-
     public static void miniGameOverDialog(final Main main, Stage stage, final GameScreen gameScreen, int troops) {
         Dialog dialog = new Dialog("Game Completed", DialogFactory.skin) {
             protected void result(Object object) {
                 main.setScreen(gameScreen);  // change to menu screen when ok button is pressed
                 gameScreen.resetCameraPosition();
+                gameScreen.resumeTimer();
 
             }
         };
