@@ -252,6 +252,7 @@ public class WidgetFactory {
      */
     private static Label getLabel(String labelText, Texture labelBackground, int alignment) {
         Label.LabelStyle style = new Label.LabelStyle();
+        fontSmall.getData().markupEnabled = true;
         style.font = fontSmall;
         style.background = new TextureRegionDrawable(new TextureRegion(labelBackground));
 
