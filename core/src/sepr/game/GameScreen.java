@@ -237,7 +237,7 @@ public class GameScreen implements Screen, InputProcessor{
      *
      * @return gets the player object for the player who's turn it currently is
      */
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return players.get(turnOrder.get(currentPlayerPointer));
     }
 
