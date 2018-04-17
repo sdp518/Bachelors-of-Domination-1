@@ -258,13 +258,12 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * method is used for progression through the phases of a turn evaluating the currentPhase case label
      * if nextPhase is called during the movement phase then the game progresses to the next players turn
      */
     protected void nextPhase() {
         this.phases.get(currentPhase).endPhase();
-
-
 
         switch (currentPhase) {
             case REINFORCEMENT:
@@ -282,27 +281,33 @@ public class GameScreen implements Screen, InputProcessor{
         }
 
         this.updateInputProcessor(); // phase changed so update input handling
-        this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
-        removeEliminatedPlayers(); // check no players have been eliminated
+        if (currentPhase != TurnPhaseType.REINFORCEMENT) {
+            this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
+        }
     }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * called when the player ends the MOVEMENT phase of their turn to advance the game to the next Player's turn
      * increments the currentPlayerPointer and resets it to 0 if it now exceeds the number of players in the list
      */
     private void nextPlayer() {
         previousPlayerPointer = currentPlayerPointer;
-        currentPlayerPointer++;
-        if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0 and increase turn number
+        this.currentPlayerPointer++;
+        if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0
             currentPlayerPointer = 0;
-
         }
 
         resetCameraPosition(); // re-centres the camera for the next player
 
         if (this.turnTimerEnabled) { // if the turn timer is on reset it for the next player
             this.turnTimeStart = System.currentTimeMillis();
+            this.pausedTime = 0;
         }
+        this.currentPhase = TurnPhaseType.REINFORCEMENT;
+        this.updateInputProcessor(); // phase changed so update input handling
+        this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
+        removeEliminatedPlayers(); // check no players have been eliminated
     }
 
     /**
