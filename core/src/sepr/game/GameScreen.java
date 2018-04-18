@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -402,6 +403,10 @@ public class GameScreen implements Screen, InputProcessor{
             this.gameplayCamera.translate(4, 0, 0);
         }
 
+        // TODO Test on other screen resolutions
+        // NEW ASSESSMENT 4
+        this.gameplayCamera.position.x = MathUtils.clamp(this.gameplayCamera.position.x, 700, 1200);
+        this.gameplayCamera.position.y = MathUtils.clamp(this.gameplayCamera.position.y, 400, 700);
     }
 
     /**
