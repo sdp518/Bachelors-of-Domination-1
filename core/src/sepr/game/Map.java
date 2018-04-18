@@ -212,12 +212,12 @@ public class Map {
      * sets up movement of units after conquering a sector
      *
      * @param attackingSectorId id of the sector the attack is coming from
-     * @param defendingSectorId id of the defending sectorthis.sectors = sectors;
+     * @param defendingSectorId id of the defending sector this.sectors = sectors;
      * @param attackersLost     amount of units lost on the attacking sector
-     * @param defendersLost     amount of units lost on the defenfing sector
+     * @param defendersLost     amount of units lost on the defending sector
      * @param attacker          the player who is carrying out the attack
      * @param defender          the player who is being attacked
-     * @param netrualPlayer     the neutral player
+     * @param neutralPlayer     the neutral player
      * @param stage             the stage to draw any dialogs to
      * @return true if attack successful else false
      * @throws IllegalArgumentException if the amount of attackers lost exceeds the amount of attackers
@@ -261,6 +261,7 @@ public class Map {
             attacker.addTroopsToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
+            // TODO Redo PVC minigame dialog boxes
             if (sectors.get(defendingSectorId).getIsPVCTile()) //if the player takes over PVC tile add PVC bonus
             {
                 defender.setOwnsPVC(false);
