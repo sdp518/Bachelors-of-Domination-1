@@ -149,6 +149,9 @@ public abstract class Phase extends Stage {
             this.bottomBarRightPart.setText("Mouse over a sector to see further details");
         } else {
             String ownerColour = gameScreen.getPlayerById(sector.getOwnerId()).getSectorColour().toString();
+            if (ownerColour.equals("7f7f7fff")) {
+                ownerColour = "000000ff"; // Neutral player displays as black for readability
+            }
             this.bottomBarRightPart.setText("College: " + sector.getCollege() + " - " + sector.getDisplayName() + " - " + "Owned By: [#" + ownerColour + "]" + gameScreen.getPlayerById(sector.getOwnerId()).getPlayerName() + "[] - " + "Grants +" + sector.getReinforcementsProvided() + " Troops");
         }
     }
