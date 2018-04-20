@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -107,7 +108,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnOrder = turnOrder;
         this.currentPlayerPointer = currentPlayerPointer;
         this.phases.get(this.currentPhase).enterPhase(getCurrentPlayer());
-        this.ProViceChancellor = new PVC((float)1.00,this);
+        this.ProViceChancellor = new PVC((float)1.00,this); // TODO Change PVC spawn chance
         this.gameSetup = true;
     }
 
@@ -134,7 +135,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         this.turnTimerEnabled = turnTimerEnabled;
         this.maxTurnTime = maxTurnTime;
-        this.ProViceChancellor = new PVC((float)1.00,this);
+        this.ProViceChancellor = new PVC((float)1.00,this); // TODO Change PVC spawn chance
         this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor); // setup the game map and allocate the sectors
 
         setUpPhases();
@@ -237,7 +238,7 @@ public class GameScreen implements Screen, InputProcessor{
      *
      * @return gets the player object for the player who's turn it currently is
      */
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         return players.get(turnOrder.get(currentPlayerPointer));
     }
 
@@ -258,13 +259,12 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * method is used for progression through the phases of a turn evaluating the currentPhase case label
      * if nextPhase is called during the movement phase then the game progresses to the next players turn
      */
     protected void nextPhase() {
         this.phases.get(currentPhase).endPhase();
-
-
 
         switch (currentPhase) {
             case REINFORCEMENT:
@@ -282,27 +282,34 @@ public class GameScreen implements Screen, InputProcessor{
         }
 
         this.updateInputProcessor(); // phase changed so update input handling
-        this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
-        removeEliminatedPlayers(); // check no players have been eliminated
+        if (currentPhase != TurnPhaseType.REINFORCEMENT) {
+            this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
+        }
     }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * called when the player ends the MOVEMENT phase of their turn to advance the game to the next Player's turn
      * increments the currentPlayerPointer and resets it to 0 if it now exceeds the number of players in the list
      */
     private void nextPlayer() {
         previousPlayerPointer = currentPlayerPointer;
-        currentPlayerPointer++;
-        if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0 and increase turn number
+        this.currentPlayerPointer++;
+        if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0
             currentPlayerPointer = 0;
-
         }
 
         resetCameraPosition(); // re-centres the camera for the next player
 
         if (this.turnTimerEnabled) { // if the turn timer is on reset it for the next player
             this.turnTimeStart = System.currentTimeMillis();
+            this.pausedTime = 0;
         }
+        this.currentPhase = TurnPhaseType.REINFORCEMENT;
+        this.updateInputProcessor(); // phase changed so update input handling
+        this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
+        removeEliminatedPlayers(); // check no players have been eliminated
+        // TODO Check and fix if next player eliminated game crashes
     }
 
     /**
@@ -397,6 +404,10 @@ public class GameScreen implements Screen, InputProcessor{
             this.gameplayCamera.translate(4, 0, 0);
         }
 
+        // TODO Test on other screen resolutions
+        // NEW ASSESSMENT 4
+        this.gameplayCamera.position.x = MathUtils.clamp(this.gameplayCamera.position.x, 700, 1200);
+        this.gameplayCamera.position.y = MathUtils.clamp(this.gameplayCamera.position.y, 400, 700);
     }
 
     /**
