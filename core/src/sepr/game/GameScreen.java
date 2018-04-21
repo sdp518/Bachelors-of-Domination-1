@@ -315,9 +315,9 @@ public class GameScreen implements Screen, InputProcessor{
         }
         this.currentPhase = TurnPhaseType.REINFORCEMENT;
         this.updateInputProcessor(); // phase changed so update input handling
-        this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
         removeEliminatedPlayers(); // check no players have been eliminated
-        // TODO Check and fix if next player eliminated game crashes
+        this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
+        // TODO Check and fix if next player eliminated game crashes (prev 2 lines swapped)
     }
 
     /**
