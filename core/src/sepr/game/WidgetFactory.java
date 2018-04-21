@@ -58,6 +58,9 @@ public class WidgetFactory {
     private static BitmapFont fontBig;
     private static BitmapFont fontSmall;
 
+    //NEW ASSESSMENT 4
+    private static Texture pauseMenuBtnTexture;
+
     /**
      * initialises all the assets required for generating the UI components
      */
@@ -99,6 +102,9 @@ public class WidgetFactory {
         uniOfYorkLogoTexture = new Texture("logos/uni-of-york-logo.png");
         vanbrughLogoTexture = new Texture("logos/vanbrugh-logo.png");
         wentworthLogoTexture = new Texture("logos/wentworth-logo.png");
+
+        // NEW ASSESSMENT 4
+        pauseMenuBtnTexture = new Texture("uiComponents/pauseMenuButton.png");
     }
 
     /**
@@ -433,6 +439,21 @@ public class WidgetFactory {
         style.knobOver = new TextureRegionDrawable(new TextureRegion(sliderKnobTexture));
 
         return new Slider(0f, 1f, 0.01f, false, style);
+    }
+
+    /**
+     * NEW ASSESSMENT 4
+     *
+     * @param text the text to be displayed on the button
+     * @return a pause menu button with desired text
+     */
+    public static TextButton genPauseMenuButton(String text){
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        style.up = new TextureRegionDrawable(new TextureRegion(pauseMenuBtnTexture, 0,0, 211, 60));
+        style.down = new TextureRegionDrawable(new TextureRegion(pauseMenuBtnTexture, 0,60, 211, 60));
+        style.font = fontSmall;
+
+        return new TextButton(text, style);
     }
 
     /**
