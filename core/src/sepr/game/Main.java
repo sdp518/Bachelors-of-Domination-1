@@ -56,6 +56,16 @@ public class Main extends Game implements ApplicationListener {
 	}
 
 	/**
+	 * NEW ASSESSMENT 4
+	 * changes the screen currently being displayed to the menu and re-instantiates game screen
+	 */
+	public void exitToMenu() {
+		this.setScreen(menuScreen);
+		this.gameScreen.dispose();
+		this.gameScreen = new GameScreen(this);
+	}
+
+	/**
 	 * displays the game screen and starts a game with the passed properties
 	 *
 	 * @param players hashmap of players who should be present in the game

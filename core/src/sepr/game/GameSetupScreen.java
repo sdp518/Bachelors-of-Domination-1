@@ -503,6 +503,8 @@ public class GameSetupScreen implements Screen{
         int MAX_TURN_TIME = 120;
         Audio.disposeMusic("sound/IntroMusic/introMusic.mp3");
         Audio.loadMusic("sound/Gameplay Music/wind.mp3"); //loads and plays the gamePlay music
+        isLoading = false;
+        loadingWidgetDrawn = false;
         main.setGameScreen(x, turnTimerSwitch.isChecked(), MAX_TURN_TIME, neutralPlayerSwitch.isChecked());
     }
 

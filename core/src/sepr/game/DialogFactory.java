@@ -342,7 +342,7 @@ public class DialogFactory {
     public static void gameOverDialog(String playerName, String collegeName, final Main main, Stage stage) {
         Dialog dialog = new Dialog("Game Over!", DialogFactory.skin) {
             protected void result(Object object) {
-                main.setMenuScreen(); // change to menu screen when ok button is pressed
+                main.exitToMenu(); // change to menu screen when ok button is pressed
             }
         };
         dialog.text("Game Over!\n" + playerName + " of College " + collegeName + " has conquered the University of York!");
