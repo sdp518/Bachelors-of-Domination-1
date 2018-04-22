@@ -4,10 +4,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import sepr.game.saveandload.SaveLoadManager;
-import sepr.game.utils.PlayerType;
 
 import java.util.HashMap;
 
@@ -134,16 +132,16 @@ public class Main extends Game implements ApplicationListener {
 		gameScreen.dispose();
 	}
 
-	public void SaveGame(){
-        this.saveLoadManager.SaveByID(this.saveLoadManager.GetCurrentSaveID()); // TODO get next id/current id
+	public void saveGame(){
+        this.saveLoadManager.saveByID(this.saveLoadManager.getCurrentSaveID()); // TODO get next id/current id
     }
 
-    public void LoadGame(){
-	    this.saveLoadManager.LoadFromFile();
-		this.saveLoadManager.LoadSaveByID(0);
+    public void loadGame(){
+	    this.saveLoadManager.loadFromFile();
+		this.saveLoadManager.loadSaveByID(0);
 	}
 
-	public boolean HasLoadedSaves(){
+	public boolean hasLoadedSaves(){
 		return this.saveLoadManager.savesToLoad;
 	}
 

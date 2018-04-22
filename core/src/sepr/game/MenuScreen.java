@@ -1,6 +1,5 @@
 package sepr.game;
 
-import com.badlogic.gdx.Audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -87,8 +86,8 @@ public class MenuScreen implements Screen {
         loadGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(main.HasLoadedSaves()) {
-                    main.LoadGame();
+                if(main.hasLoadedSaves()) {
+                    main.loadGame();
                 }
             }
         });

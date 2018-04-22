@@ -467,7 +467,8 @@ public class GameScreen implements Screen, InputProcessor{
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // TODO Save from pause menu
+                // TODO Add save and load to pause menu
+                //main.saveGame();
             }
         });
 
@@ -668,11 +669,12 @@ public class GameScreen implements Screen, InputProcessor{
             //DialogFactory.leaveGameDialogBox(this, phases.get(currentPhase)); // confirm if the player wants to leave if escape is pressed
             this.pause();
         }
+        // TODO Decide if keeping
         if (keycode == Input.Keys.S) {
-            this.main.SaveGame();
+            this.main.saveGame();
         }
         if (keycode == Input.Keys.L) {
-            this.main.LoadGame();
+            this.main.loadGame();
         }
         return true;
     }

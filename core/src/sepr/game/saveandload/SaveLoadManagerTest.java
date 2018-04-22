@@ -1,25 +1,17 @@
 package sepr.game.saveandload;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import javafx.print.PageLayout;
 import org.junit.*;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
-import org.lwjgl.Sys;
 import sepr.game.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -123,7 +115,7 @@ public class SaveLoadManagerTest implements ApplicationListener {
 
     @Test
     public void playersFromPlayerState() {
-        HashMap<Integer, Player> playerHashMap = saveLoadManager.PlayersFromPlayerState(gameState.playerStates);
+        HashMap<Integer, Player> playerHashMap = saveLoadManager.playersFromPlayerState(gameState.playerStates);
 
         assertTrue("Player HashMap Size", playerHashMap.size() == 4);
 
@@ -148,7 +140,7 @@ public class SaveLoadManagerTest implements ApplicationListener {
     @Test
     public void sectorsFromSectorState() {
         HashMap<Integer, Player> playerHashMap = new HashMap<Integer, Player>();
-        HashMap<Integer, Sector> sectorHashMap = this.saveLoadManager.SectorsFromSectorState(this.gameState.mapState.sectorStates, playerHashMap, true);
+        HashMap<Integer, Sector> sectorHashMap = this.saveLoadManager.sectorsFromSectorState(this.gameState.mapState.sectorStates, playerHashMap, true);
         
         int index = 0;
 
@@ -183,12 +175,12 @@ public class SaveLoadManagerTest implements ApplicationListener {
 
     @Test
     public void getCurrentSaveID() {
-        assertTrue("Current Save ID", saveLoadManager.GetCurrentSaveID() == 0);
+        assertTrue("Current Save ID", saveLoadManager.getCurrentSaveID() == 0);
     }
 
     @Test
     public void getNextSaveID() {
-        assertTrue("Next Save ID", saveLoadManager.GetNextSaveID() == 1);
+        assertTrue("Next Save ID", saveLoadManager.getNextSaveID() == 1);
     }
 
     @Override
