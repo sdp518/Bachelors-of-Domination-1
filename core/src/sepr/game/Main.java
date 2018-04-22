@@ -32,14 +32,15 @@ public class Main extends Game implements ApplicationListener {
 		new WidgetFactory(); // setup widget factory for generating UI components
 		new DialogFactory(); // setup dialog factory for generating dialogs
 
+		// TODO Applying preferences after instantiating gameScreen causes quit button bug
+		applyPreferences();
+
 		this.menuScreen = new MenuScreen(this);
 		this.gameScreen = new GameScreen(this);
 		this.optionsScreen = new OptionsScreen(this);
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
-
-		applyPreferences();
 
 		this.setMenuScreen();
 	}
