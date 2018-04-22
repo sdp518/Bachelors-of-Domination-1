@@ -500,7 +500,7 @@ public class GameSetupScreen implements Screen{
      */
     private void startGame() {
         HashMap<Integer, Player> x = generatePlayerHashmaps();
-        int MAX_TURN_TIME = 300;
+        int MAX_TURN_TIME = 120;
         Audio.disposeMusic("sound/IntroMusic/introMusic.mp3");
         Audio.loadMusic("sound/Gameplay Music/wind.mp3"); //loads and plays the gamePlay music
         main.setGameScreen(x, turnTimerSwitch.isChecked(), MAX_TURN_TIME, neutralPlayerSwitch.isChecked());
