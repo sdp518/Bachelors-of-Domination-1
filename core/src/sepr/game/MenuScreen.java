@@ -89,6 +89,9 @@ public class MenuScreen implements Screen {
                 if(main.hasLoadedSaves()) {
                     main.loadGame();
                 }
+                else {
+                    DialogFactory.basicDialogBox("Error!", "No save to load", stage);
+                }
             }
         });
 
