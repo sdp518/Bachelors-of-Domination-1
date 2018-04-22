@@ -196,10 +196,9 @@ public class Map {
 
     public void spawnPVC(Stage stage, int defendingSectorId) {
         sectors.get(defendingSectorId).setIsPVCTile(true); //set the taken over tile to be the PVC tile
-        DialogFactory.TakenOverPVCDialogue(stage);
+        DialogFactory.takenOverPVCDialogue(proViceChancellor, stage);
         sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
         proViceChancellor.setPVCSpawned(true);
-        proViceChancellor.startMiniGame();
 
     }
 
@@ -217,7 +216,6 @@ public class Map {
      * @param defendersLost     amount of units lost on the defending sector
      * @param attacker          the player who is carrying out the attack
      * @param defender          the player who is being attacked
-     * @param neutralPlayer     the neutral player
      * @param stage             the stage to draw any dialogs to
      * @return true if attack successful else false
      * @throws IllegalArgumentException if the amount of attackers lost exceeds the amount of attackers
@@ -261,19 +259,7 @@ public class Map {
             attacker.addTroopsToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
-            // TODO Redo PVC minigame dialog boxes
-            if (sectors.get(defendingSectorId).getIsPVCTile()) //if the player takes over PVC tile add PVC bonus
-            {
-                defender.setOwnsPVC(false);
-                attacker.setOwnsPVC(true);
-                sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
-                proViceChancellor.startMiniGame();
-
-            }
-            if (proViceChancellor.PVCSpawn() && !proViceChancellor.isPVCSpawned()) {
-                spawnPVC(stage, defendingSectorId);
-            }
-            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
+            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 
 
         } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
@@ -281,6 +267,30 @@ public class Map {
             sectors.get(defendingSectorId).setOwner(netrualPlayer);
         }
         return true;
+    }
+
+    /**
+     * NEW ASSESSMENT 4
+     * handles PVC capture
+     *
+     * @param defendingSectorId id of the sector receiving troops
+     * @param attacker          the player who is carrying out the attack
+     * @param defender          the player who is being attacked
+     * @param stage             the stage to draw any dialogs to
+     * @return true if movement successful else false
+     **/
+    public void handlePVC(int defendingSectorId, Player attacker, Player defender, Stage stage) {
+        if (sectors.get(defendingSectorId).getIsPVCTile()) //if the player takes over PVC tile add PVC bonus
+        {
+            defender.setOwnsPVC(false);
+            attacker.setOwnsPVC(true);
+            sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+            proViceChancellor.startMiniGame();
+
+        }
+        if (proViceChancellor.PVCSpawn() && !proViceChancellor.isPVCSpawned()) {
+            spawnPVC(stage, defendingSectorId);
+        }
     }
 
 

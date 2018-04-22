@@ -137,7 +137,7 @@ public class DialogFactory {
      * @param sectorName name of the sector being taken
      * @param stage The stage to draw the box onto
      */
-    public static void attackSuccessDialogBox(Integer bonusTroops, Integer maxTroops, final int[] troopsMoved, String prevOwner, String newOwner, String sectorName, Stage stage) {
+    public static void attackSuccessDialogBox(Integer bonusTroops, Integer maxTroops, final int[] troopsMoved, String prevOwner, String newOwner, String sectorName, final int defendingSectorId, final Player attacker, final Player defender, final Map map, final Stage stage) {
         final Slider slider = new Slider(1, (maxTroops - 1), 1, false, DialogFactory.skin); // slider max value is (maxTroops - 1) as must leave at least one troop on attacking sector
         slider.setValue(1); // must move at least one troop so set initial value to 1
         final Label sliderValue = new Label("1", DialogFactory.skin); // label to display the slider value
@@ -153,6 +153,7 @@ public class DialogFactory {
             protected void result(Object object) {
                 // set number of troops to move to the value of the slider when the dialog is closed
                 troopsMoved[0] = (int)slider.getValue();
+                map.handlePVC(defendingSectorId, attacker, defender, stage);
             }
         };
 
@@ -358,8 +359,18 @@ public class DialogFactory {
      *
      * @param stage to draw the box onto
      */
-    public static void TakenOverPVCDialogue(Stage stage) {
-        basicDialogBox("Pro Vice Chancellor tile captured","Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 1 bonus troop per turn from this sector",stage);
+    public static void takenOverPVCDialogue(final PVC proViceChancellor, Stage stage) {
+        //basicDialogBox("Pro Vice Chancellor tile captured","Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 1 bonus troop per turn from this sector",stage);
+        Dialog dialog = new Dialog("Pro Vice Chancellor tile captured", DialogFactory.skin) {
+            protected void result(Object object) {
+                if (object.toString().equals("0")){ // yes pressed : quit the minigame
+                    proViceChancellor.startMiniGame();
+                }
+            }
+        };
+        dialog.text("Well done you have found and captured the Pro Vice Chancellor tile. You now get extra 1 bonus troop per turn from this sector");
+        dialog.button("Start Minigame", "0");
+        dialog.show(stage);
     }
 
     /**
@@ -368,7 +379,6 @@ public class DialogFactory {
      * @param stage to draw the box onto
      * @param miniGameScreen the mini game screen where the dialog will be shown
      */
-
     public static void leaveMiniGameDialog(final MiniGameScreen miniGameScreen, Stage stage) {
         Dialog dialog = new Dialog("Continue?", DialogFactory.skin) {
             protected void result(Object object) {
