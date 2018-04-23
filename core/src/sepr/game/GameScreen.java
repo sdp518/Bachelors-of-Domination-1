@@ -299,11 +299,12 @@ public class GameScreen implements Screen, InputProcessor{
      * MODIFIED - ASSESSMENT 4
      * called when the player ends the MOVEMENT phase of their turn to advance the game to the next Player's turn
      * increments the currentPlayerPointer and resets it to 0 if it now exceeds the number of players in the list
+     * MODIFIED 23/4/18 - Fixed crash caused by eliminating a player
      */
     private void nextPlayer() {
         previousPlayerPointer = currentPlayerPointer;
         this.currentPlayerPointer++;
-        if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0
+        if (currentPlayerPointer == turnOrder.size() - 1) { // reached end of players, reset to 0
             currentPlayerPointer = 0;
         }
 
