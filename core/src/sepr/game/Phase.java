@@ -96,9 +96,9 @@ public abstract class Phase extends Stage {
         subTable.add(bottomBarRightPart).bottom().expandX().fillX().height(60);
 
         table.row();
-        table.add(subTable).expandX().fill();
+        table.add(subTable).expandX().fill().colspan(1);
         table.bottom().right();
-        table.add(endPhaseButton).fill().height(60).width(170);
+        table.add(endPhaseButton).fillX().height(60).width(180).bottom().right();
 
         setBottomBarText(null);
     }
