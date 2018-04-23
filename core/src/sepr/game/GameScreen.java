@@ -299,12 +299,13 @@ public class GameScreen implements Screen, InputProcessor{
      * MODIFIED - ASSESSMENT 4
      * called when the player ends the MOVEMENT phase of their turn to advance the game to the next Player's turn
      * increments the currentPlayerPointer and resets it to 0 if it now exceeds the number of players in the list
-     * MODIFIED 23/4/18 - Fixed crash caused by eliminating a player
+     * MODIFIED 23/4/18 - Fixed crash caused by eliminating a player by moving check for eliminated players to top
      */
     private void nextPlayer() {
+        removeEliminatedPlayers(); // check no players have been eliminated
         previousPlayerPointer = currentPlayerPointer;
         this.currentPlayerPointer++;
-        if (currentPlayerPointer == turnOrder.size() - 1) { // reached end of players, reset to 0
+        if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0
             currentPlayerPointer = 0;
         }
 
@@ -316,7 +317,7 @@ public class GameScreen implements Screen, InputProcessor{
         }
         this.currentPhase = TurnPhaseType.REINFORCEMENT;
         this.updateInputProcessor(); // phase changed so update input handling
-        removeEliminatedPlayers(); // check no players have been eliminated
+
         this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
         // TODO Check and fix if next player eliminated game crashes (prev 2 lines swapped)
     }
@@ -357,7 +358,7 @@ public class GameScreen implements Screen, InputProcessor{
         }
     }
 
-    /**
+    /** MODIFIED 23/4/18 - commented out loading of sound asset that was causing crash
      * method called when one player owns all the sectors in the map
      *
      * @throws RuntimeException if there is more than one player in the turn order when gameOver is called
@@ -386,7 +387,7 @@ public class GameScreen implements Screen, InputProcessor{
                     break;
             }
 
-            Audio.get("", Sound.class).play(AudioManager.GlobalFXvolume);
+            //Audio.get("", Sound.class).play(AudioManager.GlobalFXvolume);
             
             int winnerId = turnOrder.get(0); // winner will be the only player in the turn order list
             DialogFactory.gameOverDialog(players.get(winnerId).getPlayerName(), players.get(winnerId).getCollegeName().getCollegeName(), main, phases.get(currentPhase));
