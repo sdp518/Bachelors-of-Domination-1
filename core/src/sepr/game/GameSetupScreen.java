@@ -371,9 +371,9 @@ public class GameSetupScreen implements Screen{
             case HES_EAST:
                 return Color.GREEN;
             case JAMES:
-                return Color.GRAY;
+                return Color.YELLOW; // MODIFIED ASSESSMENT 4 to differ from neutral player
             case UNI_OF_YORK:
-                return Color.WHITE;
+                return Color.GRAY; // MODIFIED ASSESSMENT 4 to match neutral player
             case VANBRUGH:
                 return Color.PURPLE;
             case WENTWORTH:
