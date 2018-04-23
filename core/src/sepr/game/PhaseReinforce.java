@@ -37,9 +37,12 @@ public class PhaseReinforce extends Phase {
         DialogFactory.nextTurnDialogBox(currentPlayer.getPlayerName(), currentPlayer.getTroopsToAllocate(), this);
     }
 
+    /**
+     * MODIFIED 23/4/18 - Commented out line to prevent unallocated units from being lost
+     */
     @Override
     public void endPhase() {
-        currentPlayer.setTroopsToAllocate(0); // any unallocated units are removed
+        //currentPlayer.setTroopsToAllocate(0); // any unallocated units are removed
         super.endPhase();
     }
 
