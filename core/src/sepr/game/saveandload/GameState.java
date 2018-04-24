@@ -16,13 +16,15 @@ import java.util.List;
  */
 public class GameState {
     public TurnPhaseType currentPhase; // Current phase of the game
-    public Map map; // The map of the game
-    public MapState mapState; // The stipped-down map state
+    //public Map map; // The map of the game
+    //public MapState mapState; // The stipped-down map state
+    public HashMap<Integer, Sector> sectors;
     public HashMap<Integer, Player> players; // HashMap of players
     public PlayerState[] playerStates; // Stripped-down player states
     public boolean turnTimerEnabled; // Whether the turn timer is enabled
     public int maxTurnTime; // Maximum time that the player can take on a turn
-    public long turnTimeStart; // The start time of the current turn
+    //public long turnTimeStart; // The start time of the current turn
+    public long turnTimeElapsed;
     public List<Integer> turnOrder; // The order in which players take their turn
     public int currentPlayerPointer; // The player currently taking their turn
 

@@ -15,6 +15,16 @@ import sepr.game.Sector;
 import java.io.*;
 import java.util.HashMap;
 
+//Order to reimplement saving of files and loading.
+//Todo understand and re-setup saving all data from file and testing
+    //Todo find and remove old saving function
+    //Todo edit and fix saving
+    //Todo test it works
+    //Todo reimplement saving into game and test
+//Todo neaten saving into a clean function, commented for understanding.
+//Todo copy the above for loading
+//Todo reimplement saving and loading into the games code
+
 /**
  * Class to manage saving and loading from files
  */
@@ -24,12 +34,12 @@ public class SaveLoadManager {
     private Main main; // The main class
     private GameScreen gameScreen; // Game screen to read data from
 
-    private static String SAVE_FILE_PATH = ""; // Path to the saves file
+    private static String save_path = ""; // Path to the saves file
     private static int currentSaveID = -1; // ID of the current save
     private static int numberOfSaves = 0; // Current number of saves
     private static GameState loadedState; // The state that has just been loaded
 
-    private static Boolean loadedSave = false; // Whether a save has been loaded
+    private static Boolean loadedSave; // Whether a save has been loaded
 
     public SaveLoadManager(){ }
 
@@ -49,10 +59,10 @@ public class SaveLoadManager {
         String path = home + File.separator + "Bachelors-of-Domination" + File.separator + "saves" + File.separator + "saves.json"; // Generate the path to the saves.json file
         boolean directoryExists = new File(path).exists();
 
-        this.SAVE_FILE_PATH = path;
+        this.save_path = path;
 
         if(directoryExists) { // Check that the directory exists
-            loadFromFile(); // Load the file if it exists
+            //loadFromFile(); // Load the file if it exists
         } else { // Create a blank saves file
             File file = new File(path);
             try {
@@ -64,7 +74,7 @@ public class SaveLoadManager {
                 savesTemplate.put("CurrentSaveID", this.currentSaveID);
 
                 try {
-                    FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
+                    FileWriter fileWriter = new FileWriter(this.save_path);
                     fileWriter.write(savesTemplate.toJSONString());
                     fileWriter.flush();
                 } catch (Exception e) {
@@ -85,7 +95,7 @@ public class SaveLoadManager {
         JSONParser parser = new JSONParser(); // Create JSON parser
 
         try {
-            Object obj = parser.parse(new FileReader(SAVE_FILE_PATH)); // Read file
+            Object obj = parser.parse(new FileReader(save_path)); // Read file
             JSONObject loadProperties = (JSONObject)obj;
 
             this.numberOfSaves = Integer.parseInt(loadProperties.get("Saves").toString()); // Get number of saves
@@ -96,9 +106,9 @@ public class SaveLoadManager {
 
                 JSONifier jifier = new JSONifier();
                 jifier.SetStateJSON(gameStateJSON);
-                GameState gameState = jifier.getStateFromJSON();
+                //GameState gameState = jifier.getStateFromJSON();
 
-                this.loadedState = gameState;
+                //this.loadedState = gameState;
                 this.savesToLoad = true;
             }else{
                 this.savesToLoad = false;
@@ -179,11 +189,11 @@ public class SaveLoadManager {
      */
     public boolean loadSaveByID(int id){
         HashMap<Integer, Player> players = playersFromPlayerState(loadedState.playerStates);
-        HashMap<Integer, Sector> sectors = sectorsFromSectorState(loadedState.mapState.sectorStates, players, false);
+        //HashMap<Integer, Sector> sectors = sectorsFromSectorState(loadedState.mapState.sectorStates, players, false);
 
-        Map loadedMap = mapFromMapState(loadedState.mapState, players, sectors);
+        //Map loadedMap = mapFromMapState(loadedState.mapState, players, sectors);
 
-        this.gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
+        //this.gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
 
         this.main.setGameScreenFromLoad(this.gameScreen);
 
@@ -197,7 +207,7 @@ public class SaveLoadManager {
      */
     public boolean saveToFile(JSONObject newSave){
         try {
-            FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
+            FileWriter fileWriter = new FileWriter(this.save_path);
             fileWriter.write(newSave.toJSONString());
             fileWriter.flush();
         } catch (Exception e) {
@@ -207,25 +217,54 @@ public class SaveLoadManager {
         return true;
     }
 
+    public boolean saveByID(int id) {
+        GameState gameState = new GameState();
+        gameState.currentPhase = this.gameScreen.getCurrentPhase(); // Store current phase
+        gameState.players = this.gameScreen.getPlayers(); // Store players
+        gameState.sectors = this.gameScreen.getMap().getSectors();
+        gameState.turnTimerEnabled = this.gameScreen.isTurnTimerEnabled(); // Store whether the turn timer is enabled
+        gameState.maxTurnTime = this.gameScreen.getMaxTurnTime(); // Store the maximum turn time
+        // Replaced - >gameState.turnTimeStart = this.gameScreen.getTurnTimeStart(); // Store the start time of the current turn
+        long temp = (System.currentTimeMillis() - this.gameScreen.getPauseStartTime());
+        gameState.turnTimeElapsed = System.currentTimeMillis() - (this.gameScreen.getTurnTimeStart() + this.gameScreen.getPausedTime() + temp);
+        gameState.turnOrder = this.gameScreen.getTurnOrder(); // Store the turn order
+        gameState.currentPlayerPointer = this.gameScreen.getCurrentPlayerPointer(); // Store the pointer to the current player
+
+        JSONObject newSave = new JSONObject(); // Create the save object
+        newSave.put("Saves", this.numberOfSaves);
+        newSave.put("CurrentSaveID", this.currentSaveID);
+
+        JSONifier jifier = new JSONifier(); // Create a JSON representation of the state
+        jifier.SetState(gameState);
+        newSave.put("GameState", jifier.getJSONGameState());
+
+        saveToFile(newSave); // Save the JSON representation to a file
+
+        return true;
+    }
+
     /**
      * Save to a save with a given ID
      * @param id
      * @return true if saving is successful
      */
-    public boolean saveByID(int id){
+    public boolean oldsaveByID(int id){
+        //Todo this is the entire save function, understand and reorder
         GameState gameState = new GameState(); // GameState to store data in
         gameState.currentPhase = this.gameScreen.getCurrentPhase(); // Store current phase
-        gameState.map = this.gameScreen.getMap(); // Store map
+        //gameState.map = this.gameScreen.getMap(); // Store map
+        // IF STORING MAP IS STORING SECTORS NECESSARY
         gameState.players = this.gameScreen.getPlayers(); // Store players
         gameState.turnTimerEnabled = this.gameScreen.isTurnTimerEnabled(); // Store whether the turn timer is enabled
         gameState.maxTurnTime = this.gameScreen.getMaxTurnTime(); // Store the maximum turn time
-        gameState.turnTimeStart = this.gameScreen.getTurnTimeStart(); // Store the start time of the current turn
+        //gameState.turnTimeStart = this.gameScreen.getTurnTimeStart(); // Store the start time of the current turn
         gameState.turnOrder = this.gameScreen.getTurnOrder(); // Store the turn order
         gameState.currentPlayerPointer = this.gameScreen.getCurrentPlayerPointer(); // Store the pointer to the current player
 
         GameState.MapState mapState = gameState.new MapState(); // Create a new MapState
 
-        mapState.sectors = gameState.map.getSectors(); // Store the Map sectors in the Mapstate
+        //mapState.sectors = gameState.map.getSectors(); // Store the Map sectors in the Mapstate
+        //THIS IS COUNTER INTUITIVE
         mapState.sectorStates = new GameState.SectorState[mapState.sectors.size()]; // Create an array of Sector States
 
         int i = 0;
@@ -257,8 +296,8 @@ public class SaveLoadManager {
         }
 
         mapState.sectors = null;
-        gameState.map = null;
-        gameState.mapState = mapState;
+        //gameState.map = null;
+        //gameState.mapState = mapState;
 
         gameState.playerStates = new GameState.PlayerState[gameState.players.size()]; // Create an array of PlayerStates
 

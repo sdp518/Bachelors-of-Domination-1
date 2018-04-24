@@ -71,6 +71,14 @@ public class GameScreen implements Screen, InputProcessor{
     private long pauseStartTime;
     private long pausedTime;
 
+    public long getPauseStartTime() {
+        return this.pauseStartTime;
+    }
+
+    public long getPausedTime() {
+        return this.pausedTime;
+    }
+
     /**
      * sets up rendering objects and key input handling
      * setupGame then start game must be called before a game is ready to be played
@@ -671,8 +679,9 @@ public class GameScreen implements Screen, InputProcessor{
             //DialogFactory.leaveGameDialogBox(this, phases.get(currentPhase)); // confirm if the player wants to leave if escape is pressed
             this.pause();
         }
-        // TODO Decide if keeping
+        // TODO Decide if keeping -- DEFINITLY FUCKING NOT
         if (keycode == Input.Keys.S) {
+            System.out.println("SAVING");
             this.main.saveGame();
         }
         if (keycode == Input.Keys.L) {
