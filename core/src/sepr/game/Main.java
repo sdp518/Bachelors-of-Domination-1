@@ -4,10 +4,8 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import sepr.game.saveandload.SaveLoadManager;
-import sepr.game.utils.PlayerType;
 
 import java.util.HashMap;
 
@@ -34,14 +32,15 @@ public class Main extends Game implements ApplicationListener {
 		new WidgetFactory(); // setup widget factory for generating UI components
 		new DialogFactory(); // setup dialog factory for generating dialogs
 
+		// TODO Applying preferences after instantiating gameScreen causes quit button bug
+		applyPreferences();
+
 		this.menuScreen = new MenuScreen(this);
 		this.gameScreen = new GameScreen(this);
 		this.optionsScreen = new OptionsScreen(this);
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
-
-		applyPreferences();
 
 		this.setMenuScreen();
 	}
@@ -55,6 +54,16 @@ public class Main extends Game implements ApplicationListener {
 
 	public void setMenuScreen() {
 		this.setScreen(menuScreen);
+	}
+
+	/**
+	 * NEW ASSESSMENT 4
+	 * changes the screen currently being displayed to the menu and re-instantiates game screen
+	 */
+	public void exitToMenu() {
+		this.setScreen(menuScreen);
+		this.gameScreen.dispose();
+		this.gameScreen = new GameScreen(this);
 	}
 
 	/**
@@ -134,16 +143,16 @@ public class Main extends Game implements ApplicationListener {
 		gameScreen.dispose();
 	}
 
-	public void SaveGame(){
-        this.saveLoadManager.SaveByID(this.saveLoadManager.GetCurrentSaveID()); // TODO get next id/current id
+	public void saveGame(){
+        this.saveLoadManager.saveByID(this.saveLoadManager.getCurrentSaveID()); // TODO get next id/current id
     }
 
-    public void LoadGame(){
-	    this.saveLoadManager.LoadFromFile();
-		this.saveLoadManager.LoadSaveByID(0);
+    public void loadGame(){
+	    this.saveLoadManager.loadFromFile();
+		this.saveLoadManager.loadSaveByID(0);
 	}
 
-	public boolean HasLoadedSaves(){
+	public boolean hasLoadedSaves(){
 		return this.saveLoadManager.savesToLoad;
 	}
 

@@ -37,13 +37,16 @@ public class PhaseReinforce extends Phase {
         DialogFactory.nextTurnDialogBox(currentPlayer.getPlayerName(), currentPlayer.getTroopsToAllocate(), this);
     }
 
+    /**
+     * MODIFIED 23/4/18 - Commented out line to prevent unallocated units from being lost
+     */
     @Override
     public void endPhase() {
-        currentPlayer.setTroopsToAllocate(0); // any unallocated units are removed
+        //currentPlayer.setTroopsToAllocate(0); // any unallocated units are removed
         super.endPhase();
     }
 
-    /**
+    /** MODIFIED 23/4/18 - Added auto end phase
      * checks if the user has completed the unit allocation dialog
      */
     private void detectUnitAllocation() {
@@ -53,8 +56,14 @@ public class PhaseReinforce extends Phase {
             } else if (allocateUnits[0] != -1) { // dialog complete : perform the allocation
                 gameScreen.getMap().addUnitsToSectorAnimated(allocateUnits[1], allocateUnits[0]);
                 currentPlayer.addTroopsToAllocate(-allocateUnits[0]);
-                allocateUnits = null;
-                updateTroopReinforcementLabel();
+                if (currentPlayer.getTroopsToAllocate() == 0) { // auto end the phase if all troops have been allocated
+                    allocateUnits = null;
+                    updateTroopReinforcementLabel();
+                    gameScreen.nextPhase();
+                } else {
+                    allocateUnits = null;
+                    updateTroopReinforcementLabel();
+                }
             }
         }
     }

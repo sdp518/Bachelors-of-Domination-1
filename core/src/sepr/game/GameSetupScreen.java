@@ -52,6 +52,11 @@ public class GameSetupScreen implements Screen{
 
     private Texture collegeTableBackground;
 
+    // NEW ASSESSMENT 4
+    private Stage loadingWidgetStage;
+    private boolean isLoading;
+    private boolean loadingWidgetDrawn;
+
     /**
      * the colleges available to play as
      */
@@ -116,6 +121,11 @@ public class GameSetupScreen implements Screen{
 
         this.collegeTableBackground = new Texture("uiComponents/Game-Setup-Name-Box.png");
         this.Audio.loadMusic("sound/IntroMusic/introMusic.mp3"); //load the introMusic
+
+        this.loadingWidgetStage = new Stage();
+        this.isLoading = false;
+        this.loadingWidgetDrawn = false;
+
         this.setupUi();
     }
 
@@ -361,9 +371,9 @@ public class GameSetupScreen implements Screen{
             case HES_EAST:
                 return Color.GREEN;
             case JAMES:
-                return Color.GRAY;
+                return Color.YELLOW; // MODIFIED ASSESSMENT 4 to differ from neutral player
             case UNI_OF_YORK:
-                return Color.WHITE;
+                return Color.GRAY; // MODIFIED ASSESSMENT 4 to match neutral player
             case VANBRUGH:
                 return Color.PURPLE;
             case WENTWORTH:
@@ -462,7 +472,7 @@ public class GameSetupScreen implements Screen{
     }
 
     /**
-     * Method attempts to start the game
+     * Method checks if the given settings are valid
      * Following conditions must be met for a game to be able to start
      *  At least 2 players
      *  At least 1 human player
@@ -472,7 +482,7 @@ public class GameSetupScreen implements Screen{
      *  Player names must be at least three characters long
      *  Player names contain numbers and digits only
      */
-    private void startGame() {
+    private void validateGame() {
         try {
             validatePlayerNames();
             validateCollegeSelection();
@@ -481,11 +491,20 @@ public class GameSetupScreen implements Screen{
             DialogFactory.basicDialogBox("Game Setup Error", e.getExceptionType().getErrorMessage(), stage);
             return;
         }
-        HashMap<Integer, Player> x = generatePlayerHashmaps();
+        Gdx.input.setInputProcessor(null); //Blocks user input as the game is now loading
+        this.showLoadingWidget();
+    }
 
+    /**
+     * Method starts the game
+     */
+    private void startGame() {
+        HashMap<Integer, Player> x = generatePlayerHashmaps();
         int MAX_TURN_TIME = 120;
         Audio.disposeMusic("sound/IntroMusic/introMusic.mp3");
         Audio.loadMusic("sound/Gameplay Music/wind.mp3"); //loads and plays the gamePlay music
+        isLoading = false;
+        loadingWidgetDrawn = false;
         main.setGameScreen(x, turnTimerSwitch.isChecked(), MAX_TURN_TIME, neutralPlayerSwitch.isChecked());
     }
 
@@ -497,7 +516,7 @@ public class GameSetupScreen implements Screen{
         startGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                startGame();
+                validateGame();
             }
         });
 
@@ -529,6 +548,19 @@ public class GameSetupScreen implements Screen{
         })).colspan(2);
     }
 
+    /**
+     * sets up loading widget to be shown when game starts
+     */
+    @SuppressWarnings("Duplicates")
+    private void showLoadingWidget() {
+        isLoading = true;
+        Table table = new Table();
+        table.setDebug(false);
+        table.setFillParent(true);
+        table.add(new Image(new Texture("uiComponents/loadingBox.png")));
+        loadingWidgetStage.addActor(table);
+    }
+
 
     /**
      * change the input processing to be handled by this screen's stage
@@ -540,9 +572,16 @@ public class GameSetupScreen implements Screen{
 
     @Override
     public void render(float delta) {
+        if (loadingWidgetDrawn) {
+            startGame();
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         this.stage.act(Gdx.graphics.getDeltaTime());
         this.stage.draw();
+        if (isLoading) {
+            loadingWidgetStage.draw();
+            loadingWidgetDrawn = true;
+        }
     }
 
     @Override

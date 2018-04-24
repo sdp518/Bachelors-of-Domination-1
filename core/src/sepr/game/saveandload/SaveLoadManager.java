@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.lwjgl.Sys;
 import sepr.game.GameScreen;
 import sepr.game.Main;
 import sepr.game.Map;
@@ -15,7 +14,6 @@ import sepr.game.Sector;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.*;
 
 /**
  * Class to manage saving and loading from files
@@ -54,7 +52,7 @@ public class SaveLoadManager {
         this.SAVE_FILE_PATH = path;
 
         if(directoryExists) { // Check that the directory exists
-            LoadFromFile(); // Load the file if it exists
+            loadFromFile(); // Load the file if it exists
         } else { // Create a blank saves file
             File file = new File(path);
             try {
@@ -82,7 +80,7 @@ public class SaveLoadManager {
      * Load GameState JSON from file
      * @return true if loading is successful
      */
-    public boolean LoadFromFile(){
+    public boolean loadFromFile(){
 
         JSONParser parser = new JSONParser(); // Create JSON parser
 
@@ -123,7 +121,7 @@ public class SaveLoadManager {
      * @param sectors
      * @return A Map object
      */
-    public Map MapFromMapState(GameState.MapState mapState, HashMap<Integer, Player> players, HashMap<Integer, Sector> sectors){
+    public Map mapFromMapState(GameState.MapState mapState, HashMap<Integer, Player> players, HashMap<Integer, Sector> sectors){
         Map map = new Map(players, false, sectors);
 
         return map;
@@ -134,7 +132,7 @@ public class SaveLoadManager {
      * @param playerStates
      * @return A Player object
      */
-    public HashMap<Integer, Player> PlayersFromPlayerState(GameState.PlayerState[] playerStates){
+    public HashMap<Integer, Player> playersFromPlayerState(GameState.PlayerState[] playerStates){
         HashMap<Integer, Player> players = new HashMap<Integer, Player>();
 
         for (GameState.PlayerState player : playerStates){
@@ -150,7 +148,7 @@ public class SaveLoadManager {
      * @param players
      * @return A HashMap of Sectors
      */
-    public HashMap<Integer, Sector> SectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players, boolean test){
+    public HashMap<Integer, Sector> sectorsFromSectorState(GameState.SectorState[] sectorStates, HashMap<Integer, Player> players, boolean test){
         HashMap<Integer, Sector> sectors = new HashMap<Integer, Sector>();
 
         for (GameState.SectorState sector : sectorStates) {
@@ -179,11 +177,11 @@ public class SaveLoadManager {
      * @param id
      * @return true if loading is successful
      */
-    public boolean LoadSaveByID(int id){
-        HashMap<Integer, Player> players = PlayersFromPlayerState(loadedState.playerStates);
-        HashMap<Integer, Sector> sectors = SectorsFromSectorState(loadedState.mapState.sectorStates, players, false);
+    public boolean loadSaveByID(int id){
+        HashMap<Integer, Player> players = playersFromPlayerState(loadedState.playerStates);
+        HashMap<Integer, Sector> sectors = sectorsFromSectorState(loadedState.mapState.sectorStates, players, false);
 
-        Map loadedMap = MapFromMapState(loadedState.mapState, players, sectors);
+        Map loadedMap = mapFromMapState(loadedState.mapState, players, sectors);
 
         this.gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
 
@@ -197,7 +195,7 @@ public class SaveLoadManager {
      * @param newSave
      * @return true if loading is successful
      */
-    public boolean SaveToFile(JSONObject newSave){
+    public boolean saveToFile(JSONObject newSave){
         try {
             FileWriter fileWriter = new FileWriter(this.SAVE_FILE_PATH);
             fileWriter.write(newSave.toJSONString());
@@ -214,7 +212,7 @@ public class SaveLoadManager {
      * @param id
      * @return true if saving is successful
      */
-    public boolean SaveByID(int id){
+    public boolean saveByID(int id){
         GameState gameState = new GameState(); // GameState to store data in
         gameState.currentPhase = this.gameScreen.getCurrentPhase(); // Store current phase
         gameState.map = this.gameScreen.getMap(); // Store map
@@ -294,7 +292,7 @@ public class SaveLoadManager {
         jifier.SetState(gameState);
         newSave.put("GameState", jifier.getJSONGameState());
 
-        SaveToFile(newSave); // Save the JSON representation to a file
+        saveToFile(newSave); // Save the JSON representation to a file
 
         return true;
     }
@@ -303,9 +301,9 @@ public class SaveLoadManager {
      * Returns the ID of the currently loaded save, generates a new ID if no file is loaded
      * @return The current save ID
      */
-    public int GetCurrentSaveID(){
+    public int getCurrentSaveID(){
         if (!this.loadedSave){
-            return GetNextSaveID();
+            return getNextSaveID();
         }else{
             return this.currentSaveID;
         }
@@ -315,7 +313,7 @@ public class SaveLoadManager {
      * Returns the next available save ID
      * @return The nexxt available save ID
      */
-    public int GetNextSaveID(){
+    public int getNextSaveID(){
         this.currentSaveID++;
         this.numberOfSaves++;
 

@@ -26,7 +26,7 @@
 25,james2.png,James Centre,25,10,James,FALSE,23 24 30 26,501,650,FALSE
 26,james1.png,Sports Centre,26,10,James,FALSE,25 27 28 30 23,559,794,FALSE
 27,james4.png,James West,27,10,James,FALSE,26 28 6,725,757,FALSE
-28,neutral2.png,Campus Centre South,28,10,The University of York,TRUE,26 27 6 29,763,660,FALSE
+28,neutral2.png,Campus Centre South,28,10,The University of York,TRUE,26 27 6 29 30,763,660,FALSE
 29,neutral3.png,Campus Centre East,29,10,The University of York,TRUE,7 8 28 30,846,596,FALSE
 30,neutral1.png,Campus Centre West,30,10,The University of York,TRUE,17 24 25 26 28 29,677,559,FALSE
 31,lake1.png,Lake1,31,10,NA,TRUE,,0,653,TRUE

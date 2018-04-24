@@ -181,12 +181,12 @@ public abstract class Phase extends Stage {
     public Table genGameHUDTopBar() {
         TextButton.TextButtonStyle btnStyle = new TextButton.TextButtonStyle();
         btnStyle.font = WidgetFactory.getFontSmall();
-        TextButton exitButton = new TextButton("QUIT", btnStyle);
+        TextButton exitButton = new TextButton("PAUSE", btnStyle);
 
         exitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                DialogFactory.leaveGameDialogBox(gameScreen, actor.getStage());
+                gameScreen.pause();
             }
         });
 
