@@ -30,6 +30,10 @@ public class Sector implements ApplicationListener {
     private boolean allocated; // becomes true once the sector has been allocated
     private boolean isPVCTile;
 
+    public Sector() {
+
+    }
+
     /**
      * @param id sector id
      * @param ownerId id of player who owns sector
@@ -112,6 +116,10 @@ public class Sector implements ApplicationListener {
         return ownerId;
     }
 
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
+
     /**
      * sets the owner id and colour of this sector
      * @param player the player object that owns this sector
@@ -148,6 +156,10 @@ public class Sector implements ApplicationListener {
         return displayName;
     }
 
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     /**
      *
      * @return number of troops rewarded for conquering this territory
@@ -156,12 +168,20 @@ public class Sector implements ApplicationListener {
         return reinforcementsProvided;
     }
 
+    public void setReinforcementsProvided(int reinforcementsProvided) {
+        this.reinforcementsProvided = reinforcementsProvided;
+    }
+
     /**
      *
      * @return number of units present in this sector
      */
     public int getUnitsInSector() {
         return unitsInSector;
+    }
+
+    public void setUnitsInSector(int unitsInSector) {
+        this.unitsInSector = unitsInSector;
     }
 
     /**
@@ -219,6 +239,10 @@ public class Sector implements ApplicationListener {
      */
     public boolean isNeutral() { return neutral; }
 
+    public void setNeutral(boolean neutral) {
+        this.neutral = neutral;
+    }
+
     /**
      *
      * @return true if this sector has been allocated to a player, else false
@@ -232,6 +256,10 @@ public class Sector implements ApplicationListener {
      * @return the name of the college this sector belongs to
      */
     public String getCollege() { return college; }
+
+    public void setCollege(String college) {
+        this.college = college;
+    }
 
     /**
      *

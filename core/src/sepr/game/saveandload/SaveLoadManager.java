@@ -17,13 +17,10 @@ import java.util.HashMap;
 
 //Order to reimplement saving of files and loading.
 //Todo understand and re-setup saving all data from file and testing
-    //Todo find and remove old saving function
-    //Todo edit and fix saving
-    //Todo test it works
-    //Todo reimplement saving into game and test
+    //Todo edit and fix saving -- Just needs testing with load implemented, looks good by eye
 //Todo neaten saving into a clean function, commented for understanding.
-//Todo copy the above for loading
 //Todo reimplement saving and loading into the games code
+    //TODO setup loading from what should be working, needs to be tested with implementation of game
 
 /**
  * Class to manage saving and loading from files
@@ -217,6 +214,11 @@ public class SaveLoadManager {
         return true;
     }
 
+    /**
+     * Save to a save with a given ID
+     * @param id
+     * @return true if saving is successful
+     */
     public boolean saveByID(int id) {
         GameState gameState = new GameState();
         gameState.currentPhase = this.gameScreen.getCurrentPhase(); // Store current phase
@@ -224,104 +226,9 @@ public class SaveLoadManager {
         gameState.sectors = this.gameScreen.getMap().getSectors();
         gameState.turnTimerEnabled = this.gameScreen.isTurnTimerEnabled(); // Store whether the turn timer is enabled
         gameState.maxTurnTime = this.gameScreen.getMaxTurnTime(); // Store the maximum turn time
-        // Replaced - >gameState.turnTimeStart = this.gameScreen.getTurnTimeStart(); // Store the start time of the current turn
-        long temp = (System.currentTimeMillis() - this.gameScreen.getPauseStartTime());
-        gameState.turnTimeElapsed = System.currentTimeMillis() - (this.gameScreen.getTurnTimeStart() + this.gameScreen.getPausedTime() + temp);
+        gameState.turnTimeElapsed = this.gameScreen.getTurnTimeElapsed();
         gameState.turnOrder = this.gameScreen.getTurnOrder(); // Store the turn order
         gameState.currentPlayerPointer = this.gameScreen.getCurrentPlayerPointer(); // Store the pointer to the current player
-
-        JSONObject newSave = new JSONObject(); // Create the save object
-        newSave.put("Saves", this.numberOfSaves);
-        newSave.put("CurrentSaveID", this.currentSaveID);
-
-        JSONifier jifier = new JSONifier(); // Create a JSON representation of the state
-        jifier.SetState(gameState);
-        newSave.put("GameState", jifier.getJSONGameState());
-
-        saveToFile(newSave); // Save the JSON representation to a file
-
-        return true;
-    }
-
-    /**
-     * Save to a save with a given ID
-     * @param id
-     * @return true if saving is successful
-     */
-    public boolean oldsaveByID(int id){
-        //Todo this is the entire save function, understand and reorder
-        GameState gameState = new GameState(); // GameState to store data in
-        gameState.currentPhase = this.gameScreen.getCurrentPhase(); // Store current phase
-        //gameState.map = this.gameScreen.getMap(); // Store map
-        // IF STORING MAP IS STORING SECTORS NECESSARY
-        gameState.players = this.gameScreen.getPlayers(); // Store players
-        gameState.turnTimerEnabled = this.gameScreen.isTurnTimerEnabled(); // Store whether the turn timer is enabled
-        gameState.maxTurnTime = this.gameScreen.getMaxTurnTime(); // Store the maximum turn time
-        //gameState.turnTimeStart = this.gameScreen.getTurnTimeStart(); // Store the start time of the current turn
-        gameState.turnOrder = this.gameScreen.getTurnOrder(); // Store the turn order
-        gameState.currentPlayerPointer = this.gameScreen.getCurrentPlayerPointer(); // Store the pointer to the current player
-
-        GameState.MapState mapState = gameState.new MapState(); // Create a new MapState
-
-        //mapState.sectors = gameState.map.getSectors(); // Store the Map sectors in the Mapstate
-        //THIS IS COUNTER INTUITIVE
-        mapState.sectorStates = new GameState.SectorState[mapState.sectors.size()]; // Create an array of Sector States
-
-        int i = 0;
-
-        for (java.util.Map.Entry<Integer, Sector> sector : mapState.sectors.entrySet()){ // Iterate through each Sector and store it as a SectorState
-            Integer key = sector.getKey();
-            Sector value = sector.getValue();
-
-            GameState.SectorState sectorState = gameState.new SectorState(); // Create SectorState
-            sectorState.hashMapPosition = key; // Store the Sector position in the HashMap
-            sectorState.id = value.getId(); // Store the Sector's ID
-            sectorState.ownerId = value.getOwnerId(); // Store the Sector's owner's ID
-            sectorState.displayName = value.getDisplayName(); // Store the Sector's display name
-            sectorState.unitsInSector = value.getUnitsInSector(); // Store the number of units in the Sector
-            sectorState.reinforcementsProvided = value.getReinforcementsProvided(); // Store the number of reinforcements provided to the Sector
-            sectorState.college = value.getCollege(); // Store the college of the Sector
-            sectorState.texturePath = value.getTexturePath(); // Store the path to the Sector's texture
-            sectorState.neutral = value.isNeutral(); // Store whether the Sector is neutral
-            sectorState.adjacentSectorIds = value.getAdjacentSectorIds(); // Store the adjacent Sector IDs
-            sectorState.sectorCentreX = value.getSectorCentreX(); // Store the Sector's location
-            sectorState.sectorCentreY = value.getSectorCentreY();
-            sectorState.decor = value.isDecor(); // Store whether the Sector is for decoration
-            sectorState.fileName = value.getFileName(); // Store the filename of the Sector file
-            sectorState.allocated = value.isAllocated(); // Store whether the Sector has been allocated
-
-            mapState.sectorStates[i] = sectorState;
-
-            i++;
-        }
-
-        mapState.sectors = null;
-        //gameState.map = null;
-        //gameState.mapState = mapState;
-
-        gameState.playerStates = new GameState.PlayerState[gameState.players.size()]; // Create an array of PlayerStates
-
-        i = 0;
-
-        for (java.util.Map.Entry<Integer, Player> player : gameState.players.entrySet()) { // Iterate through all of the Players and store them as PlayerStates
-            Integer key = player.getKey();
-            Player value = player.getValue();
-
-            GameState.PlayerState playerState = gameState.new PlayerState();
-            playerState.hashMapPosition = key; // Store the Player's position in the HashMap
-            playerState.id = value.getId(); // Store the Player's ID
-            playerState.collegeName = value.getCollegeName(); // Store the Player's college
-            playerState.playerName = value.getPlayerName(); // Store the Player's name
-            playerState.troopsToAllocate = value.getTroopsToAllocate(); // Store the number of troops left to allocate
-            playerState.sectorColour = value.getSectorColour(); // Store the Player's Sector's colour
-            playerState.playerType = value.getPlayerType(); // Store the Player's type
-            playerState.ownsPVC = value.getOwnsPVC(); // Store whether the Player owns the PVC
-
-            gameState.playerStates[i] = playerState;
-            i++;
-        }
-
-        gameState.players = null;
 
         JSONObject newSave = new JSONObject(); // Create the save object
         newSave.put("Saves", this.numberOfSaves);

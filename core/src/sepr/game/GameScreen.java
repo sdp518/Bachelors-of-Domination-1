@@ -743,6 +743,11 @@ public class GameScreen implements Screen, InputProcessor{
         return this.turnTimerEnabled;
     }
 
+    public long getTurnTimeElapsed() {
+        this.pausedTime += (System.currentTimeMillis() - pauseStartTime);
+        return System.currentTimeMillis() - (turnTimeStart + pausedTime);
+    }
+
     public int getMaxTurnTime(){
         return this.maxTurnTime;
     }
