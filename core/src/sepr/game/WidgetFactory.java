@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import sepr.game.punishmentcards.CardType;
+import sepr.game.punishmentcards.PlagueOfGeese;
 import sepr.game.utils.TurnPhaseType;
 import sun.net.www.content.image.png;
 
@@ -58,8 +60,14 @@ public class WidgetFactory {
     private static BitmapFont fontBig;
     private static BitmapFont fontSmall;
 
-    //NEW ASSESSMENT 4
+    // NEW ASSESSMENT 4
     private static Texture pauseMenuBtnTexture;
+
+    // cards
+    private static Texture plagueOfGeeseTexture;
+    private static Texture goldenGooseTexture;
+    private static Texture freshersFluTexture;
+    private static Texture exceptionalCircumstancesTexture;
 
     /**
      * initialises all the assets required for generating the UI components
@@ -105,6 +113,13 @@ public class WidgetFactory {
 
         // NEW ASSESSMENT 4
         pauseMenuBtnTexture = new Texture("uiComponents/pauseMenuButton.png");
+
+        // cards
+        plagueOfGeeseTexture = new Texture("uiComponents/punishment_cards/PlagueOfGeese.png");
+        goldenGooseTexture = new Texture("uiComponents/punishment_cards/GoldenGoose.png");
+        freshersFluTexture = new Texture("uiComponents/punishment_cards/FreshersFlu.png");
+        exceptionalCircumstancesTexture = new Texture("uiComponents/punishment_cards/ExceptionalCircumstances.png");
+
     }
 
     /**
@@ -454,6 +469,27 @@ public class WidgetFactory {
         style.font = fontSmall;
 
         return new TextButton(text, style);
+    }
+
+    /**
+     * NEW ASSESSMENT 4
+     * gets the image of the card supplied
+     *
+     * @param cardType the card type to get the image for
+     * @return an Image of the card
+     */
+    public static Image genCardDrawable(CardType cardType) {
+        switch (cardType) {
+            case PLAGUE_OF_GEESE:
+                return new Image(plagueOfGeeseTexture);
+            case GOLDEN_GOOSE:
+                return new Image(goldenGooseTexture);
+            case FRESHERS_FLU:
+                return new Image(freshersFluTexture);
+            case EXCEPTIONAL_CIRCUMSTANCES:
+                return new Image(exceptionalCircumstancesTexture);
+        }
+        return null;
     }
 
     /**
