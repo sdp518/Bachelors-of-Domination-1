@@ -40,38 +40,39 @@ public class JSONifier {
     public GameState getStateFromJSON() {
         GameState gameState = new GameState();
         gameState.currentPhase = this.StringToPhase(this.saveState.get("CurrentPhase").toString());
-        gameState.currentPlayerPointer = (Integer) this.saveState.get("CurrentPlayerPointer");
-        gameState.turnTimeElapsed = (Long) this.saveState.get("TurnTimeElapsed");
-        gameState.maxTurnTime = (Integer) this.saveState.get("MaxTurnTime");
-        gameState.turnTimerEnabled = (Boolean) this.saveState.get("TurnTimerEnabled");
+        gameState.currentPlayerPointer = Integer.parseInt(this.saveState.get("CurrentPlayerPointer").toString());
+        gameState.turnTimeElapsed = Long.parseLong(this.saveState.get("TurnTimeElapsed").toString());
+        gameState.maxTurnTime = Integer.parseInt(this.saveState.get("MaxTurnTime").toString());
+        gameState.turnTimerEnabled = Boolean.parseBoolean(this.saveState.get("TurnTimerEnabled").toString());
 
         JSONArray sectors = (JSONArray) this.saveState.get("MapState");
         HashMap<Integer, Sector> tempSectors = new HashMap<Integer, Sector>();
         for(Object obj: sectors) {
             Sector temp = new Sector();
             JSONObject sector = (JSONObject) obj;
-            temp.setOwnerId((Integer) sector.get("OwnerID"));
-            temp.setDisplayName((String) sector.get("DisplayName"));
-            temp.setUnitsInSector((Integer) sector.get("UnitsInSector"));
-            temp.setReinforcementsProvided((Integer) sector.get("ReinforcementsProvided"));
-            temp.setNeutral((Boolean) sector.get("Neutral"));
-            temp.setIsPVCTile((Boolean) sector.get("PVCTile"));
-            temp.setCollege((String) sector.get("College"));
-            tempSectors.put((Integer) sector.get("HashMapPosition"), temp);
+            temp.setOwnerId(Integer.parseInt(sector.get("OwnerID").toString()));
+            temp.setDisplayName(sector.get("DisplayName").toString());
+            temp.setUnitsInSector(Integer.parseInt(sector.get("UnitsInSector").toString()));
+            temp.setReinforcementsProvided(Integer.parseInt(sector.get("ReinforcementsProvided").toString()));
+            temp.setNeutral(Boolean.parseBoolean(sector.get("Neutral").toString()));
+            temp.setIsPVCTile(Boolean.parseBoolean(sector.get("PVCTile").toString()));
+            temp.setCollege(sector.get("College").toString());
+            tempSectors.put(Integer.parseInt(sector.get("HashMapPosition").toString()), temp);
         }
         gameState.sectors = tempSectors;
 
         JSONArray players = (JSONArray) this.saveState.get("PlayerState");
         HashMap<Integer, Player> tempPlayers = new HashMap<Integer, Player>();
-        for(Object obj: sectors) {
+        for(Object obj: players) {
             JSONObject temp = (JSONObject) obj;
-            int id = (Integer) temp.get("ID");
-            CollegeName collegeName = CollegeName.fromString((String) temp.get("CollegeName"));;
-            String playerName = (String) temp.get("PlayerName");
-            int troopsToAllocate = (Integer) temp.get("TroopsToAllocate");
-            boolean ownsPVC = (Boolean) temp.get("OwnsPVC");
-            PlayerType playerType = PlayerType.fromString((String) temp.get("PlayerType"));
-            Color color = new Color((Float) temp.get("R"), (Float) temp.get("G"), (Float) temp.get("B"), (Float) temp.get("A"));
+            int id = Integer.parseInt(temp.get("ID").toString());
+            CollegeName collegeName = CollegeName.fromString(temp.get("CollegeName").toString());
+            String playerName = temp.get("PlayerName").toString();
+            int troopsToAllocate = Integer.parseInt(temp.get("TroopsToAllocate").toString());
+            boolean ownsPVC = Boolean.parseBoolean(temp.get("OwnsPVC").toString());
+            PlayerType playerType = PlayerType.fromString(temp.get("PlayerType").toString());
+            JSONObject colors = (JSONObject) temp.get("SectorColour");
+            Color color = new Color(Float.parseFloat(colors.get("R").toString()), Float.parseFloat(colors.get("G").toString()), Float.parseFloat(colors.get("B").toString()), Float.parseFloat(colors.get("A").toString()));
             Player player;
             if (playerType.equals(PlayerType.HUMAN)) {
                 player = Player.createHumanPlayer(id, collegeName, color, playerName);
@@ -80,7 +81,7 @@ public class JSONifier {
             } else {
                 player = Player.createNeutralPlayer(id);
             }
-            tempPlayers.put((Integer) temp.get("HashMapPosition"), player);
+            tempPlayers.put(Integer.parseInt(temp.get("HashMapPosition").toString()), player);
         }
         gameState.players = tempPlayers;
 
@@ -88,7 +89,7 @@ public class JSONifier {
         JSONArray turnOrderJSON = (JSONArray) this.saveState.get("TurnOrder");
 
         for (Object obj : turnOrderJSON){ // Iterate through the turn order array and add the order to the game state
-            turnOrder.add((Integer) obj);
+            turnOrder.add(Integer.parseInt(obj.toString()));
         }
         gameState.turnOrder = turnOrder;
 
@@ -225,7 +226,7 @@ public class JSONifier {
 
             playerState.put("HashMapPosition", entry.getKey());
             playerState.put("ID", player.getId());
-            playerState.put("CollegeName", player.getCollegeName());
+            playerState.put("CollegeName", player.getCollegeName().getCollegeName());
             playerState.put("PlayerName", player.getPlayerName());
             playerState.put("TroopsToAllocate", player.getTroopsToAllocate());
             playerState.put("OwnsPVC", player.getOwnsPVC());

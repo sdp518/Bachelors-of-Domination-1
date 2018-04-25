@@ -91,7 +91,6 @@ public class GameSetupScreen implements Screen{
             for (CollegeName collegeName : CollegeName.values()) {
                 if (collegeName.getCollegeName().equals(text)) return collegeName;
             }
-
             throw new IllegalArgumentException("Text parameter must match one of the enums");
         }
     }

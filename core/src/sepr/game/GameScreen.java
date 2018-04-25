@@ -258,6 +258,26 @@ public class GameScreen implements Screen, InputProcessor{
         return players.get(turnOrder.get(currentPlayerPointer));
     }
 
+    public void setTurnOrder(List<Integer> turnOrder) {
+        this.turnOrder = turnOrder;
+    }
+
+    public void setCurrentPlayerPointer(int currentPlayerPointer) {
+        this.currentPlayerPointer = currentPlayerPointer;
+    }
+
+    public void setCurrentPhase(TurnPhaseType currentPhase) {
+        this.currentPhase = currentPhase;
+    }
+
+    public void setTurnTimeStart(long turnTimeStart) {
+        this.turnTimeStart = turnTimeStart;
+    }
+
+    public HashMap<TurnPhaseType, Phase> getPhases() {
+        return phases;
+    }
+
     /**
      *
      * @return the sprite batch being used to render the game
@@ -733,6 +753,10 @@ public class GameScreen implements Screen, InputProcessor{
 
     public TurnPhaseType getCurrentPhase(){
         return this.currentPhase;
+    }
+
+    public void resetPausedTime(){
+        pausedTime = 0;
     }
 
     public HashMap<Integer, Player> getPlayers() {

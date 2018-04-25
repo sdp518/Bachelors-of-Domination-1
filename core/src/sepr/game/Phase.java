@@ -161,7 +161,7 @@ public abstract class Phase extends Stage {
      *
      * @param player the new player that is entering the phase
      */
-    void enterPhase(Player player) {
+    public void enterPhase(Player player) {
         this.currentPlayer = player;
 
 

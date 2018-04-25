@@ -86,6 +86,16 @@ public class Main extends Game implements ApplicationListener {
 	    this.gameScreen.startGame();
     }
 
+	public void returnGameScreen() {
+		this.setScreen(gameScreen);
+		gameScreen.resetCameraPosition();
+		gameScreen.resume();
+	}
+
+	/*public LoadScreen getSaveScreen() {
+		return this.saveScreen;
+	}*/
+
 	/**
 	 * change the screen currently being displayed to the options screen
 	 */

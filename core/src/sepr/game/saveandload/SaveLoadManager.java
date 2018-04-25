@@ -3,6 +3,7 @@ package sepr.game.saveandload;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -11,16 +12,19 @@ import sepr.game.Main;
 import sepr.game.Map;
 import sepr.game.Player;
 import sepr.game.Sector;
+import sepr.game.utils.TurnPhaseType;
 
 import java.io.*;
 import java.util.HashMap;
 
 //Order to reimplement saving of files and loading.
 //Todo understand and re-setup saving all data from file and testing
-    //Todo edit and fix saving -- Just needs testing with load implemented, looks good by eye
+    //Todo Test with JUnit tests, saving looks all good by eye.
 //Todo neaten saving into a clean function, commented for understanding.
 //Todo reimplement saving and loading into the games code
-    //TODO setup loading from what should be working, needs to be tested with implementation of game
+    //TODO loading seems to be working, need to setup JUnits for loading, all looks good by eye.
+//TODO implement saving of PVCTile into save game, make sure all loading procedures work, turn timer currently causes bug after saving.
+//TODO Concurrent work on new units by Lewis needs to be implemented into saves, this will require meet-up and manual merge and edits of saving and loading.
 
 /**
  * Class to manage saving and loading from files
@@ -59,7 +63,7 @@ public class SaveLoadManager {
         this.save_path = path;
 
         if(directoryExists) { // Check that the directory exists
-            //loadFromFile(); // Load the file if it exists
+            loadFromFile(); // Load the file if it exists
         } else { // Create a blank saves file
             File file = new File(path);
             try {
@@ -90,7 +94,6 @@ public class SaveLoadManager {
     public boolean loadFromFile(){
 
         JSONParser parser = new JSONParser(); // Create JSON parser
-
         try {
             Object obj = parser.parse(new FileReader(save_path)); // Read file
             JSONObject loadProperties = (JSONObject)obj;
@@ -103,9 +106,9 @@ public class SaveLoadManager {
 
                 JSONifier jifier = new JSONifier();
                 jifier.SetStateJSON(gameStateJSON);
-                //GameState gameState = jifier.getStateFromJSON();
+                GameState gameState = jifier.getStateFromJSON();
 
-                //this.loadedState = gameState;
+                this.loadedState = gameState;
                 this.savesToLoad = true;
             }else{
                 this.savesToLoad = false;
@@ -185,16 +188,51 @@ public class SaveLoadManager {
      * @return true if loading is successful
      */
     public boolean loadSaveByID(int id){
-        HashMap<Integer, Player> players = playersFromPlayerState(loadedState.playerStates);
-        //HashMap<Integer, Sector> sectors = sectorsFromSectorState(loadedState.mapState.sectorStates, players, false);
-
         //Map loadedMap = mapFromMapState(loadedState.mapState, players, sectors);
 
         //this.gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
+        this.gameScreen.setupGame(this.loadedState.players,
+                this.loadedState.turnTimerEnabled,
+                this.loadedState.maxTurnTime,
+                true);
+        this.updateSectors(this.gameScreen.getMap().getSectors());
+        this.gameScreen.setTurnOrder(this.loadedState.turnOrder);
+        this.gameScreen.setCurrentPlayerPointer(this.loadedState.currentPlayerPointer);
+        if (this.loadedState.currentPhase == TurnPhaseType.REINFORCEMENT) {
+            gameScreen.getCurrentPlayer().addTroopsToAllocate(-3);
+        }
+        gameScreen.setCurrentPhase(loadedState.currentPhase);
+        if(loadedState.turnTimerEnabled) {
+            this.gameScreen.setTurnTimeStart(System.currentTimeMillis() - loadedState.turnTimeElapsed);
+        }
 
         this.main.setGameScreenFromLoad(this.gameScreen);
-
+        this.main.returnGameScreen();
+        this.gameScreen.getPhases().get(gameScreen.getCurrentPhase()).enterPhase(gameScreen.getCurrentPlayer());
+        this.gameScreen.resetPausedTime();
+        //Stage stage = this.main.getSaveScreen.getStage();
         return true;
+    }
+
+    public void updateSectors(HashMap<Integer, Sector> fullSectors) {
+        Integer[] keys = fullSectors.keySet().toArray(new Integer[fullSectors.size()]);
+        Integer[] playerKeys = this.loadedState.players.keySet().toArray(new Integer[this.loadedState.players.size()]);
+        for(int i = 0; i < fullSectors.size(); i++) {
+            Sector fullSector = fullSectors.get(keys[i]);
+            Sector smallSector = this.loadedState.sectors.get(keys[i]);
+            fullSector.setOwnerId(smallSector.getOwnerId());
+            for(int j = 0; j < playerKeys.length; j++) {
+                if (smallSector.getOwnerId() == this.loadedState.players.get(playerKeys[j]).getId()) {
+                    fullSector.setOwner(this.loadedState.players.get(playerKeys[j]));
+                }
+            }
+            fullSector.setDisplayName(smallSector.getDisplayName());
+            fullSector.setUnitsInSector(smallSector.getUnitsInSector());
+            fullSector.setReinforcementsProvided(smallSector.getReinforcementsProvided());
+            fullSector.setCollege(smallSector.getCollege());
+            fullSector.setNeutral(smallSector.isNeutral());
+            fullSector.setIsPVCTile(smallSector.getIsPVCTile());
+        }
     }
 
     /**
