@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import sepr.game.gangmembers.GangMembers;
+import sepr.game.gangmembers.Postgraduates;
+import sepr.game.gangmembers.Undergraduates;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -114,7 +117,18 @@ public class Map {
         Texture sectorTexture = new Texture(texturePath);
         Pixmap sectorPixmap = new Pixmap(Gdx.files.internal("mapData/" + sectorData[1]));
         String displayName = sectorData[2];
-        int unitsInSector = 10 + random.nextInt(15);
+        int numberUndergraduates = 10 + random.nextInt(15);
+        int numberPostgraduates = 0; // TODO assign initial postgrads
+        ArrayList<GangMembers> unitsInSector = new ArrayList<GangMembers>();
+        for (int i = 0; i < numberUndergraduates; i++) {
+            Undergraduates u = new Undergraduates();
+            unitsInSector.add(u);
+        }
+        if (numberPostgraduates < 0) {
+            Postgraduates g = new Postgraduates();
+            unitsInSector.add(g);
+        }
+
         int reinforcementsProvided = Integer.parseInt(sectorData[4]);
         String college = sectorData[5];
         boolean neutral = Boolean.parseBoolean(sectorData[6]);
@@ -224,10 +238,10 @@ public class Map {
 
 
     public boolean attackSector(int attackingSectorId, int defendingSectorId, int attackersLost, int defendersLost, Player attacker, Player defender, Player netrualPlayer, Stage stage) {
-        if (sectors.get(attackingSectorId).getUnitsInSector() < attackersLost) {
+        if (sectors.get(attackingSectorId).getUnitsInSector().size() < attackersLost) {
             throw new IllegalArgumentException("Cannot loose more attackers than are on the sector: Attackers " + sectors.get(attackingSectorId).getUnitsInSector() + "     Attackers Lost " + attackersLost);
         }
-        if (sectors.get(defendingSectorId).getUnitsInSector() < defendersLost) {
+        if (sectors.get(defendingSectorId).getUnitsInSector().size() < defendersLost) {
             throw new IllegalArgumentException("Cannot loose more defenders than are on the sector: Defenders " + sectors.get(attackingSectorId).getUnitsInSector() + "     Defenders Lost " + attackersLost);
         }
 
@@ -240,15 +254,15 @@ public class Map {
          * - Not all defenders killed, all attackers killed         -->     attacking sector becomes unAssigned
          * - Not all defenders killed, not all attackers killed     -->     both sides loose troops, no dialog to display
          * */
-        if (sectors.get(attackingSectorId).getUnitsInSector() == 0) { // attacker lost all troops
+        if (sectors.get(attackingSectorId).getUnitsInSector().size() == 0) { // attacker lost all troops
             DialogFactory.sectorOwnerChangeDialog(attacker.getPlayerName(), netrualPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
             sectors.get(attackingSectorId).setOwner(netrualPlayer);
-            if (sectors.get(defendingSectorId).getUnitsInSector() == 0) { // both players wiped each other out
+            if (sectors.get(defendingSectorId).getUnitsInSector().size() == 0) { // both players wiped each other out
                 DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), netrualPlayer.getPlayerName(), sectors.get(attackingSectorId).getDisplayName(), stage);
                 sectors.get(defendingSectorId).setOwner(netrualPlayer);
             }
 
-        } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() > 1) { // territory conquered
+        } else if (sectors.get(defendingSectorId).getUnitsInSector().size() == 0 && sectors.get(attackingSectorId).getUnitsInSector().size() > 1) { // territory conquered
 
             unitsToMove = new int[3];
             unitsToMove[0] = -1;
@@ -259,10 +273,10 @@ public class Map {
             attacker.addTroopsToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
-            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
+            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector().size(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 
 
-        } else if (sectors.get(defendingSectorId).getUnitsInSector() == 0 && sectors.get(attackingSectorId).getUnitsInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
+        } else if (sectors.get(defendingSectorId).getUnitsInSector().size() == 0 && sectors.get(attackingSectorId).getUnitsInSector().size() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
             DialogFactory.sectorOwnerChangeDialog(defender.getPlayerName(), netrualPlayer.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), stage);
             sectors.get(defendingSectorId).setOwner(netrualPlayer);
         }
@@ -320,8 +334,10 @@ public class Map {
      * @param amount   of units to add
      */
     public void addUnitsToSectorAnimated(int sectorId, int amount) {
-        this.sectors.get(sectorId).addUnits(amount);
+        System.out.println(this.sectors.get(sectorId).getUnitsInSector().size());
+        this.sectors.get(sectorId).addUndergraduates(amount);
         this.particles.add(new UnitChangeParticle(amount, new Vector2(sectors.get(sectorId).getSectorCentreX(), sectors.get(sectorId).getSectorCentreY())));
+        System.out.println(this.sectors.get(sectorId).getUnitsInSector().size());
     }
 
     /**
@@ -387,7 +403,7 @@ public class Map {
         if (sectors.get(unitsToMove[1]).getOwnerId() != sectors.get(unitsToMove[2]).getOwnerId()) {
             throw new IllegalArgumentException("Source and target sectors must have the same owners");
         }
-        if (sectors.get(unitsToMove[1]).getUnitsInSector() <= unitsToMove[0]) {
+        if (sectors.get(unitsToMove[1]).getUnitsInSector().size() <= unitsToMove[0]) {
             throw new IllegalArgumentException("Must leave at least one unit on source sector and can't move more units than are on source sector");
         }
         if (!sectors.get(unitsToMove[1]).isAdjacentTo(sectors.get(unitsToMove[2]))) {
@@ -418,7 +434,7 @@ public class Map {
         detectUnitsMove(); // check if units need to be moved, and carry the movement out if required
 
         for (Sector sector : sectors.values()) {
-            String text = sector.getUnitsInSector() + "";
+            String text = sector.getUnitsInSector().size() + "";
             batch.draw(sector.getSectorTexture(), 0, 0);
             if (!sector.isDecor()) { // don't need to draw the amount of units on a decor sector
                 layout.setText(font, text);

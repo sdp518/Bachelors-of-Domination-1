@@ -12,7 +12,7 @@ public class Plagues {
     }
 
     public void useCard(Sector sector) {
-        int unitsLost = sector.getUnitsInSector() - (int) Math.floor(sector.getUnitsInSector() * negativeMultiplier);
-        sector.addUnits(-1 * unitsLost);
+        //int unitsLost = sector.getUnitsInSector() - (int) Math.floor(sector.getUnitsInSector() * negativeMultiplier);
+        //sector.addUndergraduates(-1 * unitsLost);
     }
 }

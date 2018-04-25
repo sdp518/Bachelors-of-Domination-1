@@ -7,6 +7,12 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import org.lwjgl.Sys;
+import sepr.game.gangmembers.GangMembers;
+import sepr.game.gangmembers.Postgraduates;
+import sepr.game.gangmembers.Undergraduates;
+
+import java.util.ArrayList;
 
 /**
  * class for specifying properties of a sector that is part of a map
@@ -15,7 +21,7 @@ public class Sector implements ApplicationListener {
     private int id;
     private int ownerId;
     private String displayName;
-    private int unitsInSector;
+    private ArrayList<GangMembers> unitsInSector;
     private int reinforcementsProvided;
     private String college; // name of the college this sector belongs to
     private boolean neutral; // is this sector a default neutral sector
@@ -45,7 +51,7 @@ public class Sector implements ApplicationListener {
      * @param sectorCentreY ycoord of sector centre
      * @param decor false if a sector is accessible to a player and true if sector is decorative
      */
-    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor) {
+    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor) {
         this.id = id;
         this.ownerId = ownerId;
         this.displayName = displayName;
@@ -64,7 +70,7 @@ public class Sector implements ApplicationListener {
         this.allocated = false;
     }
 
-    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color) {
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color) {
         this(id, ownerId, fileName, new Texture(texturePath), texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor);
         
         this.allocated = allocated;
@@ -75,7 +81,7 @@ public class Sector implements ApplicationListener {
         }
     }
 
-    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, int unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test){
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test){
         HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
 
         new HeadlessApplication(this, conf);
@@ -160,8 +166,14 @@ public class Sector implements ApplicationListener {
      *
      * @return number of units present in this sector
      */
-    public int getUnitsInSector() {
-        return unitsInSector;
+    public ArrayList<GangMembers> getUnitsInSector() {
+        ArrayList<GangMembers> temp = unitsInSector;
+        for (GangMembers g : unitsInSector) {
+            if (g.getName().equals("postgraduate")) {
+                temp.remove(g);
+            }
+        }
+        return temp;
     }
 
     /**
@@ -261,12 +273,38 @@ public class Sector implements ApplicationListener {
      * @param amount number of units to change by, (can be negative to subtract units
      * @throws IllegalArgumentException if units in sector is below 0
      */
-    public void addUnits(int amount) throws IllegalArgumentException {
-        this.unitsInSector += amount;
-        if (this.unitsInSector < 0) {
-            this.unitsInSector = 0;
+    public void addUndergraduates(int amount) throws IllegalArgumentException {
+
+        if (amount > 0) {
+            for (int i = 0; i < amount; i++) {
+                Undergraduates undergraduate = new Undergraduates();
+                this.unitsInSector.add(undergraduate);
+            }
+        }
+        else {
+            for (int i = 0; i < -amount; i++) {
+                System.out.println("Loop");
+                Undergraduates undergraduate = new Undergraduates();
+                if (unitsInSector.get(i).equals(undergraduate)) {
+                    unitsInSector.remove(i);
+                }
+            }
+            unitsInSector.trimToSize(); //TODO unit removal from sectors to allow combat to work
+        }
+
+        if (this.unitsInSector.size() < 0) {
+            this.unitsInSector = new ArrayList<GangMembers>();
             throw new IllegalArgumentException("Cannot have less than 0 units on a sector");
         }
+    }
+
+    /**
+     * ADDED ASSESSMENT 4
+     * Adds a postgrad to the sector
+     */
+    public void addPostgraduate() {
+        Postgraduates postgraduate = new Postgraduates();
+        this.unitsInSector.add(postgraduate);
     }
 
     /**
