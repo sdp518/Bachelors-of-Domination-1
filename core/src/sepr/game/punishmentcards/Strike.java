@@ -1,12 +1,12 @@
 package sepr.game.punishmentcards;
 
 public class Strike extends Card {
-    public Strike(CardType type) {
-        super(type);
+    public Strike() {
+        super(CardType.STRIKE);
     }
 
     @Override
     public void act() {
-
+        System.out.println(type.getCardType());
     }
 }
