@@ -10,14 +10,20 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
@@ -65,19 +71,24 @@ public class GameScreen implements Screen, InputProcessor{
 
     private Random random;
 
-    // pause menu setup - NEW Assessment 4
+    // pause menu setup - NEW ASSESSMENT 4
     private Stage pauseMenuStage = new Stage();
     private boolean timerPaused, gamePaused;
     private long pauseStartTime;
     private long pausedTime;
 
+    // cards - NEW ASSESSMENT 4
+    private ArrayList<Card> cardDeck = new ArrayList<Card>();
+    private Stage cardStage = new Stage();
+    private Table cardTable;
+    private Image[] closedCardImages, openCardImages;
+
     /**
      * sets up rendering objects and key input handling
      * setupGame then start game must be called before a game is ready to be played
      *
-     * @param main used to change screenthis.phases = phases;
+     * @param main used to change screen this.phases = phases;
      */
-
     public GameScreen(Main main) {
         this.main = main;
 
@@ -148,6 +159,11 @@ public class GameScreen implements Screen, InputProcessor{
 
         setUpPhases();
 
+        // cards - NEW ASSESSMENT 4
+        initCardDeck();
+        setupCardUI();
+        random = new Random();
+
         gameSetup = true; // game is now setup
     }
 
@@ -180,6 +196,7 @@ public class GameScreen implements Screen, InputProcessor{
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(phases.get(currentPhase));
         inputMultiplexer.addProcessor(this);
+        inputMultiplexer.addProcessor(cardStage); // ADDED ASSESSMENT 4
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -523,6 +540,115 @@ public class GameScreen implements Screen, InputProcessor{
         pauseMenuStage.addActor(table);
     }
 
+    // TODO Comment new methods below
+    private void initCardDeck() {
+        for (int i=0;i<4;i++){
+            cardDeck.add(new PlagueOfGeese());
+            cardDeck.add(new GoldenGoose());
+            cardDeck.add(new FreshersFlu());
+            cardDeck.add(new ExceptionalCircumstances());
+        }
+    }
+
+    public int getCardDeckSize() {
+        return cardDeck.size();
+    }
+
+    public Card getRandomCard() {
+        return cardDeck.remove(random.nextInt(cardDeck.size()));
+    }
+
+    public void setupCardUI() {
+        cardTable = new Table();
+        cardTable.setDebug(false);
+        cardTable.setTouchable(Touchable.enabled);
+        cardTable.setFillParent(true);
+
+        for (Actor a : cardStage.getActors()){
+            a.addAction(Actions.removeActor());
+        }
+        cardStage.act();
+
+        //System.out.println("Actors after clearing: " + cardStage.getActors());
+
+        /*Card[] currentHand = new Card[getCurrentPlayer().getCardHand().size()];
+        getCurrentPlayer().getCardHand().toArray(currentHand);*/
+        closedCardImages = new Image[4];
+        openCardImages = new Image[4];
+
+
+        for (int i = 0; i < getCurrentPlayer().getCardHand().size(); i++) {
+            closedCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
+            openCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
+
+            final int finalI = i;
+            closedCardImages[i].addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    //System.out.println("closed click");
+                    Gdx.input.setInputProcessor(cardStage);
+                    openCards();
+                }
+            });
+
+            openCardImages[i].addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    //System.out.println("open click");
+                    getCurrentPlayer().getCardHand().get(finalI).act();
+                    cardDeck.add(getCurrentPlayer().removeCard(finalI));
+                    updateInputProcessor();
+                    setupCardUI();
+                }
+            });
+
+            closedCardImages[i].setPosition((1650-(i*40)),750); // Top right position
+            closedCardImages[i].setScale(0.4f);
+
+            //cardImages[i].setPosition((i*400),400);
+            //cardImages[i].setScale(1f);
+            closedCardImages[i].setOrigin(closedCardImages[i].getWidth()/2, closedCardImages[i].getHeight()/2);
+
+            cardTable.add(openCardImages[i]).padRight(40).padLeft(40);
+
+            cardStage.addActor(closedCardImages[i]);
+            //System.out.println("Stage after adding actors:" + cardStage.getActors());
+        }
+        cardTable.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //System.out.println("outside click");
+                updateInputProcessor();
+                closeCards();
+            }
+        });
+
+        //System.out.println("Size after setup: " + cardStage.getActors().size);
+    }
+
+    private void openCards() {
+        for (Actor a : cardStage.getActors()){
+            a.addAction(Actions.removeActor());
+        }
+
+        cardStage.addActor(cardTable);
+    }
+
+    private void closeCards() {
+        for (Actor a : cardStage.getActors()){
+            a.addAction(Actions.removeActor());
+        }
+
+        for (Image i : closedCardImages) {
+            if (i != null){
+                cardStage.addActor(i);
+            }
+        }
+    }
+
     /**
      * draws a background image behind the map and UI covering the whole visible area of the render window
      */
@@ -572,6 +698,9 @@ public class GameScreen implements Screen, InputProcessor{
             pauseMenuStage.act();
             pauseMenuStage.draw();
         }
+
+        cardStage.act();
+        cardStage.draw();
 
         gameplayBatch.end(); // stop rendering
 

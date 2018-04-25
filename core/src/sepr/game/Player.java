@@ -1,7 +1,10 @@
 package sepr.game;
 
 import com.badlogic.gdx.graphics.Color;
+import sepr.game.punishmentcards.Card;
 import sepr.game.utils.PlayerType;
+
+import java.util.ArrayList;
 
 /**
  * base class for storing Neutral and Human player data
@@ -14,6 +17,8 @@ public class Player {
     private Color sectorColour; // what colour to shade sectors owned by the player
     private PlayerType playerType; // Human or Neutral player
     private Boolean OwnsPVC;
+
+    private ArrayList<Card> cardHand = new ArrayList<Card>();
 
     /**
      * creates a player object with the specified properties
@@ -62,13 +67,11 @@ public class Player {
     /**
      * @return  if the player owns the PVC tile
      */
-
     public Boolean getOwnsPVC() { return OwnsPVC; }
 
     /**
      * @param  ownsPVC boolean if the player owns the PVC
      */
-
     public void setOwnsPVC(Boolean ownsPVC) { OwnsPVC = ownsPVC; }
 
 
@@ -136,5 +139,18 @@ public class Player {
      */
     public void addTroopsToAllocate(int troopsToAllocate) {
         this.troopsToAllocate += troopsToAllocate;
+    }
+
+    // TODO comment new methods below
+    public void addCard(Card card) {
+        cardHand.add(card);
+    }
+
+    public Card removeCard(int i) {
+        return cardHand.remove(i);
+    }
+
+    public ArrayList<Card> getCardHand() {
+        return cardHand;
     }
 }
