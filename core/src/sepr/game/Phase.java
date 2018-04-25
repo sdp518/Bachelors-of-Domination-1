@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sun.prism.paint.Color;
+import sepr.game.punishmentcards.CardType;
 import sepr.game.utils.TurnPhaseType;
 
 /**
@@ -171,6 +172,7 @@ public abstract class Phase extends Stage {
         collegeLogo.setDrawable(WidgetFactory.genCollegeLogoDrawable(player.getCollegeName()));
         updateTroopReinforcementLabel();
         this.updatePhaseLabelColour();
+        gameScreen.setupCardUI();
     }
 
     /**MOVED FROM WIDGET FACTORY ASSESSMENT 4
@@ -189,6 +191,21 @@ public abstract class Phase extends Stage {
                 gameScreen.pause();
             }
         });
+
+        // TODO Remove temp code before submission
+        /*********TEMP**********/
+        TextButton addCardButton = new TextButton("CARD", btnStyle);
+
+        addCardButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if ((currentPlayer.getCardHand().size() < 4) && (gameScreen.getCardDeckSize() != 0)){
+                    currentPlayer.addCard(gameScreen.getRandomCard());
+                    gameScreen.setupCardUI();
+                }
+            }
+        });
+        /*********END TEMP**********/
 
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = WidgetFactory.getFontSmall();
@@ -228,6 +245,7 @@ public abstract class Phase extends Stage {
         table.add(labelPre).height(60);
         table.add(labelText).height(60);
         table.add(labelPost).height(60);
+        table.right().add(addCardButton).padLeft(190).padRight(20);
 
         return table;
     }
