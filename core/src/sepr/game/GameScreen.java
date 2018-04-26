@@ -716,12 +716,13 @@ public class GameScreen implements Screen, InputProcessor{
             if (!player.equals(getCurrentPlayer())) {
                 Label l = new Label(player.getPlayerName(), smallStyle);
                 l.setColor(player.getSectorColour());
+                final GameScreen gameScreen = this;
                 l.addListener(new ClickListener() {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         event.stop();
-                        getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player);
+                        getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player, gameScreen);
                         cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
                         updateInputProcessor();
                         setupCardUI();

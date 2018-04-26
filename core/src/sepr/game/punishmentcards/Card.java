@@ -1,6 +1,7 @@
 package sepr.game.punishmentcards;
 
 
+import sepr.game.GameScreen;
 import sepr.game.Player;
 
 public class Card {
@@ -11,7 +12,7 @@ public class Card {
         this.type = type;
     }
 
-    public void act(Player player) {
+    public void act(Player player, GameScreen gameScreen) {
 
     }
 

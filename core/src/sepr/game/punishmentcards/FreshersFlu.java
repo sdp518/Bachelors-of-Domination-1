@@ -1,5 +1,7 @@
 package sepr.game.punishmentcards;
 
+import com.badlogic.gdx.Game;
+import sepr.game.GameScreen;
 import sepr.game.Player;
 
 public class FreshersFlu extends Card {
@@ -11,7 +13,7 @@ public class FreshersFlu extends Card {
      * Effect: Debuffs affected player (half strength)
      */
     @Override
-    public void act(Player player) {
+    public void act(Player player, GameScreen gameScreen) {
         System.out.println(player.getPlayerName() + ": " + type.getCardType());
     }
 }
