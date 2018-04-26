@@ -27,7 +27,7 @@ public class PhaseMovement extends PhaseAttackMove {
         }
         numOfAttackers = new int[1];
         numOfAttackers[0] = -1;
-        DialogFactory.moveDialog(attackingSector.getUnitsInSector().size(), numOfAttackers, this);
+        DialogFactory.moveDialog(attackingSector.getUnitsInSector(), numOfAttackers, this);
     }
 
     /**
@@ -102,7 +102,7 @@ public class PhaseMovement extends PhaseAttackMove {
                     this.attackingSector = null;
                 }
 
-            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector().size() > 1) { // First selection, is owned by the player and has enough troops
+            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector() > 1) { // First selection, is owned by the player and has enough troops
                 this.attackingSector = selected;
                 this.arrowTailPosition.set(worldCoord.x, worldCoord.y); // set arrow tail position
             } else {

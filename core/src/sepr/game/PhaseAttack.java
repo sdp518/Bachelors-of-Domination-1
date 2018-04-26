@@ -36,7 +36,7 @@ public class PhaseAttack extends PhaseAttackMove{
         }
         numOfAttackers = new int[1];
         numOfAttackers[0] = -1;
-        DialogFactory.attackDialog(attackingSector.getUnitsInSector().size(), defendingSector.getUnitsInSector().size(), numOfAttackers, this);
+        DialogFactory.attackDialog(attackingSector.getUnitsInSector(), defendingSector.getUnitsInSector(), numOfAttackers, this);
     }
 
     /**
@@ -44,7 +44,7 @@ public class PhaseAttack extends PhaseAttackMove{
      */
     private void executeAttack() {
         int attackers = numOfAttackers[0];
-        int defenders = defendingSector.getUnitsInSector().size();
+        int defenders = defendingSector.getUnitsInSector();
 
         float propAttack = (float)attackers / (float)(attackers + defenders); // proportion of troops that are attackers
         float propDefend = (float)defenders / (float)(attackers + defenders); // proportion of troops that are defenders
@@ -180,7 +180,7 @@ public class PhaseAttack extends PhaseAttackMove{
                     this.attackingSector = null;
                 }
 
-            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector().size() > 1 && notAlreadySelected) { // First selection, is owned by the player and has enough troops
+            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector() > 1 && notAlreadySelected) { // First selection, is owned by the player and has enough troops
                 this.attackingSector = selected;
                 this.arrowTailPosition.set(worldCoord.x, worldCoord.y); // set arrow tail position
             } else {

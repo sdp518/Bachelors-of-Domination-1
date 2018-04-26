@@ -8,11 +8,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import org.lwjgl.Sys;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import sepr.game.gangmembers.GangMembers;
 import sepr.game.gangmembers.Postgraduates;
 import sepr.game.gangmembers.Undergraduates;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * class for specifying properties of a sector that is part of a map
@@ -163,17 +167,31 @@ public class Sector implements ApplicationListener {
     }
 
     /**
-     *
-     * @return number of units present in this sector
+     * MODIFED ASSESSMENT 4
+     * @return number of undergraduates present in this sector
      */
-    public ArrayList<GangMembers> getUnitsInSector() {
-        ArrayList<GangMembers> temp = unitsInSector;
-        for (GangMembers g : unitsInSector) {
-            if (g.getName().equals("postgraduate")) {
-                temp.remove(g);
+    public int getUnitsInSector() {
+        Iterator<GangMembers> iterator = this.unitsInSector.iterator();
+        int count = 0;
+        while (iterator.hasNext()) {
+            GangMembers g = iterator.next();
+            if (g.getName().equals("Postgraduate")) {
+                count++;
             }
         }
-        return temp;
+        return this.unitsInSector.size() - count;
+    }
+
+    public int getPostgraduatesInSector() {
+        Iterator<GangMembers> iterator = this.unitsInSector.iterator();
+        int count = 0;
+        while (iterator.hasNext()) {
+            GangMembers g = iterator.next();
+            if (g.getName().equals("Undergraduates")) {
+                count++;
+            }
+        }
+        return this.unitsInSector.size() - count;
     }
 
     /**
@@ -282,14 +300,17 @@ public class Sector implements ApplicationListener {
             }
         }
         else {
-            for (int i = 0; i < -amount; i++) {
-                System.out.println("Loop");
-                Undergraduates undergraduate = new Undergraduates();
-                if (unitsInSector.get(i).equals(undergraduate)) {
-                    unitsInSector.remove(i);
+            int count = -amount;
+            for (Iterator<GangMembers> iterator = this.unitsInSector.iterator(); iterator.hasNext();) {
+                GangMembers g = iterator.next();
+                System.out.println(count);
+                if (g.getName().equals("Undergraduates") && count > 0) {
+                    System.out.println("Removed");
+                    iterator.remove();
+                    count--;
                 }
             }
-            unitsInSector.trimToSize(); //TODO unit removal from sectors to allow combat to work
+            unitsInSector.trimToSize();
         }
 
         if (this.unitsInSector.size() < 0) {
