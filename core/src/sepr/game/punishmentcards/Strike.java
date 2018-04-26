@@ -8,7 +8,6 @@ public class Strike extends Card {
     /**
      * Effect: Steal PVC sector from player that currently holds it
      */
-    @Override
     public void act() {
         System.out.println(type.getCardType());
     }

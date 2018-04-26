@@ -1,5 +1,7 @@
 package sepr.game.punishmentcards;
 
+import sepr.game.Player;
+
 public class ExceptionalCircumstances extends Card {
     public ExceptionalCircumstances() {
         super(CardType.EXCEPTIONAL_CIRCUMSTANCES);
@@ -9,7 +11,7 @@ public class ExceptionalCircumstances extends Card {
      * Effect: Swap sectors with chosen player
      */
     @Override
-    public void act() {
-        System.out.println(type.getCardType());
+    public void act(Player player) {
+        System.out.println(player.getPlayerName() + ": " + type.getCardType());
     }
 }
