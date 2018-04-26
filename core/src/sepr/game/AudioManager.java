@@ -3,6 +3,7 @@ package sepr.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import java.util.ArrayList;
 
@@ -102,7 +103,11 @@ public class AudioManager extends AssetManager {
      */
 
     public void disposeMusic(String filePath) {
-        this.get(filePath, Music.class).dispose(); // remove the introMusic from memory to to increase performance
+        try {
+            this.get(filePath, Music.class).dispose(); // remove the introMusic from memory to to increase performance
+        } catch (GdxRuntimeException e) {
+
+        }
     }
 
 

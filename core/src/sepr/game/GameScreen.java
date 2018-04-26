@@ -706,11 +706,11 @@ public class GameScreen implements Screen, InputProcessor{
         }
         // TODO Decide if keeping -- DEFINITLY FUCKING NOT
         if (keycode == Input.Keys.S) {
-            System.out.println("SAVING");
-            this.main.saveGame();
+            //System.out.println("SAVING");
+            //this.main.saveGame();
         }
         if (keycode == Input.Keys.L) {
-            this.main.loadGame();
+            //this.main.loadGame();
         }
         return true;
     }
@@ -773,7 +773,7 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     public long getTurnTimeElapsed() {
-        //pausedTime += (System.currentTimeMillis() - pauseStartTime);
+        pausedTime += (System.currentTimeMillis() - pauseStartTime);
         return System.currentTimeMillis() - (turnTimeStart + pausedTime);
     }
 

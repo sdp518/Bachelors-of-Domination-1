@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import sepr.game.saveandload.GameState;
+import sepr.game.saveandload.SaveLoadManager;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,12 +33,13 @@ public class LoadScreen implements Screen{
     private Table table;
     private GameScreen gameScreen;
     private GameSetupScreen gameSetupScreen;
+    private SaveLoadManager saveLoadManager;
 
     private EntryPoint entryPoint;
 
     private Texture selectSaveBox;
 
-    private String fileName = null;
+    private int saveID = -1;
 
     private Stage loadingWidgetStage;
     private boolean isLoading;
@@ -49,11 +52,12 @@ public class LoadScreen implements Screen{
      * @param gameScreen to access data for save and load
      * @param gameSetupScreen for
      */
-    public LoadScreen (final Main main, EntryPoint entryPoint, GameScreen gameScreen, GameSetupScreen gameSetupScreen) {
+    public LoadScreen (final Main main, EntryPoint entryPoint, GameScreen gameScreen, GameSetupScreen gameSetupScreen, SaveLoadManager saveLoadManager) {
         this.main = main;
         this.entryPoint = entryPoint;
         this.gameScreen = gameScreen;
         this.gameSetupScreen = gameSetupScreen;
+        this.saveLoadManager = saveLoadManager;
 
         if (entryPoint == EntryPoint.MENU_SCREEN) {
             this.stage = new Stage() {
@@ -153,6 +157,10 @@ public class LoadScreen implements Screen{
         final Table[] saveTables = new Table[] {new Table(), new Table(), new Table(), new Table()};
         final List<Boolean> clickedTables = Arrays.asList(new Boolean[]{false,false,false,false});
         for (int i = 0; i < saveTables.length; i++) {
+            GameState loadedState = saveLoadManager.getLoadedStates()[i];
+            if ((loadedState == null) && (this.entryPoint == EntryPoint.MENU_SCREEN)) {
+                continue;
+            }
             //Data loadedSave = this.loadDataForSaveSlots(i + ".data");
             //if ((loadedSave == null) && (this.entryPoint == EntryPoint.MENU_SCREEN)) {
             //    continue;
@@ -175,7 +183,7 @@ public class LoadScreen implements Screen{
                     }
                     clickedSave.set(tableNo, true);
                     allTables[tableNo].setBackground(new TextureRegionDrawable(new TextureRegion(selectSaveBox, 0,208, 1240, 208)));
-                    fileName = Integer.toString(tableNo) + ".data";
+                    saveID = tableNo;
                 }
 
                 @Override
@@ -193,26 +201,26 @@ public class LoadScreen implements Screen{
                 }
             });
 
-            /*if (loadedSave != null) {
-                Integer[] keys = loadedSave.getFullPlayers().keySet().toArray(new Integer[loadedSave.getFullPlayers().size()]);
-                Player player1 = loadedSave.getFullPlayers().get(keys[0]);
+            if (saveLoadManager.getLoadedStates()[i] != null) {
+                Integer[] keys = loadedState.players.keySet().toArray(new Integer[loadedState.players.size()]);
+                Player player1 = loadedState.players.get(keys[0]);
                 t.row().left();
                 t.add(new Image(WidgetFactory.genCollegeLogoDrawable(player1.getCollegeName()))).width(150).height(120).padRight(10).padLeft(10);
-                for (int j = 1; j < loadedSave.getFullPlayers().size(); j++) {
+                for (int j = 1; j < loadedState.players.size(); j++) {
                     t.add(new Label("V", smallStyle));
-                    t.add(new Image(WidgetFactory.genCollegeLogoDrawable(loadedSave.getFullPlayers().get(keys[j]).getCollegeName()))).width(150).height(120).padRight(10).padLeft(10);
+                    t.add(new Image(WidgetFactory.genCollegeLogoDrawable(loadedState.players.get(keys[j]).getCollegeName()))).width(150).height(120).padRight(10).padLeft(10);
                 }
                 t.row().left();
                 t.add(new Label(player1.getPlayerName(), bigStyle)).center();
-                for (int j = 1; j < loadedSave.getFullPlayers().size(); j++) {
+                for (int j = 1; j < loadedState.players.size(); j++) {
                     t.add();
-                    t.add(new Label(loadedSave.getFullPlayers().get(keys[j]).getPlayerName(), bigStyle)).center();
+                    t.add(new Label(loadedState.players.get(keys[j]).getPlayerName(), bigStyle)).center();
                 }
 
             } else {
             t.row().center();
             t.add(new Label("EMPTY SAVE SLOT", smallStyle));
-            }*/
+            }
             stage.addActor(t);
 
             saveTable.row();
@@ -244,12 +252,22 @@ public class LoadScreen implements Screen{
         table.row().padTop(60);
         table.add(setupSelectSaveTable());
 
-        TextButton saveButton = WidgetFactory.genStartGameButton();
+        final TextButton saveButton = WidgetFactory.genStartGameButton();
         saveButton.setText("SAVE");
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                HashMap<Integer, Player> players = gameScreen.getPlayers();
+                if (saveID == -1) {
+                    DialogFactory.basicDialogBox("Save Unsuccessful", "A save slot must be selected first.", getStage());
+                } else {
+                    boolean saved = saveLoadManager.saveByID(saveID);
+                    saveLoadManager.saveToFile();
+                    if (saved) {
+                        LoadScreen save = main.getSaveScreen();
+                        DialogFactory.basicDialogBox("Save Successful", "The game has been successfully saved.", save.getStage());
+                    }
+                }
+                //HashMap<Integer, Player> players = gameScreen.getPlayers();
                 /*if (!main.getAllocateNeutralPlayer()) {
                     players.remove(4);
                 }
@@ -278,10 +296,12 @@ public class LoadScreen implements Screen{
         loadButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (fileName == null) {
+                if (saveID == -1) {
                     DialogFactory.basicDialogBox("Load Failure", "No save has been selected", stage);
                 } else {
                     try {
+                        saveLoadManager.loadSaveByID(saveID);
+                        showLoadingWidget();
                         /*Data loadedSave = loadDataForSaveSlots(fileName);
                         if (loadedSave != null) {
                             showLoadingWidget();

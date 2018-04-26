@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 //Todo neaten saving into a clean function, commented for understanding.
 //Todo reimplement saving and loading into the games code
     //TODO loading seems to be working, need to setup JUnits for loading, all looks good by eye.
-//TODO implement saving of PVCTile into save game, make sure all loading procedures work, turn timer currently causes bug after saving.
 //TODO Concurrent work on new units by Lewis needs to be implemented into saves, this will require meet-up and manual merge and edits of saving and loading.
 
 /**
@@ -37,7 +37,7 @@ public class SaveLoadManager {
     private static String save_path = ""; // Path to the saves file
     private static int currentSaveID = -1; // ID of the current save
     private static int numberOfSaves = 0; // Current number of saves
-    private static GameState loadedState; // The state that has just been loaded
+    private static GameState[] loadedStates = new GameState[4]; // The state that has just been loaded
 
     private static Boolean loadedSave; // Whether a save has been loaded
 
@@ -69,9 +69,8 @@ public class SaveLoadManager {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
 
-                JSONObject savesTemplate = new JSONObject();
-                savesTemplate.put("Saves", this.numberOfSaves);
-                savesTemplate.put("CurrentSaveID", this.currentSaveID);
+                JSONArray savesTemplate = new JSONArray();
+                savesTemplate.add(new JSONObject().put("CurrentSaveID", 0));
 
                 try {
                     FileWriter fileWriter = new FileWriter(this.save_path);
@@ -94,23 +93,19 @@ public class SaveLoadManager {
 
         JSONParser parser = new JSONParser(); // Create JSON parser
         try {
-            Object obj = parser.parse(new FileReader(save_path)); // Read file
-            JSONObject loadProperties = (JSONObject)obj;
+            Object fullFile = parser.parse(new FileReader(save_path)); // Read file
+            JSONArray allSaves = (JSONArray) fullFile;
 
-            this.numberOfSaves = Integer.parseInt(loadProperties.get("Saves").toString()); // Get number of saves
-
-            if(this.numberOfSaves > 0){ // If saves exist, read the first save into the loaded state
-                JSONObject gameStateJSON = (JSONObject)loadProperties.get("GameState"); // TODO Allow for more than one save
-
+            for(Object obj: allSaves) {
+                JSONObject jObj = (JSONObject) obj;
+                int save = Integer.parseInt(jObj.get("CurrentSaveID").toString());
+                JSONObject gameStateJSON = (JSONObject) jObj.get("GameState");
 
                 JSONifier jifier = new JSONifier();
                 jifier.SetStateJSON(gameStateJSON);
                 GameState gameState = jifier.getStateFromJSON();
 
-                this.loadedState = gameState;
-                this.savesToLoad = true;
-            }else{
-                this.savesToLoad = false;
+                this.loadedStates[save] = gameState;
             }
         } catch (FileNotFoundException e){
             e.printStackTrace();
@@ -183,32 +178,32 @@ public class SaveLoadManager {
 
     /**
      * Loads a save file with a given ID
-     * @param id
+     * //@param id
      * @return true if loading is successful
      */
     public boolean loadSaveByID(int id){
         //Map loadedMap = mapFromMapState(loadedState.mapState, players, sectors);
 
         //this.gameScreen = new GameScreen(this.main, loadedState.currentPhase, loadedMap, players, loadedState.turnTimerEnabled, loadedState.maxTurnTime, loadedState.turnTimeStart, loadedState.turnOrder, loadedState.currentPlayerPointer);
-        this.gameScreen.setupGame(this.loadedState.players,
-                this.loadedState.turnTimerEnabled,
-                this.loadedState.maxTurnTime,
+        this.gameScreen.setupGame(this.loadedStates[id].players,
+                this.loadedStates[id].turnTimerEnabled,
+                this.loadedStates[id].maxTurnTime,
                 true);
-        this.updateSectors(this.gameScreen.getMap().getSectors());
-        this.gameScreen.setTurnOrder(this.loadedState.turnOrder);
-        this.gameScreen.setCurrentPlayerPointer(this.loadedState.currentPlayerPointer);
-        if (this.loadedState.currentPhase == TurnPhaseType.REINFORCEMENT) {
-            gameScreen.getCurrentPlayer().addTroopsToAllocate(-10);
+        this.updateSectors(this.gameScreen.getMap().getSectors(), id);
+        this.gameScreen.setTurnOrder(this.loadedStates[id].turnOrder);
+        this.gameScreen.setCurrentPlayerPointer(this.loadedStates[id].currentPlayerPointer);
+        if (this.loadedStates[id].currentPhase == TurnPhaseType.REINFORCEMENT) {
+            gameScreen.getCurrentPlayer().addTroopsToAllocate(-5);
         }
-        gameScreen.setCurrentPhase(loadedState.currentPhase);
-        for(Player temp: this.loadedState.players.values()) {
+        gameScreen.setCurrentPhase(loadedStates[id].currentPhase);
+        for(Player temp: this.loadedStates[id].players.values()) {
             if (temp.getOwnsPVC()) {
                 this.gameScreen.getProViceChancellor().setPVCSpawned(true);
                 break;
             }
         }
-        if(loadedState.turnTimerEnabled) {
-            this.gameScreen.setTurnTimeStart(System.currentTimeMillis() - loadedState.turnTimeElapsed);
+        if(loadedStates[id].turnTimerEnabled) {
+            this.gameScreen.setTurnTimeStart(System.currentTimeMillis() - loadedStates[id].turnTimeElapsed);
         }
         this.main.returnGameScreen();
         this.gameScreen.getPhases().get(gameScreen.getCurrentPhase()).enterPhase(gameScreen.getCurrentPlayer());
@@ -217,16 +212,16 @@ public class SaveLoadManager {
         return true;
     }
 
-    public void updateSectors(HashMap<Integer, Sector> fullSectors) {
+    public void updateSectors(HashMap<Integer, Sector> fullSectors, int id) {
         Integer[] keys = fullSectors.keySet().toArray(new Integer[fullSectors.size()]);
-        Integer[] playerKeys = this.loadedState.players.keySet().toArray(new Integer[this.loadedState.players.size()]);
+        Integer[] playerKeys = this.loadedStates[id].players.keySet().toArray(new Integer[this.loadedStates[id].players.size()]);
         for(int i = 0; i < fullSectors.size(); i++) {
             Sector fullSector = fullSectors.get(keys[i]);
-            Sector smallSector = this.loadedState.sectors.get(keys[i]);
+            Sector smallSector = this.loadedStates[id].sectors.get(keys[i]);
             fullSector.setOwnerId(smallSector.getOwnerId());
             for(int j = 0; j < playerKeys.length; j++) {
-                if (smallSector.getOwnerId() == this.loadedState.players.get(playerKeys[j]).getId()) {
-                    fullSector.setOwner(this.loadedState.players.get(playerKeys[j]));
+                if (smallSector.getOwnerId() == this.loadedStates[id].players.get(playerKeys[j]).getId()) {
+                    fullSector.setOwner(this.loadedStates[id].players.get(playerKeys[j]));
                 }
             }
             fullSector.setDisplayName(smallSector.getDisplayName());
@@ -243,13 +238,24 @@ public class SaveLoadManager {
 
     /**
      * Saves to the saves.json file
-     * @param newSave
+     * //@param newSave
      * @return true if loading is successful
      */
-    public boolean saveToFile(JSONObject newSave){
+    public boolean saveToFile(/*JSONObject newSave*/){
+        JSONArray allSaves = new JSONArray();
+        JSONifier jifier = new JSONifier();
+        for(int i = 0; i < 4; i++) {
+            if (loadedStates[i] != null) {
+                JSONObject save = new JSONObject();
+                save.put("CurrentSaveID", i);
+                jifier.SetState(loadedStates[i]);
+                save.put("GameState", jifier.getJSONGameState());
+                allSaves.add(save);
+            }
+        }
         try {
             FileWriter fileWriter = new FileWriter(this.save_path);
-            fileWriter.write(newSave.toJSONString());
+            fileWriter.write(allSaves.toJSONString());
             fileWriter.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -274,15 +280,7 @@ public class SaveLoadManager {
         gameState.turnOrder = this.gameScreen.getTurnOrder(); // Store the turn order
         gameState.currentPlayerPointer = this.gameScreen.getCurrentPlayerPointer(); // Store the pointer to the current player
 
-        JSONObject newSave = new JSONObject(); // Create the save object
-        newSave.put("Saves", this.numberOfSaves);
-        newSave.put("CurrentSaveID", this.currentSaveID);
-
-        JSONifier jifier = new JSONifier(); // Create a JSON representation of the state
-        jifier.SetState(gameState);
-        newSave.put("GameState", jifier.getJSONGameState());
-
-        saveToFile(newSave); // Save the JSON representation to a file
+        this.loadedStates[id] = gameState;
 
         return true;
     }
@@ -308,6 +306,10 @@ public class SaveLoadManager {
         this.numberOfSaves++;
 
         return this.currentSaveID;
+    }
+
+    public GameState[] getLoadedStates() {
+        return this.loadedStates;
     }
 
 }

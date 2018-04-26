@@ -43,10 +43,20 @@ public class Main extends Game implements ApplicationListener {
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
-		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen, saveLoadManager);
 
 
 		this.setMenuScreen();
+	}
+
+	public void refreshScreens() {
+		this.menuScreen = new MenuScreen(this);
+		this.gameScreen = new GameScreen(this);
+		this.optionsScreen = new OptionsScreen(this);
+		this.gameSetupScreen = new GameSetupScreen(this);
+		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
+		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen, saveLoadManager);
 	}
 
 	public void setMiniGameScreen() {
@@ -57,6 +67,7 @@ public class Main extends Game implements ApplicationListener {
 	}
 
 	public void setMenuScreen() {
+		this.refreshScreens();
 		this.setScreen(menuScreen);
 	}
 
@@ -65,9 +76,8 @@ public class Main extends Game implements ApplicationListener {
 	 * changes the screen currently being displayed to the menu and re-instantiates game screen
 	 */
 	public void exitToMenu() {
+		this.refreshScreens();
 		this.setScreen(menuScreen);
-		this.gameScreen.dispose();
-		this.gameScreen = new GameScreen(this);
 	}
 
 	/**
@@ -80,7 +90,7 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void setGameScreen(HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, boolean allocateNeutralPlayer) {
 		gameScreen.setupGame(players, turnTimerEnabled, maxTurnTime, allocateNeutralPlayer);
-		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen, saveLoadManager);
 		this.setScreen(gameScreen);
 		gameScreen.startGame();
 	}
@@ -116,7 +126,7 @@ public class Main extends Game implements ApplicationListener {
 	}
 
 	public void setLoadScreen() {
-		this.loadScreen = new LoadScreen(this, EntryPoint.MENU_SCREEN, this.gameScreen, this.gameSetupScreen);
+		this.loadScreen = new LoadScreen(this, EntryPoint.MENU_SCREEN, this.gameScreen, this.gameSetupScreen, saveLoadManager);
 		this.setScreen(loadScreen);
 	}
 
@@ -129,6 +139,9 @@ public class Main extends Game implements ApplicationListener {
 	}
 
 	public LoadScreen getSaveScreen() {
+		this.saveLoadManager.loadFromFile();
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen, saveLoadManager);
+		this.setSaveScreen();
 		return this.saveScreen;
 	}
 
