@@ -239,7 +239,7 @@ public class SaveLoadManager {
             sectorState.id = value.getId(); // Store the Sector's ID
             sectorState.ownerId = value.getOwnerId(); // Store the Sector's owner's ID
             sectorState.displayName = value.getDisplayName(); // Store the Sector's display name
-            //sectorState.unitsInSector = value.getUnitsInSector(); // Store the number of units in the Sector
+            //sectorState.unitsInSector = value.getUndergraduatesInSector(); // Store the number of units in the Sector
             sectorState.reinforcementsProvided = value.getReinforcementsProvided(); // Store the number of reinforcements provided to the Sector
             sectorState.college = value.getCollege(); // Store the college of the Sector
             sectorState.texturePath = value.getTexturePath(); // Store the path to the Sector's texture

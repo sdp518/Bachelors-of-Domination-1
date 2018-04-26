@@ -277,44 +277,59 @@ public class DialogFactory {
 
 
 
-    /**
+    /** MODIFIED ASSESSMENT 4 - ADDED SUPPORT FOR MOVING PGS
      * creates a dialog box for the player to select how many troops they want to move with
      * if player cancels the attackers[0] = 0 to signify the attack has been cancelled
      *
-     * @param maxAttackers max number of attackers the player chooses to move
-     * @param attackers 1 index array for setting number of troops the player has chosen to move with: [0] number of troops player has set to move with
+     * @param maxUndergraduates max number of troops the player chooses to move
+     * @param troopsToMove 1 index array for setting number of troops the player has chosen to move with: [0] number of troops player has set to move with
      * @param stage to display the dialog on
      * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
-    public static void moveDialog(int maxAttackers, final int[] attackers, Stage stage) {
-        maxAttackers --; // leave at least one troop on the tile
-        final Slider slider = new Slider(0, maxAttackers, 1, false, DialogFactory.skin);
-        slider.setValue(maxAttackers);
-        final Label sliderValue = new Label(maxAttackers + "", DialogFactory.skin); // label showing the value of the slider
-        slider.addListener(new ChangeListener() {
+    public static void moveDialog(int maxUndergraduates, int maxPostgraduates, final int[] troopsToMove, Stage stage) {
+        maxUndergraduates --; // leave at least one troop on the tile
+        final Slider sliderUG = new Slider(0, maxUndergraduates, 1, false, DialogFactory.skin);
+        final Slider sliderPG = new Slider(0, maxPostgraduates, 1, false, DialogFactory.skin);
+        sliderUG.setValue(maxUndergraduates);
+        final Label sliderValueUG = new Label(maxUndergraduates + "", DialogFactory.skin); // label showing the value of the ug slider
+        final Label sliderValuePG = new Label(maxPostgraduates + "", DialogFactory.skin); // label showing the value of the pg slider
+        sliderUG.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                sliderValue.setText(new StringBuilder((int)slider.getValue() + "")); // update slider value label when the slider is moved
+                sliderValueUG.setText(new StringBuilder((int)sliderUG.getValue() + "")); // update slider value label when the slider is moved
+            }
+        });
+        sliderPG.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sliderValuePG.setText(new StringBuilder((int)sliderPG.getValue() + "")); // update slider value label when the slider is moved
             }
         });
 
         Dialog dialog = new Dialog("Select number of troops to move", DialogFactory.skin) {
             protected void result(Object object) {
                 if (object.equals("0")) { // cancel pressed
-                    attackers[0] = 0; // set number of attacker to 0, i.e. no attack
+                    troopsToMove[0] = 0; // set number of attacker to 0, i.e. no attack
                 } else if (object.equals("1")){ // ok button pressed
-                    attackers[0] = (int)slider.getValue(); // set number of attackers to the value of the slider
+                    troopsToMove[0] = (int)sliderUG.getValue(); // set number of undergraduates to the value of the slider
+                    troopsToMove[1] = (int)sliderPG.getValue(); // set number of postgraduates to the value of the slider
                 }
             }
         };
 
         // add labels saying the max number of attackers and how many defenders there are
-        dialog.text(new Label("Max number to move: " + maxAttackers, DialogFactory.skin)).padLeft(20).padRight(20).align(Align.left);
+        dialog.text(new Label("Max number of Undergraduates to move: " + maxUndergraduates, DialogFactory.skin)).padLeft(20).padRight(20).align(Align.left);
         dialog.getContentTable().row();
 
         // add slider and label showing number of units selected
-        dialog.getContentTable().add(slider).padLeft(20).padRight(20).align(Align.left).expandX();
-        dialog.getContentTable().add(sliderValue).padLeft(20).padRight(20).align(Align.right);
+        dialog.getContentTable().add(sliderUG).padLeft(20).padRight(20).align(Align.left).expandX();
+        dialog.getContentTable().add(sliderValueUG).padLeft(20).padRight(20).align(Align.right);
+
+        dialog.getContentTable().row();
+        dialog.text(new Label("Max number of Postgraduates to move: " + maxPostgraduates, DialogFactory.skin)).padLeft(20).padRight(20).align(Align.left);
+        dialog.getContentTable().row();
+        dialog.getContentTable().add(sliderPG).padLeft(20).padRight(20).align(Align.left).expandX();
+        dialog.getContentTable().add(sliderValuePG).padLeft(20).padRight(20).align(Align.right);
 
         dialog.getContentTable().row();
 

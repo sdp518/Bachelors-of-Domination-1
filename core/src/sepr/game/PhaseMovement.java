@@ -16,34 +16,39 @@ public class PhaseMovement extends PhaseAttackMove {
 
     }
 
-    /**
+    /** MODIFIED ASSESSMENT 4 - ADDED SUPPORT FOR PGS, RENAMED VARIABLES FOR CLARITY
      * creates a dialog asking the player how many units they want to attack with
      *
      * @throws RuntimeException if the attacking sector or defending sector are set to null
      */
-    private void getNumberOfAttackers() throws RuntimeException {
-        if (attackingSector == null || defendingSector == null) {
-            throw new RuntimeException("Cannot execute attack unless both an attacking and defending sector have been selected");
+    private void getNumberToMove() throws RuntimeException {
+        if (startingSector == null || destinationSector == null) {
+            throw new RuntimeException("Cannot execute attack unless both a starting and destination sector have been selected");
         }
-        numOfAttackers = new int[1];
-        numOfAttackers[0] = -1;
-        DialogFactory.moveDialog(attackingSector.getUnitsInSector(), numOfAttackers, this);
+        troopsToMove = new int[2];
+        troopsToMove[0] = -1;
+        troopsToMove[1] = -1;
+        DialogFactory.moveDialog(startingSector.getUndergraduatesInSector(), startingSector.getPostgraduatesInSector(), troopsToMove, this);
     }
 
-    /**
+    /** MODIFIED ASSESSMENT 4 - ADDED SUPPORT FOR PGS, RENAMED VARIABLES FOR CLARITY
      * carries out movement once number of troops has been set using the dialog
      */
     private void executeMoveTroops() {
 
-        int attackersLost = numOfAttackers[0];
-        int defendersLost = numOfAttackers[0];
+        System.out.println("MOVED BOII");
+        int startUndergraduates = troopsToMove[0];
+        int endUndergraduates = troopsToMove[0];
+        int startPostgraduates = troopsToMove[1];
+        int endPostgraduates = troopsToMove[1];
 
 
         // apply the movement to the map
-        if (gameScreen.getMap().moveTroops(attackingSector.getId(), defendingSector.getId(), attackersLost, defendersLost)) {
-
-
+        if (gameScreen.getMap().moveTroops(startingSector.getId(), destinationSector.getId(), startUndergraduates, endUndergraduates, startPostgraduates, endPostgraduates)) {
             updateTroopReinforcementLabel();
+        }
+        else {
+            DialogFactory.basicDialogBox("Postgraduates", "Cannot move Postgraduate to a sector that already contains one", this);
         }
     }
 
@@ -54,18 +59,18 @@ public class PhaseMovement extends PhaseAttackMove {
     public void phaseAct() {
 
 
-        if (attackingSector != null && defendingSector != null && numOfAttackers[0] != -1) {
+        if (startingSector != null && destinationSector != null && troopsToMove[0] != -1 && troopsToMove[1] != -1) {
 
-            if (numOfAttackers[0] == 0) {
+            if (troopsToMove[0] == 0 && troopsToMove[1] == 0) {
 
                 // cancel attack
             } else {
                 executeMoveTroops();
             }
             // reset attack
-            attackingSector = null;
-            defendingSector = null;
-            numOfAttackers = null;
+            startingSector = null;
+            destinationSector = null;
+            troopsToMove = null;
         }
     }
 
@@ -91,27 +96,27 @@ public class PhaseMovement extends PhaseAttackMove {
             Sector selected = gameScreen.getMap().getSectorById(sectorId); // Current sector
 
 
-            if (this.attackingSector != null && this.defendingSector == null) { // If its the second selection in the movement phase
+            if (this.startingSector != null && this.destinationSector == null) { // If its the second selection in the movement phase
 
-                if (this.attackingSector.isAdjacentTo(selected) && selected.getOwnerId() == this.currentPlayer.getId()) { // check the player does owns the defending sector and that it is adjacent
+                if (this.startingSector.isAdjacentTo(selected) && selected.getOwnerId() == this.currentPlayer.getId()) { // check the player does owns the defending sector and that it is adjacent
                     this.arrowHeadPosition.set(worldCoord.x, worldCoord.y); // Finalise the end position of the arrow
-                    this.defendingSector = selected;
+                    this.destinationSector = selected;
 
-                    getNumberOfAttackers(); // attacking and defending sector selected so find out how many units the player wants to move with
+                    getNumberToMove(); // attacking and defending sector selected so find out how many units the player wants to move with
                 } else { // cancel the movement as selected defending sector cannot be moved to: may not be adjacent or may be owned by the attacker
-                    this.attackingSector = null;
+                    this.startingSector = null;
                 }
 
-            } else if (selected.getOwnerId() == this.currentPlayer.getId() && selected.getUnitsInSector() > 1) { // First selection, is owned by the player and has enough troops
-                this.attackingSector = selected;
+            } else if (selected.getOwnerId() == this.currentPlayer.getId() && (selected.getUndergraduatesInSector() > 1 || selected.getPostgraduatesInSector() > 0)) { // First selection, is owned by the player and has enough troops
+                this.startingSector = selected;
                 this.arrowTailPosition.set(worldCoord.x, worldCoord.y); // set arrow tail position
             } else {
-                this.attackingSector = null;
-                this.defendingSector = null;
+                this.startingSector = null;
+                this.destinationSector = null;
             }
         } else { // mouse pressed and not hovered over a sector to attack therefore cancel any movement in progress
-            this.attackingSector = null;
-            this.defendingSector = null;
+            this.startingSector = null;
+            this.destinationSector = null;
         }
 
         return true;

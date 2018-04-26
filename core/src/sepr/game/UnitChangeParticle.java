@@ -30,7 +30,7 @@ public class UnitChangeParticle {
         font = WidgetFactory.getFontSmall();
 
         String signedAmount;
-        if (!amount.equals("0")) { // if increase make text green and add a plus sign
+        if (!amount.equals("0") && !amount.contains("-")) { // if increase make text green and add a plus sign
             this.font.setColor(Color.GREEN);
             signedAmount = "+" + amount;
         } else { // if decrease make text red and add a minus sign

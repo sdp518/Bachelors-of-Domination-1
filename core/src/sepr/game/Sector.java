@@ -170,7 +170,7 @@ public class Sector implements ApplicationListener {
      * MODIFED ASSESSMENT 4
      * @return number of undergraduates present in this sector
      */
-    public int getUnitsInSector() {
+    public int getUndergraduatesInSector() {
         Iterator<GangMembers> iterator = this.unitsInSector.iterator();
         int count = 0;
         while (iterator.hasNext()) {
