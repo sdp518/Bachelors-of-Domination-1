@@ -1,6 +1,5 @@
 package sepr.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,8 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.sun.prism.paint.Color;
-import sepr.game.punishmentcards.CardType;
+import sepr.game.utils.Constants;
 import sepr.game.utils.TurnPhaseType;
 
 /**
@@ -165,13 +163,21 @@ public abstract class Phase extends Stage {
     void enterPhase(Player player) {
         this.currentPlayer = player;
 
-
         playerNameStyle.fontColor = GameSetupScreen.getCollegeColor(currentPlayer.getCollegeName()); // update colour of player name
 
         playerNameLabel.setText(new StringBuilder((CharSequence) currentPlayer.getPlayerName())); // change the bottom bar label to the players name
         collegeLogo.setDrawable(WidgetFactory.genCollegeLogoDrawable(player.getCollegeName()));
         updateTroopReinforcementLabel();
         this.updatePhaseLabelColour();
+
+        // NEW ASSESSMENT 4
+        if (player.hasCripplingHangover()) {
+            gameScreen.setMaxTurnTime((Constants.MAX_TURN_TIME / 2));
+            player.switchCripplingHangover();
+        }
+        else {
+            gameScreen.setMaxTurnTime(Constants.MAX_TURN_TIME);
+        }
         gameScreen.setupCardUI();
     }
 

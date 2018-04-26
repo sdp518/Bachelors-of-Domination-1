@@ -972,6 +972,10 @@ public class GameScreen implements Screen, InputProcessor{
         return this.maxTurnTime;
     }
 
+    public void setMaxTurnTime(int time) {
+        maxTurnTime = time;
+    }
+
     public long getTurnTimeStart(){
         return this.turnTimeStart;
     }

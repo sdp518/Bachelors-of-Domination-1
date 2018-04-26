@@ -16,9 +16,10 @@ public class Player {
     private int troopsToAllocate; // how many troops the player has to allocate at the start of their next reinforcement phase
     private Color sectorColour; // what colour to shade sectors owned by the player
     private PlayerType playerType; // Human or Neutral player
-    private Boolean OwnsPVC;
+    private boolean ownsPVC;
 
-    private ArrayList<Card> cardHand = new ArrayList<Card>();
+    private boolean cripplingHangover;
+    private ArrayList<Card> cardHand;
 
     /**
      * creates a player object with the specified properties
@@ -36,7 +37,9 @@ public class Player {
         this.sectorColour = sectorColour;
         this.playerType = playerType;
         this.playerName = playerName;
-        this.OwnsPVC = false;
+        this.ownsPVC = false;
+        this.cripplingHangover = false;
+        this.cardHand = new ArrayList<Card>();
     }
 
     public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int troopsToAllocate, boolean ownsPVC){
@@ -67,12 +70,12 @@ public class Player {
     /**
      * @return  if the player owns the PVC tile
      */
-    public Boolean getOwnsPVC() { return OwnsPVC; }
+    public Boolean getOwnsPVC() { return ownsPVC; }
 
     /**
      * @param  ownsPVC boolean if the player owns the PVC
      */
-    public void setOwnsPVC(Boolean ownsPVC) { OwnsPVC = ownsPVC; }
+    public void setOwnsPVC(Boolean ownsPVC) { this.ownsPVC = ownsPVC; }
 
 
 
@@ -152,5 +155,13 @@ public class Player {
 
     public ArrayList<Card> getCardHand() {
         return cardHand;
+    }
+
+    public boolean hasCripplingHangover() {
+        return cripplingHangover;
+    }
+
+    public void switchCripplingHangover() {
+        cripplingHangover = (cripplingHangover?false:true);
     }
 }
