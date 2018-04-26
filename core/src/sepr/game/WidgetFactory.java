@@ -464,4 +464,14 @@ public class WidgetFactory {
         FileHandle alteDinSmall = new FileHandle("font/Alte-DIN-Small.fnt");
         return new BitmapFont(alteDinSmall);
     }
+
+    /**
+     * NEW
+     *
+     * @return a new instance of the big font
+     */
+    public static BitmapFont getFontBig() {
+        FileHandle alteDinBig = new FileHandle("font/Alte-DIN-Big.fnt");
+        return new BitmapFont(alteDinBig);
+    }
 }

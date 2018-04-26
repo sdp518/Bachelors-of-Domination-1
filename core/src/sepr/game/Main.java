@@ -20,6 +20,8 @@ public class Main extends Game implements ApplicationListener {
 	private GameScreen gameScreen;
 	private OptionsScreen optionsScreen;
 	private GameSetupScreen gameSetupScreen;
+	private LoadScreen loadScreen;
+	private LoadScreen saveScreen;
 	private SaveLoadManager saveLoadManager;
 	private AudioManager Audio = AudioManager.getInstance();
 
@@ -41,6 +43,8 @@ public class Main extends Game implements ApplicationListener {
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen);
+
 
 		this.setMenuScreen();
 	}
@@ -76,6 +80,7 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void setGameScreen(HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, boolean allocateNeutralPlayer) {
 		gameScreen.setupGame(players, turnTimerEnabled, maxTurnTime, allocateNeutralPlayer);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, this.gameScreen, this.gameSetupScreen);
 		this.setScreen(gameScreen);
 		gameScreen.startGame();
 	}
@@ -108,6 +113,23 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void setGameSetupScreen() {
 		this.setScreen(gameSetupScreen);
+	}
+
+	public void setLoadScreen() {
+		this.loadScreen = new LoadScreen(this, EntryPoint.MENU_SCREEN, this.gameScreen, this.gameSetupScreen);
+		this.setScreen(loadScreen);
+	}
+
+	public void setSaveScreen() {
+		this.setScreen(saveScreen);
+	}
+
+	public void updateSaveScreen(LoadScreen saveScreen) {
+		this.saveScreen = saveScreen;
+	}
+
+	public LoadScreen getSaveScreen() {
+		return this.saveScreen;
 	}
 
 	/**

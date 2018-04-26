@@ -47,6 +47,7 @@ public class JSONifier {
 
         JSONArray sectors = (JSONArray) this.saveState.get("MapState");
         HashMap<Integer, Sector> tempSectors = new HashMap<Integer, Sector>();
+        Sector PVC = null;
         for(Object obj: sectors) {
             Sector temp = new Sector();
             JSONObject sector = (JSONObject) obj;
@@ -58,6 +59,9 @@ public class JSONifier {
             temp.setIsPVCTile(Boolean.parseBoolean(sector.get("PVCTile").toString()));
             temp.setCollege(sector.get("College").toString());
             tempSectors.put(Integer.parseInt(sector.get("HashMapPosition").toString()), temp);
+            if (temp.getIsPVCTile()) {
+                PVC = temp;
+            }
         }
         gameState.sectors = tempSectors;
 
@@ -80,6 +84,9 @@ public class JSONifier {
                 player.setOwnsPVC(ownsPVC);
             } else {
                 player = Player.createNeutralPlayer(id);
+            }
+            if ((PVC != null) && (player.getId() == PVC.getOwnerId())) {
+                player.setOwnsPVC(true);
             }
             tempPlayers.put(Integer.parseInt(temp.get("HashMapPosition").toString()), player);
         }

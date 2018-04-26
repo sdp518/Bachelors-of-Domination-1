@@ -274,6 +274,10 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnTimeStart = turnTimeStart;
     }
 
+    public PVC getProViceChancellor() {
+        return this.ProViceChancellor;
+    }
+
     public HashMap<TurnPhaseType, Phase> getPhases() {
         return phases;
     }
@@ -497,6 +501,7 @@ public class GameScreen implements Screen, InputProcessor{
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                main.setSaveScreen();
                 // TODO Add save and load to pause menu
                 //main.saveGame();
             }
@@ -768,7 +773,7 @@ public class GameScreen implements Screen, InputProcessor{
     }
 
     public long getTurnTimeElapsed() {
-        this.pausedTime += (System.currentTimeMillis() - pauseStartTime);
+        //pausedTime += (System.currentTimeMillis() - pauseStartTime);
         return System.currentTimeMillis() - (turnTimeStart + pausedTime);
     }
 

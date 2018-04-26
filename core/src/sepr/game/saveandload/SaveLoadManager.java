@@ -17,7 +17,6 @@ import sepr.game.utils.TurnPhaseType;
 import java.io.*;
 import java.util.HashMap;
 
-//Order to reimplement saving of files and loading.
 //Todo understand and re-setup saving all data from file and testing
     //Todo Test with JUnit tests, saving looks all good by eye.
 //Todo neaten saving into a clean function, commented for understanding.
@@ -199,14 +198,18 @@ public class SaveLoadManager {
         this.gameScreen.setTurnOrder(this.loadedState.turnOrder);
         this.gameScreen.setCurrentPlayerPointer(this.loadedState.currentPlayerPointer);
         if (this.loadedState.currentPhase == TurnPhaseType.REINFORCEMENT) {
-            gameScreen.getCurrentPlayer().addTroopsToAllocate(-3);
+            gameScreen.getCurrentPlayer().addTroopsToAllocate(-10);
         }
         gameScreen.setCurrentPhase(loadedState.currentPhase);
+        for(Player temp: this.loadedState.players.values()) {
+            if (temp.getOwnsPVC()) {
+                this.gameScreen.getProViceChancellor().setPVCSpawned(true);
+                break;
+            }
+        }
         if(loadedState.turnTimerEnabled) {
             this.gameScreen.setTurnTimeStart(System.currentTimeMillis() - loadedState.turnTimeElapsed);
         }
-
-        this.main.setGameScreenFromLoad(this.gameScreen);
         this.main.returnGameScreen();
         this.gameScreen.getPhases().get(gameScreen.getCurrentPhase()).enterPhase(gameScreen.getCurrentPlayer());
         this.gameScreen.resetPausedTime();
@@ -232,6 +235,9 @@ public class SaveLoadManager {
             fullSector.setCollege(smallSector.getCollege());
             fullSector.setNeutral(smallSector.isNeutral());
             fullSector.setIsPVCTile(smallSector.getIsPVCTile());
+            if (fullSector.getIsPVCTile()) {
+                fullSector.changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+            }
         }
     }
 
