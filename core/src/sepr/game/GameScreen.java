@@ -542,7 +542,10 @@ public class GameScreen implements Screen, InputProcessor{
         pauseMenuStage.addActor(table);
     }
 
-    // TODO Comment new methods below
+    // TODO New card methods below
+    /**
+     * Initialises card deck which stores instances of card available for distribution
+     */
     private void initCardDeck() {
         for (int i=0;i<4;i++){
             cardDeck.add(new PlagueOfGeese());
@@ -552,14 +555,24 @@ public class GameScreen implements Screen, InputProcessor{
         }
     }
 
+    /**
+     * @return the number of cards left in the card deck
+     */
     public int getCardDeckSize() {
         return cardDeck.size();
     }
 
+    /**
+     * @return a random card from the deck
+     */
     public Card getRandomCard() {
         return cardDeck.remove(random.nextInt(cardDeck.size()));
     }
 
+    /**
+     * Sets up the tables and stages for drawing the card UI and completes an initial drawing
+     * of the corner cards
+     */
     public void setupCardUI() {
         cardTable = new Table();
         cardTable.setDebug(false);
@@ -571,14 +584,9 @@ public class GameScreen implements Screen, InputProcessor{
         }
         cardStage.act();
 
-        //System.out.println("Actors after clearing: " + cardStage.getActors());
-
-        /*Card[] currentHand = new Card[getCurrentPlayer().getCardHand().size()];
-        getCurrentPlayer().getCardHand().toArray(currentHand);*/
         closedCardImages = new Image[4];
         openCardImages = new Image[4];
         clickedCard = new ArrayList<Boolean>();
-
 
         for (int i = 0; i < getCurrentPlayer().getCardHand().size(); i++) {
             closedCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
@@ -602,10 +610,6 @@ public class GameScreen implements Screen, InputProcessor{
                 public void clicked(InputEvent event, float x, float y) {
                     event.stop();
                     //System.out.println("open click");
-//                    getCurrentPlayer().getCardHand().get(finalI).act();
-//                    cardDeck.add(getCurrentPlayer().removeCard(finalI));
-//                    updateInputProcessor();
-//                    setupCardUI();
                     if (clickedCard.contains(true)) {
                         unclickCard(clickedCard.indexOf(true));
                         clickedCard.set(clickedCard.indexOf(true), false);
@@ -617,15 +621,12 @@ public class GameScreen implements Screen, InputProcessor{
 
             closedCardImages[i].setPosition((1650-(i*40)),750); // Top right position
             closedCardImages[i].setScale(0.4f);
-
-            //cardImages[i].setPosition((i*400),400);
-            //cardImages[i].setScale(1f);
             closedCardImages[i].setOrigin(closedCardImages[i].getWidth()/2, closedCardImages[i].getHeight()/2);
 
             cardTable.add(openCardImages[i]).padRight(40).padLeft(40);
 
             cardStage.addActor(closedCardImages[i]);
-            //System.out.println("Stage after adding actors:" + cardStage.getActors());
+
         }
         cardTable.addListener(new ClickListener() {
 
@@ -640,13 +641,13 @@ public class GameScreen implements Screen, InputProcessor{
                     }
                     closeCards();
                 }
-
             }
         });
-
-        //System.out.println("Size after setup: " + cardStage.getActors().size);
     }
 
+    /**
+     * Opens the expanded card view
+     */
     private void openCards() {
         for (Actor a : cardStage.getActors()){
             a.addAction(Actions.removeActor());
@@ -655,6 +656,9 @@ public class GameScreen implements Screen, InputProcessor{
         cardStage.addActor(cardTable);
     }
 
+    /**
+     * Closes the expanded card view
+     */
     private void closeCards() {
         for (Actor a : cardStage.getActors()){
             a.addAction(Actions.removeActor());
@@ -667,6 +671,10 @@ public class GameScreen implements Screen, InputProcessor{
         }
     }
 
+    /**
+     * Sets up the card menu overlay for choosing what player to use the card on and swaps
+     * it in for rendering
+     */
     public void clickCard(int i) {
         Table tableCardBackground = new Table();
         tableCardBackground.setDebug(false);
@@ -712,7 +720,6 @@ public class GameScreen implements Screen, InputProcessor{
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        // TODO Click listener
                         event.stop();
                         getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player);
                         cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
@@ -739,6 +746,9 @@ public class GameScreen implements Screen, InputProcessor{
         cardTable.getCell(openCardImages[i]).setActor(clickedCardStack);
     }
 
+    /**
+     * Removes the card menu and swaps back in the regular card image
+     */
     private void unclickCard(int i) {
         cardTable.getCell(clickedCardStack).setActor(openCardImages[i]);
     }
