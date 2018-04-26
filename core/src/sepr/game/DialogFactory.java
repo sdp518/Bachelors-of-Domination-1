@@ -130,29 +130,38 @@ public class DialogFactory {
      * creates a dialog box with a slider and okay box allowing a player who has conquered a sector to select how many troops to move onto it
      *
      * @param bonusTroops amount of troops the player is awarded for conquering the tile
-     * @param maxTroops the amount of troops on the attacking tile
+     * @param maxUndergraduates the amount of troops on the attacking tile
      * @param troopsMoved 3 index final array for setting value of slider to representing how many troops to move: [0] amount of units to move; [1] id of source sector; [2] id of target sector
      * @param prevOwner name of the player who used to own the sector
      * @param newOwner name of the player who now controls the sector
      * @param sectorName name of the sector being taken
      * @param stage The stage to draw the box onto
      */
-    public static void attackSuccessDialogBox(Integer bonusTroops, Integer maxTroops, final int[] troopsMoved, String prevOwner, String newOwner, String sectorName, final int defendingSectorId, final Player attacker, final Player defender, final Map map, final Stage stage) {
-        final Slider slider = new Slider(1, (maxTroops - 1), 1, false, DialogFactory.skin); // slider max value is (maxTroops - 1) as must leave at least one troop on attacking sector
-        slider.setValue(1); // must move at least one troop so set initial value to 1
-        final Label sliderValue = new Label("1", DialogFactory.skin); // label to display the slider value
+    public static void attackSuccessDialogBox(Integer bonusTroops, Integer maxUndergraduates, Integer maxPostgraduates, final int[] troopsMoved, String prevOwner, String newOwner, String sectorName, final int defendingSectorId, final Player attacker, final Player defender, final Map map, final Stage stage) {
+        final Slider sliderUG = new Slider(1, (maxUndergraduates - 1), 1, false, DialogFactory.skin); // slider max value is (maxUndergraduates - 1) as must leave at least one troop on attacking sector
+        final Slider sliderPG = new Slider(0, (maxPostgraduates), 1, false, DialogFactory.skin);
+        sliderUG.setValue(1); // must move at least one troop so set initial value to 1
+        final Label sliderValueUG = new Label("1", DialogFactory.skin); // label to display the slider value
+        final Label sliderValuePG = new Label("0", DialogFactory.skin); // label to display the slider value
 
-        slider.addListener(new ChangeListener() {
+        sliderUG.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                sliderValue.setText(new StringBuilder((int)slider.getValue() + "")); // update slider value label when slider moved
+                sliderValueUG.setText(new StringBuilder((int)sliderUG.getValue() + "")); // update slider value label when slider moved
+            }
+        });
+        sliderPG.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sliderValuePG.setText(new StringBuilder((int)sliderPG.getValue() + "")); // update slider value label when slider moved
             }
         });
 
         Dialog dialog = new Dialog("Success!", DialogFactory.skin) {
             protected void result(Object object) {
                 // set number of troops to move to the value of the slider when the dialog is closed
-                troopsMoved[0] = (int)slider.getValue();
+                troopsMoved[0] = (int)sliderUG.getValue();
+                troopsMoved[1] = (int)sliderPG.getValue();
                 map.handlePVC(defendingSectorId, attacker, defender, stage);
             }
         };
@@ -160,8 +169,17 @@ public class DialogFactory {
         dialog.text(newOwner + " gained " + sectorName + " from " + prevOwner + "\nYou have earned " + bonusTroops + " bonus troops!\nHow many troops would you like to move to the new sector?");
         dialog.getContentTable().row();
 
-        dialog.getContentTable().add(slider).padLeft(20).padRight(20).align(Align.left).expandX();
-        dialog.getContentTable().add(sliderValue).padLeft(20).padRight(20).align(Align.right);
+        dialog.getContentTable().add(sliderUG).padLeft(20).padRight(20).align(Align.left).expandX();
+        dialog.getContentTable().add(sliderValueUG).padLeft(20).padRight(20).align(Align.right);
+
+        dialog.getContentTable().row();
+
+        dialog.text("How many Postgraduates would you like to move?");
+
+        dialog.getContentTable().row();
+
+        dialog.getContentTable().add(sliderPG).padLeft(20).padRight(20).align(Align.left).expandX();
+        dialog.getContentTable().add(sliderValuePG).padLeft(20).padRight(20).align(Align.right);
 
         dialog.getContentTable().row();
 

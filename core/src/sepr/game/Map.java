@@ -277,7 +277,7 @@ public class Map {
             attacker.addUndergraduatesToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker); //TODO fix the movement after attack
 
-            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUndergraduatesInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
+            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUndergraduatesInSector(), sectors.get(attackingSectorId).getPostgraduatesInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 
 
         } else if (sectors.get(defendingSectorId).getUndergraduatesInSector() == 0 && sectors.get(attackingSectorId).getUndergraduatesInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it
@@ -418,8 +418,8 @@ public class Map {
         if (!sectors.get(unitsToMove[2]).isAdjacentTo(sectors.get(unitsToMove[3]))) {
             throw new IllegalArgumentException("Sectors must be adjacent in order to move units");
         }
-        addUnitsToSectorAnimated(unitsToMove[2], -unitsToMove[0], 0); // remove units from source
-        addUnitsToSectorAnimated(unitsToMove[3], unitsToMove[0], 0); // add units to target
+        addUnitsToSectorAnimated(unitsToMove[2], -unitsToMove[0], -unitsToMove[1]); // remove units from source
+        addUnitsToSectorAnimated(unitsToMove[3], unitsToMove[0], unitsToMove[1]); // add units to target
     }
 
     /**
@@ -427,7 +427,7 @@ public class Map {
      */
     private void detectUnitsMove() {
         if (unitsToMove != null) {
-            if (unitsToMove[0] != -1) {
+            if (unitsToMove[0] != -1 || unitsToMove[1] != -1) {
                 moveUnits();
                 unitsToMove = null;
             }
