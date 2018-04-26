@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import javafx.util.Pair;
 import org.lwjgl.Sys;
+import sepr.game.utils.Constants;
 import sepr.game.utils.PlayerType;
 
 import java.lang.reflect.Constructor;
@@ -500,12 +501,11 @@ public class GameSetupScreen implements Screen{
      */
     private void startGame() {
         HashMap<Integer, Player> x = generatePlayerHashmaps();
-        int MAX_TURN_TIME = 120;
         Audio.disposeMusic("sound/IntroMusic/introMusic.mp3");
         Audio.loadMusic("sound/Gameplay Music/wind.mp3"); //loads and plays the gamePlay music
         isLoading = false;
         loadingWidgetDrawn = false;
-        main.setGameScreen(x, turnTimerSwitch.isChecked(), MAX_TURN_TIME, neutralPlayerSwitch.isChecked());
+        main.setGameScreen(x, turnTimerSwitch.isChecked(), Constants.MAX_TURN_TIME, neutralPlayerSwitch.isChecked());
     }
 
     /**
