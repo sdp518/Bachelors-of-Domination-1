@@ -689,7 +689,6 @@ public class GameScreen implements Screen, InputProcessor{
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Catches click on clicked card
                 if (!event.isStopped()) {
                     event.stop();
                     if (clickedCard.contains(true)){
@@ -705,17 +704,20 @@ public class GameScreen implements Screen, InputProcessor{
 
         ArrayList<Label> playerLabels = new ArrayList<Label>();
 
-        for (Player p : players.values()) {
-            if (!p.equals(getCurrentPlayer())) {
-                Label l = new Label(p.getPlayerName(), smallStyle);
-                l.setColor(p.getSectorColour());
+        for (final Player player : players.values()) {
+            if (!player.equals(getCurrentPlayer())) {
+                Label l = new Label(player.getPlayerName(), smallStyle);
+                l.setColor(player.getSectorColour());
                 l.addListener(new ClickListener() {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         // TODO Click listener
                         event.stop();
-                        System.out.println("CLick player");
+                        getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player);
+                        cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
+                        updateInputProcessor();
+                        setupCardUI();
                     }
                 });
                 playerLabels.add(l);
