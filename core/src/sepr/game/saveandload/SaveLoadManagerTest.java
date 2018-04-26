@@ -128,7 +128,7 @@ public class SaveLoadManagerTest implements ApplicationListener {
             assertTrue("Player ID", value.getId() == index);
             assertTrue("Player College", value.getCollegeName() == GameSetupScreen.CollegeName.DERWENT);
             assertTrue("Player Name", value.getPlayerName().equalsIgnoreCase(Integer.toString(index)));
-            assertTrue("Player Troops To Allocate", value.getTroopsToAllocate() == index);
+            assertTrue("Player Troops To Allocate", value.getTroopsToAllocate()[0] == index);
             assertTrue("Player Sector Colour", value.getSectorColour().equals(new Color(0, 0, 0, 0)));
             assertTrue("Player Type",value.getPlayerType() == PlayerType.HUMAN);
             assertTrue("Player Owns PVC",value.getOwnsPVC() == false);

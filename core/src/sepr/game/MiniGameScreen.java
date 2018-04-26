@@ -254,7 +254,7 @@ public class MiniGameScreen implements Screen {
      */
     public void endMiniGame() {
         Random random = new Random();
-        player.addTroopsToAllocate(score);
+        player.addUndergraduatesToAllocate(score);
         DialogFactory.miniGameOverDialog(main, stage, gameScreen, score);
 
         if (score == 0) {

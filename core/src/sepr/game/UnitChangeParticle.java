@@ -22,7 +22,7 @@ public class UnitChangeParticle {
      * @param amount the amount of troops that the sector is changing by
      * @param centrePosition initial position of the particle
      */
-    public UnitChangeParticle(int amount, Vector2 centrePosition) {
+    public UnitChangeParticle(String amount, Vector2 centrePosition) {
         this.centrePosition = centrePosition;
         this.startTime = System.currentTimeMillis();
         overlay = new Texture("uiComponents/troopCountOverlay.png");
@@ -30,7 +30,7 @@ public class UnitChangeParticle {
         font = WidgetFactory.getFontSmall();
 
         String signedAmount;
-        if (amount > 0) { // if increase make text green and add a plus sign
+        if (!amount.equals("0")) { // if increase make text green and add a plus sign
             this.font.setColor(Color.GREEN);
             signedAmount = "+" + amount;
         } else { // if decrease make text red and add a minus sign

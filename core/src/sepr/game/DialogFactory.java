@@ -47,8 +47,8 @@ public class DialogFactory {
      * @param troopsToAllocate Integer to be used to display number of troops the player has to allocate
      * @param stage to draw the box onto
      */
-    public static void nextTurnDialogBox(String nextPlayer, Integer troopsToAllocate, Stage stage) {
-        basicDialogBox("Next Turn", "Next Player: " + nextPlayer + "\nTroops to Allocate: " + troopsToAllocate, stage);
+    public static void nextTurnDialogBox(String nextPlayer, int[] troopsToAllocate, Stage stage) {
+        basicDialogBox("Next Turn", "Next Player: " + nextPlayer + "\nTroops to Allocate: " + troopsToAllocate[0] + "/" + troopsToAllocate[1], stage);
     }
 
     /**
@@ -173,17 +173,25 @@ public class DialogFactory {
      * creates a dialog modal allowing the user to select how many units they want to allocate to a sector
      *
      * @param maxAllocation maximum amount of troops that can be assigned
-     * @param allocation 2 index array storing : [0] number of troops to allocate ; [1] id of sector to allocate to
+     * @param allocation 3 index array storing : [0] number of ug to allocate ; [1] number of pg to allocate ; [2] id of sector to allocate to
      * @param sectorName name of sector being allocated to
      * @param stage to draw the box onto
      */
     public static void allocateUnitsDialog(Integer maxAllocation, final int[] allocation, String sectorName, Stage stage) {
-        final Slider slider = new Slider(0, maxAllocation, 1, false, DialogFactory.skin);
-        final Label sliderValue = new Label("1", DialogFactory.skin);
-        slider.addListener(new ChangeListener() {
+        final Slider sliderUG = new Slider(0, maxAllocation, 1, false, DialogFactory.skin);
+        final Slider sliderPG = new Slider(0, 1, 1, false, DialogFactory.skin);
+        final Label sliderValueUG = new Label("1", DialogFactory.skin);
+        final Label sliderValuePG = new Label("1", DialogFactory.skin);
+        sliderUG.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                sliderValue.setText(new StringBuilder((int)slider.getValue() + ""));
+                sliderValueUG.setText(new StringBuilder((int)sliderUG.getValue() + ""));
+            }
+        });
+        sliderPG.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                sliderValuePG.setText(new StringBuilder((int)sliderPG.getValue() + ""));
             }
         });
 
@@ -191,17 +199,24 @@ public class DialogFactory {
             protected void result(Object object) {
                 if (object.equals("0")) { // Cancel button pressed
                     allocation[0] = -1;
-                    allocation[1] = -1; // set allocating sector id to -1 to indicate the allocation has been cancelled
+                    allocation[1] = -1;
+                    allocation[2] = -1; // set allocating sector id to -1 to indicate the allocation has been cancelled
                 } else if (object.equals("1")) { // Ok button pressed
-                    allocation[0] = (int)slider.getValue(); // set the number of troops to allocate to the value of the slider
+                    allocation[0] = (int)sliderUG.getValue(); // set the number of ug to allocate to the value of the slider
+                    allocation[1] = (int)sliderPG.getValue(); // set the number of pg to allocate to the value of the slider
                 }
             }
         };
-        dialog.text("You can allocate up to " + maxAllocation + " troops to " + sectorName);
+        dialog.text("You can allocate up to " + maxAllocation + " undergraduates to " + sectorName);
         dialog.getContentTable().row();
 
-        dialog.getContentTable().add(slider).padLeft(20).padRight(20).align(Align.left).expandX();
-        dialog.getContentTable().add(sliderValue).padLeft(20).padRight(20).align(Align.right);
+        dialog.getContentTable().add(sliderUG).padLeft(20).padRight(20).align(Align.left).expandX();
+        dialog.getContentTable().add(sliderValueUG).padLeft(20).padRight(20).align(Align.right);
+        dialog.getContentTable().row();
+        dialog.text("You can allocate 1 postgraduate to " + sectorName);
+        dialog.getContentTable().row();
+        dialog.getContentTable().add(sliderPG).padLeft(20).padRight(20).align(Align.left).expandX();
+        dialog.getContentTable().add(sliderValuePG).padLeft(20).padRight(20).align(Align.right);
 
         dialog.getContentTable().row();
 

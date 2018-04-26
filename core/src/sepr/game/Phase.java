@@ -260,7 +260,7 @@ public abstract class Phase extends Stage {
      * updates the display of the number of troops the current player will have in their next reinforcement phase
      */
     void updateTroopReinforcementLabel() {
-        this.reinforcementLabel.setText("Troop Allocation: " + currentPlayer.getTroopsToAllocate());
+        this.reinforcementLabel.setText("Troop Allocation: " + currentPlayer.getTroopsToAllocate()[0] + "/" + currentPlayer.getTroopsToAllocate()[1]);
     }
 
     /**

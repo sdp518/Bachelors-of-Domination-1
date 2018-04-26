@@ -136,7 +136,7 @@ public class SaveLoadManager {
         HashMap<Integer, Player> players = new HashMap<Integer, Player>();
 
         for (GameState.PlayerState player : playerStates){
-            players.put(player.hashMapPosition, new Player(player.id, player.collegeName, new Color(player.sectorColour.r, player.sectorColour.g, player.sectorColour.b, player.sectorColour.a), player.playerType, player.playerName, player.troopsToAllocate, player.ownsPVC));
+           // players.put(player.hashMapPosition, new Player(player.id, player.collegeName, new Color(player.sectorColour.r, player.sectorColour.g, player.sectorColour.b, player.sectorColour.a), player.playerType, player.playerName, player.troopsToAllocate, player.ownsPVC));
         }
 
         return players;
@@ -273,7 +273,7 @@ public class SaveLoadManager {
             playerState.id = value.getId(); // Store the Player's ID
             playerState.collegeName = value.getCollegeName(); // Store the Player's college
             playerState.playerName = value.getPlayerName(); // Store the Player's name
-            playerState.troopsToAllocate = value.getTroopsToAllocate(); // Store the number of troops left to allocate
+            playerState.troopsToAllocate = value.getTroopsToAllocate()[0]; // Store the number of troops left to allocate
             playerState.sectorColour = value.getSectorColour(); // Store the Player's Sector's colour
             playerState.playerType = value.getPlayerType(); // Store the Player's type
             playerState.ownsPVC = value.getOwnsPVC(); // Store whether the Player owns the PVC

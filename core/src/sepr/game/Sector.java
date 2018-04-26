@@ -323,9 +323,24 @@ public class Sector implements ApplicationListener {
      * ADDED ASSESSMENT 4
      * Adds a postgrad to the sector
      */
-    public void addPostgraduate() {
-        Postgraduates postgraduate = new Postgraduates();
-        this.unitsInSector.add(postgraduate);
+    public void addPostgraduate(int amount) {
+        System.out.println("Entered");
+        if (amount > 0) {
+            System.out.println("Added");
+            Postgraduates postgraduate = new Postgraduates();
+            this.unitsInSector.add(postgraduate);
+        }
+        else if (amount < 0) {
+            for (Iterator<GangMembers> iterator = this.unitsInSector.iterator(); iterator.hasNext();) {
+                GangMembers g = iterator.next();
+                if (g.getName().equals("Postgraduate")) {
+                    System.out.println("Removed");
+                    iterator.remove();
+                    break;
+                }
+            }
+            unitsInSector.trimToSize();
+        }
     }
 
     /**

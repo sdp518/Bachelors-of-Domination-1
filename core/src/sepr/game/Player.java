@@ -10,7 +10,7 @@ public class Player {
     private int id; // player's unique id
     private GameSetupScreen.CollegeName collegeName; // college this player chose
     private String playerName;
-    private int troopsToAllocate; // how many troops the player has to allocate at the start of their next reinforcement phase
+    private int[] troopsToAllocate; // how many troops the player has to allocate at the start of their next reinforcement phase, 0 - ug, 1 - pg
     private Color sectorColour; // what colour to shade sectors owned by the player
     private PlayerType playerType; // Human or Neutral player
     private Boolean OwnsPVC;
@@ -27,18 +27,23 @@ public class Player {
     public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName) {
         this.id = id;
         this.collegeName = collegeName;
-        this.troopsToAllocate = 0;
+        this.troopsToAllocate = new int[2];
+        this.troopsToAllocate[0] = 0;
+        this.troopsToAllocate[1] = 0;
         this.sectorColour = sectorColour;
         this.playerType = playerType;
         this.playerName = playerName;
         this.OwnsPVC = false;
     }
 
-    public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int troopsToAllocate, boolean ownsPVC){
+
+    public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int undergraduatesToAllocate, int postgraduatesToAllocate, boolean ownsPVC){
         this(id, collegeName, sectorColour, playerType, playerName);
 
-        this.troopsToAllocate = troopsToAllocate;
+        this.troopsToAllocate[0] = undergraduatesToAllocate;
+        this.troopsToAllocate[1] = postgraduatesToAllocate;
         this.setOwnsPVC(ownsPVC);
+        //this never actually gets used
     }
 
     /**
@@ -117,7 +122,7 @@ public class Player {
      * fetches number of troops this player can allocate in their next turn
      * @return amount troops to allocate
      */
-    public int getTroopsToAllocate() {
+    public int[] getTroopsToAllocate() {
         return troopsToAllocate;
     }
 
@@ -127,14 +132,18 @@ public class Player {
      * @param troopsToAllocate number of troops to allocate
      */
     public void setTroopsToAllocate(int troopsToAllocate) {
-        this.troopsToAllocate = troopsToAllocate;
+        this.troopsToAllocate[0] = troopsToAllocate;
     }
 
     /**
      * increases the number of troops to allocate by the the given amount
      * @param troopsToAllocate amount to increase allocation by
      */
-    public void addTroopsToAllocate(int troopsToAllocate) {
-        this.troopsToAllocate += troopsToAllocate;
+    public void addUndergraduatesToAllocate(int troopsToAllocate) {
+        this.troopsToAllocate[0] += troopsToAllocate;
+    }
+
+    public void addPostGraduatesToAllocate(int troopsToAllocate) {
+        this.troopsToAllocate[1] += troopsToAllocate;
     }
 }
