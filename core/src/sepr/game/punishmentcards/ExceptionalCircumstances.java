@@ -5,6 +5,9 @@ public class ExceptionalCircumstances extends Card {
         super(CardType.EXCEPTIONAL_CIRCUMSTANCES);
     }
 
+    /**
+     * Effect: Swap sectors with chosen player
+     */
     @Override
     public void act() {
         System.out.println(type.getCardType());
