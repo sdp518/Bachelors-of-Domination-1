@@ -3,6 +3,7 @@ package sepr.game;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,15 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import javafx.scene.shape.Shape;
 import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
@@ -82,6 +82,8 @@ public class GameScreen implements Screen, InputProcessor{
     private Stage cardStage = new Stage();
     private Table cardTable;
     private Image[] closedCardImages, openCardImages;
+    private ArrayList<Boolean> clickedCard;
+    private Stack clickedCardStack;
 
     /**
      * sets up rendering objects and key input handling
@@ -575,11 +577,13 @@ public class GameScreen implements Screen, InputProcessor{
         getCurrentPlayer().getCardHand().toArray(currentHand);*/
         closedCardImages = new Image[4];
         openCardImages = new Image[4];
+        clickedCard = new ArrayList<Boolean>();
 
 
         for (int i = 0; i < getCurrentPlayer().getCardHand().size(); i++) {
             closedCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
             openCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
+            clickedCard.add(false);
 
             final int finalI = i;
             closedCardImages[i].addListener(new ClickListener() {
@@ -596,11 +600,18 @@ public class GameScreen implements Screen, InputProcessor{
 
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    event.stop();
                     //System.out.println("open click");
-                    getCurrentPlayer().getCardHand().get(finalI).act();
-                    cardDeck.add(getCurrentPlayer().removeCard(finalI));
-                    updateInputProcessor();
-                    setupCardUI();
+//                    getCurrentPlayer().getCardHand().get(finalI).act();
+//                    cardDeck.add(getCurrentPlayer().removeCard(finalI));
+//                    updateInputProcessor();
+//                    setupCardUI();
+                    if (clickedCard.contains(true)) {
+                        unclickCard(clickedCard.indexOf(true));
+                        clickedCard.set(clickedCard.indexOf(true), false);
+                    }
+                    clickedCard.set(finalI, true);
+                    clickCard(finalI);
                 }
             });
 
@@ -620,9 +631,16 @@ public class GameScreen implements Screen, InputProcessor{
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //System.out.println("outside click");
-                updateInputProcessor();
-                closeCards();
+                if (!event.isStopped()) {
+                    //System.out.println("outside click");
+                    updateInputProcessor();
+                    if (clickedCard.contains(true)){
+                        unclickCard(clickedCard.indexOf(true));
+                        clickedCard.set(clickedCard.indexOf(true), false);
+                    }
+                    closeCards();
+                }
+
             }
         });
 
@@ -647,6 +665,62 @@ public class GameScreen implements Screen, InputProcessor{
                 cardStage.addActor(i);
             }
         }
+    }
+
+    public void clickCard(int i) {
+        Table tableCardBackground = new Table();
+        tableCardBackground.setDebug(false);
+        tableCardBackground.setBackground(openCardImages[i].getDrawable());
+        tableCardBackground.setSize(openCardImages[0].getImageWidth(), openCardImages[0].getImageHeight());
+
+        Pixmap pixmap=new Pixmap(Math.round(openCardImages[0].getImageWidth()), Math.round(openCardImages[0].getImageHeight()), Pixmap.Format.RGBA8888);
+        pixmap.setColor(0f,0.0f,0f,0.8f);
+        pixmap.fillRectangle(0,0, pixmap.getWidth(), pixmap.getHeight());
+        TextureRegionDrawable overlay = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+        pixmap.dispose();
+
+        Table tableOverlay = new Table();
+        tableOverlay.setDebug(false);
+        tableOverlay.setBackground(overlay);
+        tableOverlay.setSize(openCardImages[0].getImageWidth(), openCardImages[0].getImageHeight());
+
+        Label.LabelStyle smallStyle = new Label.LabelStyle();
+        smallStyle.font = WidgetFactory.getFontSmall();
+
+        ArrayList<Label> playerLabels = new ArrayList<Label>();
+
+        for (Player p : players.values()) {
+            if (!p.equals(getCurrentPlayer())) {
+                Label l = new Label(p.getPlayerName(), smallStyle);
+                l.setColor(p.getSectorColour());
+                l.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        // TODO Click listener
+                    }
+                });
+                playerLabels.add(l);
+            }
+        }
+
+        tableOverlay.top();
+        tableOverlay.add(new Label("Use on Player: ", smallStyle)).padBottom(30);
+        for (Label l : playerLabels) {
+            tableOverlay.row().center();
+            tableOverlay.add(l).padBottom(40);
+        }
+
+        clickedCardStack = new Stack();
+        clickedCardStack.add(tableCardBackground);
+        clickedCardStack.add(tableOverlay);
+
+        //System.out.println("swapping");
+        cardTable.getCell(openCardImages[i]).setActor(clickedCardStack);
+    }
+
+    private void unclickCard(int i) {
+        cardTable.getCell(clickedCardStack).setActor(openCardImages[i]);
     }
 
     /**
