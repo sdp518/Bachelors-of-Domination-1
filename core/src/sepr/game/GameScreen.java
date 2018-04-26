@@ -682,7 +682,23 @@ public class GameScreen implements Screen, InputProcessor{
         Table tableOverlay = new Table();
         tableOverlay.setDebug(false);
         tableOverlay.setBackground(overlay);
+        tableOverlay.setTouchable(Touchable.enabled);
         tableOverlay.setSize(openCardImages[0].getImageWidth(), openCardImages[0].getImageHeight());
+
+        tableOverlay.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Catches click on clicked card
+                if (!event.isStopped()) {
+                    event.stop();
+                    if (clickedCard.contains(true)){
+                        unclickCard(clickedCard.indexOf(true));
+                        clickedCard.set(clickedCard.indexOf(true), false);
+                    }
+                }
+            }
+        });
 
         Label.LabelStyle smallStyle = new Label.LabelStyle();
         smallStyle.font = WidgetFactory.getFontSmall();
@@ -698,6 +714,8 @@ public class GameScreen implements Screen, InputProcessor{
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         // TODO Click listener
+                        event.stop();
+                        System.out.println("CLick player");
                     }
                 });
                 playerLabels.add(l);
