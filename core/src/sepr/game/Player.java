@@ -19,6 +19,7 @@ public class Player {
     private boolean ownsPVC;
 
     private boolean cripplingHangover;
+    private boolean goldenGoose;
     private ArrayList<Card> cardHand;
 
     /**
@@ -39,6 +40,7 @@ public class Player {
         this.playerName = playerName;
         this.ownsPVC = false;
         this.cripplingHangover = false;
+        this.goldenGoose = false;
         this.cardHand = new ArrayList<Card>();
     }
 
@@ -163,5 +165,13 @@ public class Player {
 
     public void switchCripplingHangover() {
         cripplingHangover = (cripplingHangover?false:true);
+    }
+
+    public boolean hasGoldenGoose() {
+        return goldenGoose;
+    }
+
+    public void switchGoldenGoose() {
+        goldenGoose = (goldenGoose?false:true);
     }
 }

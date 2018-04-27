@@ -178,6 +178,17 @@ public abstract class Phase extends Stage {
         else {
             gameScreen.setMaxTurnTime(Constants.MAX_TURN_TIME);
         }
+
+        if (player.hasGoldenGoose()) {
+            Audio.loadMusic("sound/GoldenGoose/geese.mp3");
+            player.switchGoldenGoose();
+        }
+        else {
+            if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
+                Audio.disposeMusic("sound/GoldenGoose/geese.mp3");
+            }
+        }
+
         gameScreen.setupCardUI();
     }
 
