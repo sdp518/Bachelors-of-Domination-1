@@ -19,7 +19,6 @@ import sepr.game.saveandload.GameState;
 import sepr.game.saveandload.SaveLoadManager;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,8 +30,6 @@ public class LoadScreen implements Screen{
     private Main main;
     private Stage stage;
     private Table table;
-    private GameScreen gameScreen;
-    private GameSetupScreen gameSetupScreen;
     private SaveLoadManager saveLoadManager;
 
     private EntryPoint entryPoint;
@@ -49,14 +46,10 @@ public class LoadScreen implements Screen{
      *
      * @param main for changing to different screens
      * @param entryPoint for reference as to where screen was entered from
-     * @param gameScreen to access data for save and load
-     * @param gameSetupScreen for
      */
-    public LoadScreen (final Main main, EntryPoint entryPoint, GameScreen gameScreen, GameSetupScreen gameSetupScreen, SaveLoadManager saveLoadManager) {
+    public LoadScreen (final Main main, EntryPoint entryPoint, SaveLoadManager saveLoadManager) {
         this.main = main;
         this.entryPoint = entryPoint;
-        this.gameScreen = gameScreen;
-        this.gameSetupScreen = gameSetupScreen;
         this.saveLoadManager = saveLoadManager;
 
         if (entryPoint == EntryPoint.MENU_SCREEN) {
@@ -64,7 +57,6 @@ public class LoadScreen implements Screen{
                 @Override
                 public boolean keyUp(int keyCode) {
                     if (keyCode == Input.Keys.ESCAPE) { // change back to the menu screen if the player presses esc
-                        //main.sounds.playSound("menu_sound");
                         main.setMenuScreen();
                     }
                     return super.keyUp(keyCode);
@@ -76,7 +68,6 @@ public class LoadScreen implements Screen{
                 @Override
                 public boolean keyUp(int keyCode) {
                     if (keyCode == Input.Keys.ESCAPE) { // change back to the game screen if the player presses esc
-                        //main.sounds.playSound("menu_sound");
                         main.returnGameScreen();
                     }
                     return super.keyUp(keyCode);
@@ -112,33 +103,6 @@ public class LoadScreen implements Screen{
         loadingWidgetStage.addActor(table);
     }
 
-    /*private Data loadDataForSaveSlots(String fileName) {
-        Path currentRelativePath = Paths.get("");
-        String currentWorkingDir = currentRelativePath.toAbsolutePath().toString();
-        String loadFileName = currentWorkingDir + "\\saves\\"+ fileName;
-        ObjectInputStream ois = null;
-        Data loadedSave = null;
-        try {
-            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(loadFileName)));
-            loadedSave = (Data) ois.readObject();
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        return loadedSave;
-    }*/
-
     /**
      * sets up table displaying saves
      *
@@ -161,10 +125,6 @@ public class LoadScreen implements Screen{
             if ((loadedState == null) && (this.entryPoint == EntryPoint.MENU_SCREEN)) {
                 continue;
             }
-            //Data loadedSave = this.loadDataForSaveSlots(i + ".data");
-            //if ((loadedSave == null) && (this.entryPoint == EntryPoint.MENU_SCREEN)) {
-            //    continue;
-            //}
             final int thisTableNo = i;
             final Table t = saveTables[i];
             t.setDebug(false);
@@ -234,7 +194,6 @@ public class LoadScreen implements Screen{
     /**
      * sets up the UI for the load screen
      */
-    @SuppressWarnings("Duplicates") // As same code is present in other screens
     private void setupUi() {
 
         // add the menu background
@@ -266,30 +225,7 @@ public class LoadScreen implements Screen{
                         LoadScreen save = main.getSaveScreen();
                         DialogFactory.basicDialogBox("Save Successful", "The game has been successfully saved.", save.getStage());
                     }
-                }
-                //HashMap<Integer, Player> players = gameScreen.getPlayers();
-                /*if (!main.getAllocateNeutralPlayer()) {
-                    players.remove(4);
-                }
-                boolean saved = Save.saveGame(fileName,
-                        gameScreen.getCurrentPhase(),
-                        gameScreen.getSectors(),
-                        players,
-                        gameScreen.getTurnOrder(),
-                        gameScreen.getCurrentPlayerPointer(),
-                        gameScreen.isTurnTimerEnabled(),
-                        gameScreen.getMaxTurnTime(),
-                        gameScreen.getTurnTimeElapsed(),
-                        gameScreen.isGamePaused());
-                main.updateSaveScreen(new LoadScreen(main, EntryPoint.GAME_SCREEN, gameScreen, gameSetupScreen));
-                main.setSaveScreen();
-                if (saved) {
-                    LoadScreen save = main.getSaveScreen();
-                    DialogFactory.basicDialogBox("Save Successful", "The game has been successfully saved.", save.getStage());
-                }
-                players.put(4, Player.createNeutralPlayer(4));
-            */}
-        });
+                }}});
 
         TextButton loadButton = WidgetFactory.genStartGameButton();
         loadButton.setText("LOAD");
@@ -300,14 +236,9 @@ public class LoadScreen implements Screen{
                     DialogFactory.basicDialogBox("Load Failure", "No save has been selected", stage);
                 } else {
                     try {
-                        saveLoadManager.loadSaveByID(saveID);
-                        showLoadingWidget();
-                        /*Data loadedSave = loadDataForSaveSlots(fileName);
-                        if (loadedSave != null) {
+                        if (saveLoadManager.getLoadedStates()[saveID] != null) {
                             showLoadingWidget();
-                        } else {
-                            DialogFactory.basicDialogBox("Load Failure", "There is no save game to load in that slot.", stage);
-                        }*/
+                        }
                     } catch (Exception e) {
                         DialogFactory.basicDialogBox("Load Failure", "There is no save game to load in that slot.", stage);
                     }
@@ -356,7 +287,7 @@ public class LoadScreen implements Screen{
      *
      * @return the stage of the current screen.
      */
-    public Stage getStage() {
+    private Stage getStage() {
         return this.stage;
     }
 
@@ -374,7 +305,7 @@ public class LoadScreen implements Screen{
     public void render(float delta) {
         if (loadingWidgetDrawn) {
             try {
-                //Load.loadGame(fileName, gameScreen, main);
+                saveLoadManager.loadSaveByID(saveID);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();

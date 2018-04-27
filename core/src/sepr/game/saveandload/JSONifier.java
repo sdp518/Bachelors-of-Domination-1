@@ -18,8 +18,8 @@ import java.util.Map.Entry;
  */
 public class JSONifier {
 
-    public GameState state; // The state of the game
-    public JSONObject saveState; // The JSON state of the game
+    private GameState state; // The state of the game
+    private JSONObject saveState; // The JSON state of the game
 
     /**
      * Set the state to represent as JSON
@@ -48,6 +48,7 @@ public class JSONifier {
         JSONArray sectors = (JSONArray) this.saveState.get("MapState");
         HashMap<Integer, Sector> tempSectors = new HashMap<Integer, Sector>();
         Sector PVC = null;
+
         for(Object obj: sectors) {
             Sector temp = new Sector();
             JSONObject sector = (JSONObject) obj;
@@ -67,6 +68,7 @@ public class JSONifier {
 
         JSONArray players = (JSONArray) this.saveState.get("PlayerState");
         HashMap<Integer, Player> tempPlayers = new HashMap<Integer, Player>();
+
         for(Object obj: players) {
             JSONObject temp = (JSONObject) obj;
             int id = Integer.parseInt(temp.get("ID").toString());
@@ -78,6 +80,7 @@ public class JSONifier {
             JSONObject colors = (JSONObject) temp.get("SectorColour");
             Color color = new Color(Float.parseFloat(colors.get("R").toString()), Float.parseFloat(colors.get("G").toString()), Float.parseFloat(colors.get("B").toString()), Float.parseFloat(colors.get("A").toString()));
             Player player;
+
             if (playerType.equals(PlayerType.HUMAN)) {
                 player = Player.createHumanPlayer(id, collegeName, color, playerName);
                 player.setTroopsToAllocate(troopsToAllocate);
@@ -85,6 +88,7 @@ public class JSONifier {
             } else {
                 player = Player.createNeutralPlayer(id);
             }
+
             if ((PVC != null) && (player.getId() == PVC.getOwnerId())) {
                 player.setOwnsPVC(true);
             }
@@ -102,94 +106,6 @@ public class JSONifier {
 
         return gameState;
     }
-
-    /**
-     * Get a game state from its JSON representation
-     * @return GameState to load
-     */
-    /*public GameState oldgetStateFromJSON() {
-        GameState gameState = new GameState(); // GameState to return
-        gameState.currentPhase = this.StringToPhase(this.saveState.get("CurrentPhase").toString()); // Get the current stage
-
-        JSONArray sectors = (JSONArray) this.saveState.get("MapState"); // Get a JSONArray of the map Sectors
-        gameState.mapState = gameState.new MapState(); // MapState to return
-        gameState.mapState.sectorStates = new GameState.SectorState[sectors.size()]; // Array of SectorStates to load to the map
-
-        int i = 0; // Index of current sector state to load
-
-        for (Object obj : sectors){ // Iterate through JSON sectors
-            JSONObject sector = (JSONObject)obj; // Cast to JSONObject
-
-            gameState.mapState.sectorStates[i] = gameState.new SectorState(); // SectorState to load
-
-            gameState.mapState.sectorStates[i].hashMapPosition = (int)(long)(Long)sector.get("HashMapPosition"); // Get Sector's HashMap position
-            gameState.mapState.sectorStates[i].id = (int)(long)(Long)sector.get("ID"); // Get Sector's ID
-            gameState.mapState.sectorStates[i].ownerId = (int)(long)(Long)sector.get("OwnerID"); // Get Sector's Owner's ID
-            gameState.mapState.sectorStates[i].displayName = (String)sector.get("DisplayName"); // Get Sector's display name
-            gameState.mapState.sectorStates[i].unitsInSector = (int)(long)(Long)sector.get("UnitsInSector"); // Get the number of units in the Sector
-            gameState.mapState.sectorStates[i].reinforcementsProvided = (int)(long)(Long)sector.get("ReinforcementsProvided"); // Get the number of reinforcements provided
-            gameState.mapState.sectorStates[i].college = (String)sector.get("College"); // Get the Sector's college
-            gameState.mapState.sectorStates[i].texturePath = (String)sector.get("TexturePath"); // Get the Sector's texture filepath
-            gameState.mapState.sectorStates[i].neutral = (Boolean)sector.get("Neutral"); // Get whether the Sector is nneutral
-
-            JSONArray adjacentSectors = (JSONArray)sector.get("AdjacentSectorIDs"); // Get the JSONArray of adjacent Sectors
-            gameState.mapState.sectorStates[i].adjacentSectorIds = new int[adjacentSectors.size()]; // Create a new array of adjacent Sectors
-
-            int j = 0; // Index of current adjacent sector
-
-            for (Object adj : adjacentSectors){ // Iterate through adjacent sectors and add each to the adjacent sectors
-                gameState.mapState.sectorStates[i].adjacentSectorIds[j] = (int)(long)(Long)adj;
-
-                j++;
-            }
-
-            gameState.mapState.sectorStates[i].sectorCentreX = (int)(long)(Long)sector.get("SectorCenterX"); // Get the Sector's X coordinate
-            gameState.mapState.sectorStates[i].sectorCentreY = (int)(long)(Long)sector.get("SectorCenterY"); // Get the Sector's Y coordinate
-            gameState.mapState.sectorStates[i].decor = (Boolean)sector.get("Decor"); // Get whether the Sector is decor
-            gameState.mapState.sectorStates[i].fileName = (String)sector.get("FileName"); // Get the file name of the Sector
-            gameState.mapState.sectorStates[i].allocated = (Boolean)sector.get("Allocated"); // Get whether the sector has been allocated
-
-            i++;
-        }
-
-        JSONArray players = (JSONArray)this.saveState.get("PlayerState"); // Get the JSONArray of player states
-        gameState.playerStates = new GameState.PlayerState[players.size()]; // Create an array of Player States
-
-        int k = 0; // Current index of player states
-
-        for (Object pl : players){ // Iterate through players
-            JSONObject player = (JSONObject)pl;
-
-            gameState.playerStates[k] = gameState.new PlayerState(); // Create new PlayerState
-
-            gameState.playerStates[k].hashMapPosition = (int)(long)(Long)player.get("HashMapPosition"); // Get Player's HashMap position
-            gameState.playerStates[k].id = (int)(long)(Long)player.get("ID"); // Get Player's ID
-            gameState.playerStates[k].collegeName = GameSetupScreen.CollegeName.fromString((String)player.get("CollegeName")); // Get Player's college name
-            gameState.playerStates[k].playerName = (String)player.get("PlayerName"); // Get Player's name
-            gameState.playerStates[k].troopsToAllocate = (int)(long)(Long)player.get("TroopsToAllocate"); // Get the troops that the Player has left to allocate
-            JSONObject colour = (JSONObject)player.get("SectorColour"); // Get the Player's Sector colour
-            gameState.playerStates[k].sectorColour = new Color((float)(double)(Double)colour.get("R"),(float)(double)(Double)colour.get("G"),(float)(double)(Double)colour.get("B"),(float)(double)(Double)colour.get("A")); // Read Sector colour into a new colour object
-            gameState.playerStates[k].playerType = PlayerType.fromString((String)player.get("PlayerType")); // Get the Player's type
-            gameState.playerStates[k].ownsPVC = (boolean)(Boolean)player.get("OwnsPVC"); // Get whether the Player owns the PVC
-
-            k++;
-        }
-
-        gameState.turnTimerEnabled = (Boolean)this.saveState.get("TurnTimerEnabled"); // Get whether the turn timer is enabled
-        gameState.maxTurnTime = (int)(long)(Long)this.saveState.get("MaxTurnTime"); // Get the maximum turn time
-        gameState.turnTimeStart = (Long)this.saveState.get("TurnTimeStart"); // Get the start time of the turn
-
-        gameState.turnOrder = new ArrayList<Integer>(); // Turn order
-        JSONArray turnOrderJSON = (JSONArray)this.saveState.get("TurnOrder"); // Get the turn order JSONArray
-
-        for (Object obj : turnOrderJSON){ // Iterate through the turn order array and add the order to the game state
-            gameState.turnOrder.add((int)(long)(Long)obj);
-        }
-
-        gameState.currentPlayerPointer = (int)(long)(Long)this.saveState.get("CurrentPlayerPointer"); // Get the pointer to the current Player
-
-        return gameState;
-    }*/
 
     /**
      * Creates JSON representation of GameState
@@ -252,9 +168,7 @@ public class JSONifier {
         gameStateObject.put("PlayerState", playerStates); // Store the Player's state
 
         JSONArray turnOrder = new JSONArray(); // Store the order of player turns
-        for (int i = 0; i < this.state.turnOrder.size(); i++){
-            turnOrder.add(this.state.turnOrder.get(i));
-        }
+        turnOrder.addAll(this.state.turnOrder);
 
         gameStateObject.put("TurnOrder", turnOrder);
 
@@ -266,7 +180,7 @@ public class JSONifier {
      * @param phase string
      * @return Phase object
      */
-    public TurnPhaseType StringToPhase(String phase) {
+    private TurnPhaseType StringToPhase(String phase) {
         for (TurnPhaseType type : TurnPhaseType.values()){
             if (type.equalsName(phase)){
                 return type;
