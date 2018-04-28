@@ -475,6 +475,9 @@ public class GameScreen implements Screen, InputProcessor{
      */
     public void openMenu() {
         Audio.disposeMusic("sound/Gameplay Music/wind.mp3"); //remove game play sounds from memory to save space
+        if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
+            Audio.disposeMusic("sound/GoldenGoose/geese.mp3"); //remove goose sounds if playing
+        }
         Audio.loadMusic("sound/IntroMusic/introMusic.mp3"); //load and play main menu music
         main.exitToMenu();
     }
