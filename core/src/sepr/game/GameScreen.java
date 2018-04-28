@@ -552,6 +552,7 @@ public class GameScreen implements Screen, InputProcessor{
             cardDeck.add(new GoldenGoose());
             cardDeck.add(new FreshersFlu());
             cardDeck.add(new ExceptionalCircumstances());
+            cardDeck.add(new Strike());
         }
     }
 
@@ -610,12 +611,21 @@ public class GameScreen implements Screen, InputProcessor{
                 public void clicked(InputEvent event, float x, float y) {
                     event.stop();
                     //System.out.println("open click");
-                    if (clickedCard.contains(true)) {
-                        unclickCard(clickedCard.indexOf(true));
-                        clickedCard.set(clickedCard.indexOf(true), false);
+                    if (getCurrentPlayer().getCardHand().get(finalI).getPlayerRequired()) {
+                        if (clickedCard.contains(true)) {
+                            unclickCard(clickedCard.indexOf(true));
+                            clickedCard.set(clickedCard.indexOf(true), false);
+                        }
+                        clickedCard.set(finalI, true);
+                        clickCard(finalI);
                     }
-                    clickedCard.set(finalI, true);
-                    clickCard(finalI);
+                    else {
+                        getCurrentPlayer().getCardHand().get(finalI).act(GameScreen.this);
+                        cardDeck.add(getCurrentPlayer().removeCard(finalI));
+                        updateInputProcessor();
+                        setupCardUI();
+                    }
+
                 }
             });
 
@@ -716,13 +726,12 @@ public class GameScreen implements Screen, InputProcessor{
             if (!player.equals(getCurrentPlayer())) {
                 Label l = new Label(player.getPlayerName(), smallStyle);
                 l.setColor(player.getSectorColour());
-                final GameScreen gameScreen = this;
                 l.addListener(new ClickListener() {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         event.stop();
-                        getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player, gameScreen);
+                        getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player, GameScreen.this);
                         cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
                         updateInputProcessor();
                         setupCardUI();

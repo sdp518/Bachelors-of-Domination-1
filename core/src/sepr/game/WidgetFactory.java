@@ -68,6 +68,7 @@ public class WidgetFactory {
     private static Texture goldenGooseTexture;
     private static Texture freshersFluTexture;
     private static Texture exceptionalCircumstancesTexture;
+    private static Texture strikeTexture;
 
     /**
      * initialises all the assets required for generating the UI components
@@ -119,6 +120,8 @@ public class WidgetFactory {
         goldenGooseTexture = new Texture("uiComponents/punishment_cards/GoldenGoose.png");
         freshersFluTexture = new Texture("uiComponents/punishment_cards/FreshersFlu.png");
         exceptionalCircumstancesTexture = new Texture("uiComponents/punishment_cards/ExceptionalCircumstances.png");
+        strikeTexture = new Texture("uiComponents/punishment_cards/Strike.png");
+
 
     }
 
@@ -488,6 +491,8 @@ public class WidgetFactory {
                 return new Image(freshersFluTexture);
             case EXCEPTIONAL_CIRCUMSTANCES:
                 return new Image(exceptionalCircumstancesTexture);
+            case STRIKE:
+                return new Image(strikeTexture);
         }
         return null;
     }
