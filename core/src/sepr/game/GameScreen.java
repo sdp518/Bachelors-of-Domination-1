@@ -857,6 +857,8 @@ public class GameScreen implements Screen, InputProcessor{
         renderBackground(); // draw the background of the game
         map.draw(gameplayBatch); // draw the map
 
+        gameplayBatch.end();// stop rendering
+
         if (gamePaused) {
             pauseMenuStage.act();
             pauseMenuStage.draw();
@@ -864,8 +866,6 @@ public class GameScreen implements Screen, InputProcessor{
 
         cardStage.act();
         cardStage.draw();
-
-        gameplayBatch.end(); // stop rendering
 
         if (this.turnTimerEnabled && !this.timerPaused) { // update the timer display, if it is enabled
             this.phases.get(currentPhase).setTimerValue(getTurnTimeRemaining());
