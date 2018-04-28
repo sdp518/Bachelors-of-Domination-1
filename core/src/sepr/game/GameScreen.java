@@ -589,6 +589,7 @@ public class GameScreen implements Screen, InputProcessor{
             cardDeck.add(new FreshersFlu());
             cardDeck.add(new ExceptionalCircumstances());
             cardDeck.add(new Strike());
+            cardDeck.add(new CripplingHangover());
         }
     }
 
