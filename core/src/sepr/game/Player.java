@@ -1,7 +1,10 @@
 package sepr.game;
 
 import com.badlogic.gdx.graphics.Color;
+import sepr.game.punishmentcards.Card;
 import sepr.game.utils.PlayerType;
+
+import java.util.ArrayList;
 
 /**
  * base class for storing Neutral and Human player data
@@ -13,7 +16,11 @@ public class Player {
     private int troopsToAllocate; // how many troops the player has to allocate at the start of their next reinforcement phase
     private Color sectorColour; // what colour to shade sectors owned by the player
     private PlayerType playerType; // Human or Neutral player
-    private Boolean OwnsPVC;
+    private boolean ownsPVC;
+
+    private boolean cripplingHangover;
+    private boolean goldenGoose;
+    private ArrayList<Card> cardHand;
 
     /**
      * creates a player object with the specified properties
@@ -31,7 +38,10 @@ public class Player {
         this.sectorColour = sectorColour;
         this.playerType = playerType;
         this.playerName = playerName;
-        this.OwnsPVC = false;
+        this.ownsPVC = false;
+        this.cripplingHangover = false;
+        this.goldenGoose = false;
+        this.cardHand = new ArrayList<Card>();
     }
 
     public Player(int id, GameSetupScreen.CollegeName collegeName, Color sectorColour, PlayerType playerType, String playerName, int troopsToAllocate, boolean ownsPVC){
@@ -62,14 +72,12 @@ public class Player {
     /**
      * @return  if the player owns the PVC tile
      */
-
-    public Boolean getOwnsPVC() { return OwnsPVC; }
+    public Boolean getOwnsPVC() { return ownsPVC; }
 
     /**
      * @param  ownsPVC boolean if the player owns the PVC
      */
-
-    public void setOwnsPVC(Boolean ownsPVC) { OwnsPVC = ownsPVC; }
+    public void setOwnsPVC(Boolean ownsPVC) { this.ownsPVC = ownsPVC; }
 
 
 
@@ -136,5 +144,34 @@ public class Player {
      */
     public void addTroopsToAllocate(int troopsToAllocate) {
         this.troopsToAllocate += troopsToAllocate;
+    }
+
+    // TODO comment new methods below
+    public void addCard(Card card) {
+        cardHand.add(card);
+    }
+
+    public Card removeCard(int i) {
+        return cardHand.remove(i);
+    }
+
+    public ArrayList<Card> getCardHand() {
+        return cardHand;
+    }
+
+    public boolean hasCripplingHangover() {
+        return cripplingHangover;
+    }
+
+    public void switchCripplingHangover() {
+        cripplingHangover = (cripplingHangover?false:true);
+    }
+
+    public boolean hasGoldenGoose() {
+        return goldenGoose;
+    }
+
+    public void switchGoldenGoose() {
+        goldenGoose = (goldenGoose?false:true);
     }
 }

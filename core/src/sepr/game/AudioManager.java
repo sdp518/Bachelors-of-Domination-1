@@ -114,7 +114,6 @@ public class AudioManager extends AssetManager {
     /**
      * sets the music volume of currently running sounds to the GlobalMusicVolume
      */
-
     public void setMusicVolume() {
 
         for (String x : currentPlayingMusic) {
@@ -122,6 +121,13 @@ public class AudioManager extends AssetManager {
 
 
         }
+    }
+
+    /**
+     * @return a list of filepaths of currently playing music
+     */
+    public ArrayList<String> getCurrentPlayingMusic() {
+        return currentPlayingMusic;
     }
 
 

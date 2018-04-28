@@ -1,6 +1,5 @@
 package sepr.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.sun.prism.paint.Color;
+import sepr.game.utils.Constants;
 import sepr.game.utils.TurnPhaseType;
 
 /**
@@ -164,13 +163,33 @@ public abstract class Phase extends Stage {
     public void enterPhase(Player player) {
         this.currentPlayer = player;
 
-
         playerNameStyle.fontColor = GameSetupScreen.getCollegeColor(currentPlayer.getCollegeName()); // update colour of player name
 
         playerNameLabel.setText(new StringBuilder((CharSequence) currentPlayer.getPlayerName())); // change the bottom bar label to the players name
         collegeLogo.setDrawable(WidgetFactory.genCollegeLogoDrawable(player.getCollegeName()));
         updateTroopReinforcementLabel();
         this.updatePhaseLabelColour();
+
+        // NEW ASSESSMENT 4
+        if (player.hasCripplingHangover()) {
+            gameScreen.setMaxTurnTime((Constants.MAX_TURN_TIME / 2));
+            player.switchCripplingHangover();
+        }
+        else {
+            gameScreen.setMaxTurnTime(Constants.MAX_TURN_TIME);
+        }
+
+        if (player.hasGoldenGoose()) {
+            Audio.loadMusic("sound/GoldenGoose/geese.mp3");
+            player.switchGoldenGoose();
+        }
+        else {
+            if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
+                Audio.disposeMusic("sound/GoldenGoose/geese.mp3");
+            }
+        }
+
+        gameScreen.setupCardUI();
     }
 
     /**MOVED FROM WIDGET FACTORY ASSESSMENT 4
@@ -189,6 +208,21 @@ public abstract class Phase extends Stage {
                 gameScreen.pause();
             }
         });
+
+        // TODO Remove temp code before submission
+        /*********TEMP**********/
+        TextButton addCardButton = new TextButton("CARD", btnStyle);
+
+        addCardButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if ((currentPlayer.getCardHand().size() < 4) && (gameScreen.getCardDeckSize() != 0)){
+                    currentPlayer.addCard(gameScreen.getRandomCard());
+                    gameScreen.setupCardUI();
+                }
+            }
+        });
+        /*********END TEMP**********/
 
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = WidgetFactory.getFontSmall();
@@ -228,6 +262,7 @@ public abstract class Phase extends Stage {
         table.add(labelPre).height(60);
         table.add(labelText).height(60);
         table.add(labelPost).height(60);
+        table.right().add(addCardButton).padLeft(190).padRight(20);
 
         return table;
     }

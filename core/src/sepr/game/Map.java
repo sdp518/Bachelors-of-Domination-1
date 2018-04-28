@@ -290,6 +290,7 @@ public class Map {
         }
         if (proViceChancellor.PVCSpawn() && !proViceChancellor.isPVCSpawned()) {
             spawnPVC(stage, defendingSectorId);
+            attacker.setOwnsPVC(true);
         }
     }
 
@@ -440,7 +441,17 @@ public class Map {
         particles.removeAll(toDelete);
     }
 
+    /**
+     * @return mapping of sector ID's to sector objects
+     */
     public HashMap<Integer, Sector> getSectors() {
         return sectors;
+    }
+
+    /**
+     * @return PVC
+     */
+    public PVC getProViceChancellor() {
+        return proViceChancellor;
     }
 }
