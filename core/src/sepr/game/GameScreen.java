@@ -165,7 +165,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnTimerEnabled = turnTimerEnabled;
         this.maxTurnTime = maxTurnTime;
         this.ProViceChancellor = new PVC((float)1.00,this); // TODO Change PVC spawn chance
-        this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor); // setup the game map and allocate the sectors
+        this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor, this); // setup the game map and allocate the sectors
 
         setUpPhases();
 
@@ -583,14 +583,26 @@ public class GameScreen implements Screen, InputProcessor{
      * Initialises card deck which stores instances of card available for distribution
      */
     private void initCardDeck() {
-        for (int i=0;i<4;i++){
-            cardDeck.add(new PlagueOfGeese());
-            cardDeck.add(new GoldenGoose());
-            cardDeck.add(new FreshersFlu());
-            cardDeck.add(new ExceptionalCircumstances());
-            cardDeck.add(new Strike());
-            cardDeck.add(new CripplingHangover());
+        int numPlayers = -1;
+        if (players.containsKey(NEUTRAL_PLAYER_ID)) {
+            numPlayers = players.size() - 1;
         }
+        for (int i=0;i<(numPlayers - 1);i++){
+            cardDeck.add(new ExceptionalCircumstances());
+        }
+        int freshersFlu = (int) Math.round(numPlayers * 1.5);
+        for (int i=0;i<freshersFlu;i++){
+            cardDeck.add(new FreshersFlu());
+        }
+        for (int i=0;i<(numPlayers * 2);i++){
+            cardDeck.add(new PlagueOfGeese());
+            cardDeck.add(new Strike());
+        }
+        for (int i=0;i<(numPlayers * 3);i++){
+            cardDeck.add(new CripplingHangover());
+            cardDeck.add(new GoldenGoose());
+        }
+
     }
 
     /**

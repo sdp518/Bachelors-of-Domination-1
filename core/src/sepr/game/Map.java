@@ -32,6 +32,8 @@ public class Map {
 
     private Random random;
 
+    private GameScreen gameScreen;
+
     /**
      * Performs the maps initial setup
      * loads the sector data from the sectorProperties.csv file
@@ -55,9 +57,10 @@ public class Map {
         this.sectors = sectors;
     }
 
-    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor) {
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor, GameScreen gameScreen) {
         this(players, allocateNeutralPlayer);
         this.proViceChancellor = proViceChancellor;
+        this.gameScreen = gameScreen;
     }
 
     /**
@@ -258,6 +261,14 @@ public class Map {
 
             attacker.addTroopsToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
+
+            // 0.5 chance of getting card on sector capture
+            if (random.nextInt(10) < 5) {
+                if ((gameScreen.getCurrentPlayer().getCardHand().size() < 4) && (gameScreen.getCardDeckSize() != 0)){
+                    gameScreen.getCurrentPlayer().addCard(gameScreen.getRandomCard());
+                    gameScreen.setupCardUI();
+                }
+            }
 
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUnitsInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 
