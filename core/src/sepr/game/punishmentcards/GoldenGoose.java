@@ -5,7 +5,7 @@ import sepr.game.Player;
 
 public class GoldenGoose extends Card {
     public GoldenGoose() {
-        super(CardType.GOLDEN_GOOSE);
+        super(CardType.GOLDEN_GOOSE, true);
     }
 
     /**

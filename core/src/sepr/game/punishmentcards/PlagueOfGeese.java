@@ -7,7 +7,7 @@ import sepr.game.Sector;
 
 public class PlagueOfGeese extends Card {
     public PlagueOfGeese() {
-        super(CardType.PLAGUE_OF_GEESE);
+        super(CardType.PLAGUE_OF_GEESE, true);
     }
 
     /**

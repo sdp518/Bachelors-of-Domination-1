@@ -5,7 +5,7 @@ import sepr.game.Player;
 
 public class CripplingHangover extends Card {
     public CripplingHangover() {
-        super(CardType.CRIPPLING_HANGOVER);
+        super(CardType.CRIPPLING_HANGOVER, true);
     }
 
     /**

@@ -1,19 +1,24 @@
 package sepr.game.punishmentcards;
 
-import com.badlogic.gdx.Game;
 import sepr.game.GameScreen;
 import sepr.game.Player;
+import sepr.game.Sector;
 
 public class FreshersFlu extends Card {
     public FreshersFlu() {
-        super(CardType.FRESHERS_FLU);
+        super(CardType.FRESHERS_FLU, true);
     }
 
     /**
-     * Effect: Debuffs affected player (half strength)
+     * Effect: Debuffs affected player (half strength) for remainder of turn
      */
     @Override
     public void act(Player player, GameScreen gameScreen) {
         System.out.println(player.getPlayerName() + ": " + type.getCardType());
+        for (Sector sector : gameScreen.getMap().getSectors().values()) {
+            if (sector.getOwnerId() == player.getId()) {
+
+            }
+        }
     }
 }

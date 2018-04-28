@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ExceptionalCircumstances extends Card {
     public ExceptionalCircumstances() {
-        super(CardType.EXCEPTIONAL_CIRCUMSTANCES);
+        super(CardType.EXCEPTIONAL_CIRCUMSTANCES, true);
     }
 
     /**
