@@ -222,7 +222,7 @@ public class Map {
     private void spawnPVC(Stage stage, int defendingSectorId) {
         sectors.get(defendingSectorId).setIsPVCTile(true); //set the taken over tile to be the PVC tile
         DialogFactory.takenOverPVCDialogue(proViceChancellor, stage);
-        sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+        //sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
         proViceChancellor.setPVCSpawned(true);
 
     }
@@ -322,7 +322,9 @@ public class Map {
         {
             defender.setOwnsPVC(false);
             attacker.setOwnsPVC(true);
-            sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+            // TODO Fix this
+            sectors.get(defendingSectorId).setOwner(attacker);
+            //sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
             proViceChancellor.startMiniGame();
 
         }
