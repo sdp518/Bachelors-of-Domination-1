@@ -26,6 +26,8 @@ public class SaveLoadManager {
     private String save_path = ""; // Path to the saves file
     private GameState[] loadedStates = new GameState[4]; // The state that has just been loaded
 
+    private boolean directoryExists;
+
     public SaveLoadManager(){ }
 
     /**
@@ -40,14 +42,14 @@ public class SaveLoadManager {
         String home = System.getProperty("user.home"); // Get the user's home directory
 
         String path = home + File.separator + "Bachelors-of-Domination" + File.separator + "saves" + File.separator + "saves.json"; // Generate the path to the saves.json file
-        boolean directoryExists = new File(path).exists();
+        this.directoryExists = new File(path).exists();
 
         this.save_path = path;
 
         if(directoryExists) { // Check that the directory exists
             loadFromFile(); // Load the file if it exists
         } else { // Create a blank saves file
-            File file = new File(path);
+            /*File file = new File(path);
             try {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
@@ -64,7 +66,7 @@ public class SaveLoadManager {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
@@ -177,6 +179,12 @@ public class SaveLoadManager {
         }
 
         try {
+            if (!directoryExists) {
+                File file = new File(this.save_path);
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+                this.directoryExists = true;
+            }
             FileWriter fileWriter = new FileWriter(this.save_path);
             fileWriter.write(allSaves.toJSONString());
             fileWriter.flush();
