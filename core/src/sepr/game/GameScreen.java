@@ -771,8 +771,11 @@ public class GameScreen implements Screen, InputProcessor{
 
         ArrayList<Label> playerLabels = new ArrayList<Label>();
 
+        boolean cardAffectsNeutral = getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).getAffectsNeutral();
+
         for (final Player player : players.values()) {
-            if (!player.equals(getCurrentPlayer())) {
+            // skips current player and also the neutral player if the card doesn't affect it
+            if ((!player.equals(getCurrentPlayer())) && (!(player.getId() == NEUTRAL_PLAYER_ID) || cardAffectsNeutral)) {
                 Label l = new Label(player.getPlayerName(), smallStyle);
                 l.setColor(player.getSectorColour());
                 l.addListener(new ClickListener() {
@@ -846,7 +849,6 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public void render(float delta) {
         if (!gameSetup) throw new RuntimeException("Game must be setup before attempting to play it"); // throw exception if attempt to run game before its setup
-        System.out.println(this.cardDeck.size());
         this.controlCamera(); // move camera
 
         gameplayCamera.update();

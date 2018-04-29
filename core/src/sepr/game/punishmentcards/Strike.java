@@ -6,7 +6,7 @@ import sepr.game.Sector;
 
 public class Strike extends Card {
     public Strike() {
-        super(CardType.STRIKE, false);
+        super(CardType.STRIKE, false, false);
     }
 
     /**
@@ -17,7 +17,6 @@ public class Strike extends Card {
         System.out.println(type.getCardType());
 
         // TODO only add cards to deck when PVC spawned?
-        System.out.println("Act");
         if (gameScreen.getMap().getProViceChancellor().isPVCSpawned()) {
             for (Player p : gameScreen.getPlayers().values()) {
                 if (p.getOwnsPVC()) {

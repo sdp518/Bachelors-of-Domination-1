@@ -8,10 +8,12 @@ public class Card {
 
     CardType type;
     boolean playerRequired;
+    boolean affectsNeutral;
 
-    public Card(CardType type, boolean playerRequired) {
+    public Card(CardType type, boolean playerRequired, boolean affectsNeutral) {
         this.type = type;
         this.playerRequired = playerRequired;
+        this.affectsNeutral = affectsNeutral;
     }
 
     public void act(Player player, GameScreen gameScreen) {
@@ -28,6 +30,10 @@ public class Card {
 
     public boolean getPlayerRequired() {
         return playerRequired;
+    }
+
+    public boolean getAffectsNeutral() {
+        return affectsNeutral;
     }
 
     public static Card initiateCard(CardType cardType) {

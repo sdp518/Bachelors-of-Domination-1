@@ -6,7 +6,7 @@ import sepr.game.Sector;
 
 public class FreshersFlu extends Card {
     public FreshersFlu() {
-        super(CardType.FRESHERS_FLU, true);
+        super(CardType.FRESHERS_FLU, true, true);
     }
 
     /**
