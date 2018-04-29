@@ -12,7 +12,7 @@ import java.util.HashMap;
 //TODO at the end of the game, the allocation still comes up, you have to end your turn, congratulations and poor performance voice lines come up at the same time.
 
 /**
- * executable http://www.riskydevelopments.co.uk/bod/BoD.zip
+ * executable http://www.sidmeiers.me/documents/code/BachelorsOfDomination3.0.zip
  *
  * main game class used for controlling what screen is currently being displayed
  */

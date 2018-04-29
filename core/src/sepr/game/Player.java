@@ -146,32 +146,54 @@ public class Player {
         this.troopsToAllocate += troopsToAllocate;
     }
 
-    // TODO comment new methods below
+    /**
+     * adds the given card to the players card hand
+     * @param card the card to be added
+     */
     public void addCard(Card card) {
         cardHand.add(card);
     }
 
+    /**
+     * removes the card at index i from the card hand
+     * @param i the cardHand index of the card to be removed
+     */
     public Card removeCard(int i) {
         return cardHand.remove(i);
     }
 
+    /**
+     * @return the players card hand as an ArrayList of Cards
+     */
     public ArrayList<Card> getCardHand() {
         return cardHand;
     }
 
+    /**
+     * @return true if player has hangover, false otherwise
+     */
     public boolean hasCripplingHangover() {
         return cripplingHangover;
     }
 
+    /**
+     * switches boolean value of cripplingHangover
+     */
     public void switchCripplingHangover() {
-        cripplingHangover = (cripplingHangover?false:true);
+        cripplingHangover = !cripplingHangover;
     }
 
+    /**
+     * @return true if player has golden goose, false otherwise
+     */
     public boolean hasGoldenGoose() {
         return goldenGoose;
     }
 
+    /**
+     * switches boolean value of goldenGoose
+     */
     public void switchGoldenGoose() {
-        goldenGoose = (goldenGoose?false:true);
+        goldenGoose = !goldenGoose;
     }
 }

@@ -137,7 +137,6 @@ public abstract class Phase extends Stage {
         return table;
     }
 
-    // TODO Set owning college colour
     /**
      * sets the bar at the bottom of the HUD to the details of the sector currently hovered over
      * If no sector is being hovered then displays "Mouse over a sector to see further details"
@@ -275,7 +274,6 @@ public abstract class Phase extends Stage {
         labelText.setColor(gameScreen.getCurrentPlayer().getSectorColour());
     }
 
-    // TODO Decide on timer low indicator
     /**
      * updates the text of the turn timer label
      *
