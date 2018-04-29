@@ -202,9 +202,9 @@ public class GameScreen implements Screen, InputProcessor{
      */
     private void updateInputProcessor() {
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(cardStage); // ADDED ASSESSMENT 4
         inputMultiplexer.addProcessor(phases.get(currentPhase));
         inputMultiplexer.addProcessor(this);
-        inputMultiplexer.addProcessor(cardStage); // ADDED ASSESSMENT 4
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
