@@ -279,12 +279,6 @@ public abstract class Phase extends Stage {
      * method for tidying up phase for next player to use
      */
     public void endPhase () {
-        System.out.println("End of phase");
-        if (currentPlayer.hasFreshersFlu()) {
-            currentPlayer.getFreshersFluCard().reverseEffect(gameScreen);
-            currentPlayer.switchFreshersFlu();
-        }
-
         this.currentPlayer = null;
     }
 
