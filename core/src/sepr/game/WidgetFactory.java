@@ -334,8 +334,9 @@ public class WidgetFactory {
         style.font = fontSmall;
         style.fontColor = new Color(Color.WHITE);
         style.cursor = new TextureRegionDrawable(new TextureRegion(textFieldCursorTexture));
-
-        return new TextField(name, style);
+        TextField text = new TextField(name, style);
+        text.setMaxLength(14);
+        return text;
     }
 
     /**
