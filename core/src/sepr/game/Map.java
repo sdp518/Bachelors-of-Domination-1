@@ -35,6 +35,8 @@ public class Map {
 
     private Random random;
 
+    private GameScreen gameScreen;
+
     /**
      * Performs the maps initial setup
      * loads the sector data from the sectorProperties.csv file
@@ -58,9 +60,10 @@ public class Map {
         this.sectors = sectors;
     }
 
-    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor) {
+    public Map(HashMap<Integer, Player> players, boolean allocateNeutralPlayer, PVC proViceChancellor, GameScreen gameScreen) {
         this(players, allocateNeutralPlayer);
         this.proViceChancellor = proViceChancellor;
+        this.gameScreen = gameScreen;
     }
 
     /**
@@ -88,8 +91,7 @@ public class Map {
         this.sectors = new HashMap<Integer, Sector>();
 
         String csvFile = "mapData/sectorProperties.csv";
-        String line = "";
-        Integer ID = 0;
+        String line;
         try {
             BufferedReader br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
@@ -208,7 +210,7 @@ public class Map {
      * spawns the PVC tile and sets the colour to gold and then starts the mini game
      */
 
-    public void spawnPVC(Stage stage, int defendingSectorId) {
+    private void spawnPVC(Stage stage, int defendingSectorId) {
         sectors.get(defendingSectorId).setIsPVCTile(true); //set the taken over tile to be the PVC tile
         DialogFactory.takenOverPVCDialogue(proViceChancellor, stage);
         sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
@@ -277,6 +279,14 @@ public class Map {
             attacker.addUndergraduatesToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
+            // 0.5 chance of getting card on sector capture
+            if (random.nextInt(10) < 5) {
+                if ((gameScreen.getCurrentPlayer().getCardHand().size() < 4) && (gameScreen.getCardDeckSize() != 0)){
+                    gameScreen.getCurrentPlayer().addCard(gameScreen.getRandomCard());
+                    gameScreen.setupCardUI();
+                }
+            }
+
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUndergraduatesInSector(), sectors.get(attackingSectorId).getPostgraduatesInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 
 
@@ -296,7 +306,6 @@ public class Map {
      * @param attacker          the player who is carrying out the attack
      * @param defender          the player who is being attacked
      * @param stage             the stage to draw any dialogs to
-     * @return true if movement successful else false
      **/
     public void handlePVC(int defendingSectorId, Player attacker, Player defender, Stage stage) {
         if (sectors.get(defendingSectorId).getIsPVCTile()) //if the player takes over PVC tile add PVC bonus
@@ -309,6 +318,7 @@ public class Map {
         }
         if (proViceChancellor.PVCSpawn() && !proViceChancellor.isPVCSpawned()) {
             spawnPVC(stage, defendingSectorId);
+            attacker.setOwnsPVC(true);
         }
     }
 
@@ -437,7 +447,7 @@ public class Map {
     /**
      * draws the map and the number of units in each sector and the units change particle effect
      *
-     * @param batch
+     * @param batch the batch used for drawing
      */
     public void draw(SpriteBatch batch) {
         detectUnitsMove(); // check if units need to be moved, and carry the movement out if required
@@ -465,7 +475,18 @@ public class Map {
         particles.removeAll(toDelete);
     }
 
+    /**
+     * @return mapping of sector ID's to sector objects
+     */
     public HashMap<Integer, Sector> getSectors() {
         return sectors;
     }
+
+    /**
+     * @return PVC
+     */
+    public PVC getProViceChancellor() {
+        return proViceChancellor;
+    }
+
 }

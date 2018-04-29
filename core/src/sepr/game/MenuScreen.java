@@ -86,12 +86,13 @@ public class MenuScreen implements Screen {
         loadGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(main.hasLoadedSaves()) {
+                /*if(main.hasLoadedSaves()) {
                     main.loadGame();
                 }
                 else {
                     DialogFactory.basicDialogBox("Error!", "No save to load", stage);
-                }
+                }*/
+                main.setLoadScreen();
             }
         });
 

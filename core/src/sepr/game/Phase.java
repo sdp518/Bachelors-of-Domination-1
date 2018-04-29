@@ -1,6 +1,5 @@
 package sepr.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.sun.prism.paint.Color;
+import sepr.game.utils.Constants;
 import sepr.game.utils.TurnPhaseType;
 
 /**
@@ -24,7 +23,6 @@ import sepr.game.utils.TurnPhaseType;
 public abstract class Phase extends Stage {
     GameScreen gameScreen;
     Player currentPlayer;
-    Player previousPlayer;
     AudioManager Audio = AudioManager.getInstance();
 
 
@@ -96,9 +94,9 @@ public abstract class Phase extends Stage {
         subTable.add(bottomBarRightPart).bottom().expandX().fillX().height(60);
 
         table.row();
-        table.add(subTable).expandX().fill();
+        table.add(subTable).expandX().fill().colspan(1);
         table.bottom().right();
-        table.add(endPhaseButton).fill().height(60).width(170);
+        table.add(endPhaseButton).fillX().height(60).width(180).bottom().right();
 
         setBottomBarText(null);
     }
@@ -138,7 +136,6 @@ public abstract class Phase extends Stage {
         return table;
     }
 
-    // TODO Set owning college colour
     /**
      * sets the bar at the bottom of the HUD to the details of the sector currently hovered over
      * If no sector is being hovered then displays "Mouse over a sector to see further details"
@@ -161,9 +158,8 @@ public abstract class Phase extends Stage {
      *
      * @param player the new player that is entering the phase
      */
-    void enterPhase(Player player) {
+    public void enterPhase(Player player) {
         this.currentPlayer = player;
-
 
         playerNameStyle.fontColor = GameSetupScreen.getCollegeColor(currentPlayer.getCollegeName()); // update colour of player name
 
@@ -171,6 +167,27 @@ public abstract class Phase extends Stage {
         collegeLogo.setDrawable(WidgetFactory.genCollegeLogoDrawable(player.getCollegeName()));
         updateTroopReinforcementLabel();
         this.updatePhaseLabelColour();
+
+        // NEW ASSESSMENT 4
+        if (player.hasCripplingHangover()) {
+            gameScreen.setMaxTurnTime((Constants.MAX_TURN_TIME / 2));
+            player.switchCripplingHangover();
+        }
+        else {
+            gameScreen.setMaxTurnTime(Constants.MAX_TURN_TIME);
+        }
+
+        if (player.hasGoldenGoose()) {
+            Audio.loadMusic("sound/GoldenGoose/geese.mp3");
+            player.switchGoldenGoose();
+        }
+        else {
+            if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
+                Audio.disposeMusic("sound/GoldenGoose/geese.mp3");
+            }
+        }
+
+        gameScreen.setupCardUI();
     }
 
     /**MOVED FROM WIDGET FACTORY ASSESSMENT 4
@@ -178,7 +195,7 @@ public abstract class Phase extends Stage {
      *
      * @return the top bar of the HUD for the specified phase
      */
-    public Table genGameHUDTopBar() {
+    private Table genGameHUDTopBar() {
         TextButton.TextButtonStyle btnStyle = new TextButton.TextButtonStyle();
         btnStyle.font = WidgetFactory.getFontSmall();
         TextButton exitButton = new TextButton("PAUSE", btnStyle);
@@ -189,6 +206,21 @@ public abstract class Phase extends Stage {
                 gameScreen.pause();
             }
         });
+
+        // TODO Remove temp code before submission
+        /*********TEMP**********/
+        TextButton addCardButton = new TextButton("CARD", btnStyle);
+
+        addCardButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if ((currentPlayer.getCardHand().size() < 4) && (gameScreen.getCardDeckSize() != 0)){
+                    currentPlayer.addCard(gameScreen.getRandomCard());
+                    gameScreen.setupCardUI();
+                }
+            }
+        });
+        /*********END TEMP**********/
 
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = WidgetFactory.getFontSmall();
@@ -228,6 +260,7 @@ public abstract class Phase extends Stage {
         table.add(labelPre).height(60);
         table.add(labelText).height(60);
         table.add(labelPost).height(60);
+        table.right().add(addCardButton).padLeft(190).padRight(20);
 
         return table;
     }
@@ -240,7 +273,6 @@ public abstract class Phase extends Stage {
         labelText.setColor(gameScreen.getCurrentPlayer().getSectorColour());
     }
 
-    // TODO Decide on timer low indicator
     /**
      * updates the text of the turn timer label
      *
@@ -290,7 +322,7 @@ public abstract class Phase extends Stage {
 
     /**
      * abstract method for writing phase specific rendering
-     * @param batch
+     * @param batch the batch for drawing
      */
     protected abstract void visualisePhase(SpriteBatch batch);
 

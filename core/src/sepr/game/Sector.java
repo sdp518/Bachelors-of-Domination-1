@@ -41,6 +41,10 @@ public class Sector implements ApplicationListener {
     private boolean allocated; // becomes true once the sector has been allocated
     private boolean isPVCTile;
 
+    public Sector() {
+
+    }
+
     /**
      * @param id sector id
      * @param ownerId id of player who owns sector
@@ -123,6 +127,10 @@ public class Sector implements ApplicationListener {
         return ownerId;
     }
 
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
+
     /**
      * sets the owner id and colour of this sector
      * @param player the player object that owns this sector
@@ -146,7 +154,7 @@ public class Sector implements ApplicationListener {
 
     /**
      *
-     * @return if sector is PVC sector
+     * set's true if sector is PVC tile, false if not
      */
     public void setIsPVCTile(boolean value) { this.isPVCTile = value; }
 
@@ -159,12 +167,20 @@ public class Sector implements ApplicationListener {
         return displayName;
     }
 
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     /**
      *
      * @return number of troops rewarded for conquering this territory
      */
     public int getReinforcementsProvided() {
         return reinforcementsProvided;
+    }
+
+    public void setReinforcementsProvided(int reinforcementsProvided) {
+        this.reinforcementsProvided = reinforcementsProvided;
     }
 
     /**
@@ -224,6 +240,10 @@ public class Sector implements ApplicationListener {
         }
     }
 
+    public void setUnitsInSector(int unitsInSector) {
+        this.unitsInSector = unitsInSector;
+    }
+
     /**
      *
      * @return the texture used for drawing the sectorNeutral
@@ -238,8 +258,7 @@ public class Sector implements ApplicationListener {
      */
     private void setNewSectorTexture(Pixmap newPixmap) {
         this.sectorTexture.dispose();
-        Texture temp = new Texture(newPixmap);
-        this.sectorTexture = temp;
+        this.sectorTexture = new Texture(newPixmap);
     }
 
     /**
@@ -279,6 +298,10 @@ public class Sector implements ApplicationListener {
      */
     public boolean isNeutral() { return neutral; }
 
+    public void setNeutral(boolean neutral) {
+        this.neutral = neutral;
+    }
+
     /**
      *
      * @return true if this sector has been allocated to a player, else false
@@ -293,11 +316,15 @@ public class Sector implements ApplicationListener {
      */
     public String getCollege() { return college; }
 
+    public void setCollege(String college) {
+        this.college = college;
+    }
+
     /**
      *
      * @return the filename of the sector image
      */
-    public String getFileName() {
+    private String getFileName() {
         return fileName;
     }
 

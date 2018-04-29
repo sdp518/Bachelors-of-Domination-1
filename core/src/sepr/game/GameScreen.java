@@ -3,6 +3,7 @@ package sepr.game;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,14 +11,17 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
@@ -65,19 +69,34 @@ public class GameScreen implements Screen, InputProcessor{
 
     private Random random;
 
-    // pause menu setup - NEW Assessment 4
+    // pause menu setup - NEW ASSESSMENT 4
     private Stage pauseMenuStage = new Stage();
     private boolean timerPaused, gamePaused;
     private long pauseStartTime;
     private long pausedTime;
 
+    public long getPauseStartTime() {
+        return this.pauseStartTime;
+    }
+
+    public long getPausedTime() {
+        return this.pausedTime;
+    }
+
+    // cards - NEW ASSESSMENT 4
+    private ArrayList<Card> cardDeck = new ArrayList<Card>();
+    private Stage cardStage = new Stage();
+    private Table cardTable;
+    private Image[] closedCardImages, openCardImages;
+    private ArrayList<Boolean> clickedCard;
+    private Stack clickedCardStack;
+
     /**
      * sets up rendering objects and key input handling
      * setupGame then start game must be called before a game is ready to be played
      *
-     * @param main used to change screenthis.phases = phases;
+     * @param main used to change screen this.phases = phases;
      */
-
     public GameScreen(Main main) {
         this.main = main;
 
@@ -144,14 +163,19 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnTimerEnabled = turnTimerEnabled;
         this.maxTurnTime = maxTurnTime;
         this.ProViceChancellor = new PVC((float)1.00,this); // TODO Change PVC spawn chance
-        this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor); // setup the game map and allocate the sectors
+        this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor, this); // setup the game map and allocate the sectors
 
         setUpPhases();
+
+        // cards - NEW ASSESSMENT 4
+        initCardDeck();
+        setupCardUI();
+        random = new Random();
 
         gameSetup = true; // game is now setup
     }
 
-    public void setUpPhases(){
+    private void setUpPhases(){
         // create the game phases and add them to the phases hashmap
         this.phases = new HashMap<TurnPhaseType, Phase>();
         this.phases.put(TurnPhaseType.REINFORCEMENT, new PhaseReinforce(this));
@@ -180,6 +204,7 @@ public class GameScreen implements Screen, InputProcessor{
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(phases.get(currentPhase));
         inputMultiplexer.addProcessor(this);
+        inputMultiplexer.addProcessor(cardStage); // ADDED ASSESSMENT 4
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -206,7 +231,7 @@ public class GameScreen implements Screen, InputProcessor{
      * NEW Assessment 4
      * records the time at which the timer was paused
      */
-    public void pauseTimer(){
+    private void pauseTimer(){
         this.pauseStartTime = System.currentTimeMillis();
         this.timerPaused = true;
     }
@@ -248,6 +273,30 @@ public class GameScreen implements Screen, InputProcessor{
      */
     public Player getCurrentPlayer() {
         return players.get(turnOrder.get(currentPlayerPointer));
+    }
+
+    public void setTurnOrder(List<Integer> turnOrder) {
+        this.turnOrder = turnOrder;
+    }
+
+    public void setCurrentPlayerPointer(int currentPlayerPointer) {
+        this.currentPlayerPointer = currentPlayerPointer;
+    }
+
+    public void setCurrentPhase(TurnPhaseType currentPhase) {
+        this.currentPhase = currentPhase;
+    }
+
+    public void setTurnTimeStart(long turnTimeStart) {
+        this.turnTimeStart = turnTimeStart;
+    }
+
+    public PVC getProViceChancellor() {
+        return this.ProViceChancellor;
+    }
+
+    public HashMap<TurnPhaseType, Phase> getPhases() {
+        return phases;
     }
 
     /**
@@ -326,7 +375,6 @@ public class GameScreen implements Screen, InputProcessor{
         this.updateInputProcessor(); // phase changed so update input handling
 
         this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
-        // TODO Check and fix if next player eliminated game crashes (prev 2 lines swapped)
     }
 
     /**
@@ -463,6 +511,9 @@ public class GameScreen implements Screen, InputProcessor{
      */
     public void openMenu() {
         Audio.disposeMusic("sound/Gameplay Music/wind.mp3"); //remove game play sounds from memory to save space
+        if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
+            Audio.disposeMusic("sound/GoldenGoose/geese.mp3"); //remove goose sounds if playing
+        }
         Audio.loadMusic("sound/IntroMusic/introMusic.mp3"); //load and play main menu music
         main.exitToMenu();
     }
@@ -476,8 +527,7 @@ public class GameScreen implements Screen, InputProcessor{
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // TODO Add save and load to pause menu
-                //main.saveGame();
+                main.setSaveScreen();
             }
         });
 
@@ -501,7 +551,6 @@ public class GameScreen implements Screen, InputProcessor{
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // TODO Fix quit box appearance
                 DialogFactory.leaveGameDialogBox(GameScreen.this, pauseMenuStage);
             }
         });
@@ -528,6 +577,252 @@ public class GameScreen implements Screen, InputProcessor{
         table.add(menu);
 
         pauseMenuStage.addActor(table);
+    }
+
+    // TODO New card methods below
+    /**
+     * Initialises card deck which stores instances of card available for distribution
+     */
+    private void initCardDeck() {
+        int numPlayers = -1;
+        if (players.containsKey(NEUTRAL_PLAYER_ID)) {
+            numPlayers = players.size() - 1;
+        }
+        for (int i=0;i<(numPlayers - 1);i++){
+            cardDeck.add(new ExceptionalCircumstances());
+        }
+        int freshersFlu = (int) Math.round(numPlayers * 1.5);
+        for (int i=0;i<freshersFlu;i++){
+            cardDeck.add(new FreshersFlu());
+        }
+        for (int i=0;i<(numPlayers * 2);i++){
+            cardDeck.add(new PlagueOfGeese());
+            cardDeck.add(new Strike());
+        }
+        for (int i=0;i<(numPlayers * 3);i++){
+            cardDeck.add(new CripplingHangover());
+            cardDeck.add(new GoldenGoose());
+        }
+
+    }
+
+    /**
+     * @return the number of cards left in the card deck
+     */
+    public int getCardDeckSize() {
+        return cardDeck.size();
+    }
+
+    /**
+     * @return a random card from the deck
+     */
+    public Card getRandomCard() {
+        return cardDeck.remove(random.nextInt(cardDeck.size()));
+    }
+
+    /**
+     * Sets up the tables and stages for drawing the card UI and completes an initial drawing
+     * of the corner cards
+     */
+    public void setupCardUI() {
+        cardTable = new Table();
+        cardTable.setDebug(false);
+        cardTable.setTouchable(Touchable.enabled);
+        cardTable.setFillParent(true);
+
+        for (Actor a : cardStage.getActors()){
+            a.addAction(Actions.removeActor());
+        }
+        cardStage.act();
+
+        closedCardImages = new Image[4];
+        openCardImages = new Image[4];
+        clickedCard = new ArrayList<Boolean>();
+
+        for (int i = 0; i < getCurrentPlayer().getCardHand().size(); i++) {
+            closedCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
+            openCardImages[i] = WidgetFactory.genCardDrawable(getCurrentPlayer().getCardHand().get(i).getType());
+            clickedCard.add(false);
+
+            final int finalI = i;
+            closedCardImages[i].addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    //System.out.println("closed click");
+                    Gdx.input.setInputProcessor(cardStage);
+                    openCards();
+                }
+            });
+
+            openCardImages[i].addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    event.stop();
+                    //System.out.println("open click");
+                    if (getCurrentPlayer().getCardHand().get(finalI).getPlayerRequired()) {
+                        if (clickedCard.contains(true)) {
+                            unclickCard(clickedCard.indexOf(true));
+                            clickedCard.set(clickedCard.indexOf(true), false);
+                        }
+                        clickedCard.set(finalI, true);
+                        clickCard(finalI);
+                    }
+                    else {
+                        if (getCurrentPlayer().getCardHand().get(finalI).act(GameScreen.this)) {
+                            cardDeck.add(getCurrentPlayer().removeCard(finalI));
+                            updateInputProcessor();
+                            setupCardUI();
+                        }
+                    }
+
+                }
+            });
+
+            closedCardImages[i].setPosition((1650-(i*40)),750); // Top right position
+            closedCardImages[i].setScale(0.4f);
+            closedCardImages[i].setOrigin(closedCardImages[i].getWidth()/2, closedCardImages[i].getHeight()/2);
+
+            cardTable.add(openCardImages[i]).padRight(40).padLeft(40);
+
+            cardStage.addActor(closedCardImages[i]);
+
+        }
+        cardTable.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!event.isStopped()) {
+                    //System.out.println("outside click");
+                    updateInputProcessor();
+                    if (clickedCard.contains(true)){
+                        unclickCard(clickedCard.indexOf(true));
+                        clickedCard.set(clickedCard.indexOf(true), false);
+                    }
+                    closeCards();
+                }
+            }
+        });
+    }
+
+    /**
+     * Opens the expanded card view
+     */
+    private void openCards() {
+        for (Actor a : cardStage.getActors()){
+            a.addAction(Actions.removeActor());
+        }
+
+        cardStage.addActor(cardTable);
+    }
+
+    /**
+     * Closes the expanded card view
+     */
+    private void closeCards() {
+        for (Actor a : cardStage.getActors()){
+            a.addAction(Actions.removeActor());
+        }
+
+        for (Image i : closedCardImages) {
+            if (i != null){
+                cardStage.addActor(i);
+            }
+        }
+    }
+
+    /**
+     * Sets up the card menu overlay for choosing what player to use the card on and swaps
+     * it in for rendering
+     */
+    private void clickCard(int i) {
+        Table tableCardBackground = new Table();
+        tableCardBackground.setDebug(false);
+        tableCardBackground.setBackground(openCardImages[i].getDrawable());
+        tableCardBackground.setSize(openCardImages[0].getImageWidth(), openCardImages[0].getImageHeight());
+
+        Pixmap pixmap=new Pixmap(Math.round(openCardImages[0].getImageWidth()), Math.round(openCardImages[0].getImageHeight()), Pixmap.Format.RGBA8888);
+        pixmap.setColor(0f,0.0f,0f,0.8f);
+        pixmap.fillRectangle(0,0, pixmap.getWidth(), pixmap.getHeight());
+        TextureRegionDrawable overlay = new TextureRegionDrawable(new TextureRegion(new Texture(pixmap)));
+        pixmap.dispose();
+
+        Table tableOverlay = new Table();
+        tableOverlay.setDebug(false);
+        tableOverlay.setBackground(overlay);
+        tableOverlay.setTouchable(Touchable.enabled);
+        tableOverlay.setSize(openCardImages[0].getImageWidth(), openCardImages[0].getImageHeight());
+
+        tableOverlay.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!event.isStopped()) {
+                    event.stop();
+                    if (clickedCard.contains(true)){
+                        unclickCard(clickedCard.indexOf(true));
+                        clickedCard.set(clickedCard.indexOf(true), false);
+                    }
+                }
+            }
+        });
+
+        Label.LabelStyle smallStyle = new Label.LabelStyle();
+        smallStyle.font = WidgetFactory.getFontSmall();
+
+        ArrayList<Label> playerLabels = new ArrayList<Label>();
+
+        boolean cardAffectsNeutral = getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).getAffectsNeutral();
+
+        for (final Player player : players.values()) {
+            // skips current player and also the neutral player if the card doesn't affect it
+            if ((!player.equals(getCurrentPlayer())) && (!(player.getId() == NEUTRAL_PLAYER_ID) || cardAffectsNeutral)) {
+                Label l = new Label(player.getPlayerName(), smallStyle);
+                l.setColor(player.getSectorColour());
+                l.addListener(new ClickListener() {
+
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        event.stop();
+                        if (getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player, GameScreen.this)) {
+                            cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
+                            updateInputProcessor();
+                            setupCardUI();
+                        }
+                    }
+                });
+                playerLabels.add(l);
+            }
+        }
+
+        tableOverlay.top();
+        tableOverlay.add(new Label("Use on Player: ", smallStyle)).padBottom(30);
+        for (Label l : playerLabels) {
+            tableOverlay.row().center();
+            tableOverlay.add(l).padBottom(40);
+        }
+
+        clickedCardStack = new Stack();
+        clickedCardStack.add(tableCardBackground);
+        clickedCardStack.add(tableOverlay);
+
+        //System.out.println("swapping");
+        cardTable.getCell(openCardImages[i]).setActor(clickedCardStack);
+    }
+
+    /**
+     * Removes the card menu and swaps back in the regular card image
+     */
+    private void unclickCard(int i) {
+        cardTable.getCell(clickedCardStack).setActor(openCardImages[i]);
+    }
+
+    /**
+     * @return the cardStage for drawing dialog boxes onto it
+     */
+    public Stage getCardStage() {
+        return cardStage;
     }
 
     /**
@@ -564,7 +859,6 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public void render(float delta) {
         if (!gameSetup) throw new RuntimeException("Game must be setup before attempting to play it"); // throw exception if attempt to run game before its setup
-
         this.controlCamera(); // move camera
 
         gameplayCamera.update();
@@ -575,12 +869,15 @@ public class GameScreen implements Screen, InputProcessor{
         renderBackground(); // draw the background of the game
         map.draw(gameplayBatch); // draw the map
 
+        gameplayBatch.end();// stop rendering
+
         if (gamePaused) {
             pauseMenuStage.act();
             pauseMenuStage.draw();
         }
 
-        gameplayBatch.end(); // stop rendering
+        cardStage.act();
+        cardStage.draw();
 
         if (this.turnTimerEnabled && !this.timerPaused) { // update the timer display, if it is enabled
             this.phases.get(currentPhase).setTimerValue(getTurnTimeRemaining());
@@ -678,13 +975,6 @@ public class GameScreen implements Screen, InputProcessor{
             //DialogFactory.leaveGameDialogBox(this, phases.get(currentPhase)); // confirm if the player wants to leave if escape is pressed
             this.pause();
         }
-        // TODO Decide if keeping
-        if (keycode == Input.Keys.S) {
-            this.main.saveGame();
-        }
-        if (keycode == Input.Keys.L) {
-            this.main.loadGame();
-        }
         return true;
     }
 
@@ -733,6 +1023,10 @@ public class GameScreen implements Screen, InputProcessor{
         return this.currentPhase;
     }
 
+    public void resetPausedTime(){
+        pausedTime = 0;
+    }
+
     public HashMap<Integer, Player> getPlayers() {
         return players;
     }
@@ -741,8 +1035,17 @@ public class GameScreen implements Screen, InputProcessor{
         return this.turnTimerEnabled;
     }
 
+    public long getTurnTimeElapsed() {
+        pausedTime += (System.currentTimeMillis() - pauseStartTime);
+        return System.currentTimeMillis() - (turnTimeStart + pausedTime);
+    }
+
     public int getMaxTurnTime(){
         return this.maxTurnTime;
+    }
+
+    public void setMaxTurnTime(int time) {
+        maxTurnTime = time;
     }
 
     public long getTurnTimeStart(){
@@ -755,5 +1058,13 @@ public class GameScreen implements Screen, InputProcessor{
 
     public int getCurrentPlayerPointer(){
         return this.currentPlayerPointer;
+    }
+
+    public ArrayList<Card> getCardDeck() {
+        return this.cardDeck;
+    }
+
+    public void setCardDeck(ArrayList<Card> cardDeck) {
+        this.cardDeck = cardDeck;
     }
 }

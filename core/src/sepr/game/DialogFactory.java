@@ -249,7 +249,6 @@ public class DialogFactory {
      * @param defenders how many units are defending
      * @param attackers 1 index array for setting number of troops the player has chosen to attack with: [0] number of troops player has set to attack with
      * @param stage to display the dialog on
-     * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
     public static void attackDialog(int maxAttackers, int defenders, final int[] attackers, Stage stage) {
         final Slider slider = new Slider(0, maxAttackers, 1, false, DialogFactory.skin);
@@ -300,7 +299,6 @@ public class DialogFactory {
      * @param maxUndergraduates max number of troops the player chooses to move
      * @param troopsToMove 1 index array for setting number of troops the player has chosen to move with: [0] number of troops player has set to move with
      * @param stage to display the dialog on
-     * @return the number of troops chosen to attack with or 0 if the attack is canceled
      */
     public static void moveDialog(int maxUndergraduates, int maxPostgraduates, final int[] troopsToMove, Stage stage) {
         maxUndergraduates --; // leave at least one troop on the tile

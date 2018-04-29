@@ -9,8 +9,10 @@ import sepr.game.saveandload.SaveLoadManager;
 
 import java.util.HashMap;
 
+//TODO at the end of the game, the allocation still comes up, you have to end your turn, congratulations and poor performance voice lines come up at the same time.
+
 /**
- * executable http://www.riskydevelopments.co.uk/bod/BoD.zip
+ * executable http://www.sidmeiers.me/documents/code/BachelorsOfDomination3.0.zip
  *
  * main game class used for controlling what screen is currently being displayed
  */
@@ -20,6 +22,7 @@ public class Main extends Game implements ApplicationListener {
 	private GameScreen gameScreen;
 	private OptionsScreen optionsScreen;
 	private GameSetupScreen gameSetupScreen;
+	private LoadScreen saveScreen;
 	private SaveLoadManager saveLoadManager;
 	private AudioManager Audio = AudioManager.getInstance();
 
@@ -41,8 +44,20 @@ public class Main extends Game implements ApplicationListener {
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, saveLoadManager);
+
 
 		this.setMenuScreen();
+	}
+
+	private void refreshScreens() {
+		this.menuScreen = new MenuScreen(this);
+		this.gameScreen = new GameScreen(this);
+		this.optionsScreen = new OptionsScreen(this);
+		this.gameSetupScreen = new GameSetupScreen(this);
+		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
+		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, saveLoadManager);
 	}
 
 	public void setMiniGameScreen() {
@@ -53,6 +68,7 @@ public class Main extends Game implements ApplicationListener {
 	}
 
 	public void setMenuScreen() {
+		this.refreshScreens();
 		this.setScreen(menuScreen);
 	}
 
@@ -61,9 +77,8 @@ public class Main extends Game implements ApplicationListener {
 	 * changes the screen currently being displayed to the menu and re-instantiates game screen
 	 */
 	public void exitToMenu() {
+		this.refreshScreens();
 		this.setScreen(menuScreen);
-		this.gameScreen.dispose();
-		this.gameScreen = new GameScreen(this);
 	}
 
 	/**
@@ -76,15 +91,20 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void setGameScreen(HashMap<Integer, Player> players, boolean turnTimerEnabled, int maxTurnTime, boolean allocateNeutralPlayer) {
 		gameScreen.setupGame(players, turnTimerEnabled, maxTurnTime, allocateNeutralPlayer);
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, saveLoadManager);
 		this.setScreen(gameScreen);
 		gameScreen.startGame();
 	}
 
-	public void setGameScreenFromLoad(GameScreen screen){
-	    this.gameScreen = screen;
-	    this.setScreen(this.gameScreen);
-	    this.gameScreen.startGame();
-    }
+	public void returnGameScreen() {
+		this.setScreen(gameScreen);
+		gameScreen.resetCameraPosition();
+		gameScreen.resume();
+	}
+
+	/*public LoadScreen getSaveScreen() {
+		return this.saveScreen;
+	}*/
 
 	/**
 	 * change the screen currently being displayed to the options screen
@@ -98,6 +118,22 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void setGameSetupScreen() {
 		this.setScreen(gameSetupScreen);
+	}
+
+	public void setLoadScreen() {
+		LoadScreen loadScreen = new LoadScreen(this, EntryPoint.MENU_SCREEN, saveLoadManager);
+		this.setScreen(loadScreen);
+	}
+
+	public void setSaveScreen() {
+		this.setScreen(saveScreen);
+	}
+
+	public LoadScreen getSaveScreen() {
+		this.saveLoadManager.loadFromFile();
+		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, saveLoadManager);
+		this.setSaveScreen();
+		return this.saveScreen;
 	}
 
 	/**
@@ -142,19 +178,5 @@ public class Main extends Game implements ApplicationListener {
 		gameSetupScreen.dispose();
 		gameScreen.dispose();
 	}
-
-	public void saveGame(){
-        this.saveLoadManager.saveByID(this.saveLoadManager.getCurrentSaveID()); // TODO get next id/current id
-    }
-
-    public void loadGame(){
-	    this.saveLoadManager.loadFromFile();
-		this.saveLoadManager.loadSaveByID(0);
-	}
-
-	public boolean hasLoadedSaves(){
-		return this.saveLoadManager.savesToLoad;
-	}
-
 }
 

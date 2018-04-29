@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import sepr.game.utils.TurnPhaseType;
-import sun.net.www.content.image.png;
+import sepr.game.punishmentcards.CardType;
 
 /**
  * class that generates widgets for using in the UI
@@ -58,8 +56,16 @@ public class WidgetFactory {
     private static BitmapFont fontBig;
     private static BitmapFont fontSmall;
 
-    //NEW ASSESSMENT 4
+    // NEW ASSESSMENT 4
     private static Texture pauseMenuBtnTexture;
+
+    // cards
+    private static Texture plagueOfGeeseTexture;
+    private static Texture goldenGooseTexture;
+    private static Texture freshersFluTexture;
+    private static Texture exceptionalCircumstancesTexture;
+    private static Texture strikeTexture;
+    private static Texture cripplingHangoverTexture;
 
     /**
      * initialises all the assets required for generating the UI components
@@ -105,6 +111,15 @@ public class WidgetFactory {
 
         // NEW ASSESSMENT 4
         pauseMenuBtnTexture = new Texture("uiComponents/pauseMenuButton.png");
+
+        // cards
+        plagueOfGeeseTexture = new Texture("uiComponents/punishment_cards/PlagueOfGeese.png");
+        goldenGooseTexture = new Texture("uiComponents/punishment_cards/GoldenGoose.png");
+        freshersFluTexture = new Texture("uiComponents/punishment_cards/FreshersFlu.png");
+        exceptionalCircumstancesTexture = new Texture("uiComponents/punishment_cards/ExceptionalCircumstances.png");
+        strikeTexture = new Texture("uiComponents/punishment_cards/Strike.png");
+        cripplingHangoverTexture = new Texture("uiComponents/punishment_cards/CripplingHangover.png");
+
     }
 
     /**
@@ -162,7 +177,7 @@ public class WidgetFactory {
      *
      * @param buttonText the text on the escape button
      * @param changeListener action to be performed when the escape button is pressed
-     * @return
+     * @return the table containing the bottom bar
      */
     public static Table genBottomBar(String buttonText, ChangeListener changeListener){
 
@@ -390,8 +405,8 @@ public class WidgetFactory {
      */
     public static TextButton genEndPhaseButton(){
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = new TextureRegionDrawable(new TextureRegion(endPhaseBtnTexture, 0,0, 348, 123));
-        style.down = new TextureRegionDrawable(new TextureRegion(endPhaseBtnTexture, 0,123, 348, 123));
+        style.up = new TextureRegionDrawable(new TextureRegion(endPhaseBtnTexture, 0,0, 340, 120));
+        style.down = new TextureRegionDrawable(new TextureRegion(endPhaseBtnTexture, 0,120, 340, 120));
         style.font = fontSmall;
 
         return new TextButton("END PHASE", style);
@@ -457,11 +472,46 @@ public class WidgetFactory {
     }
 
     /**
+     * NEW ASSESSMENT 4
+     * gets the image of the card supplied
+     *
+     * @param cardType the card type to get the image for
+     * @return an Image of the card
+     */
+    public static Image genCardDrawable(CardType cardType) {
+        switch (cardType) {
+            case PLAGUE_OF_GEESE:
+                return new Image(plagueOfGeeseTexture);
+            case GOLDEN_GOOSE:
+                return new Image(goldenGooseTexture);
+            case FRESHERS_FLU:
+                return new Image(freshersFluTexture);
+            case EXCEPTIONAL_CIRCUMSTANCES:
+                return new Image(exceptionalCircumstancesTexture);
+            case STRIKE:
+                return new Image(strikeTexture);
+            case CRIPPLING_HANGOVER:
+                return new Image(cripplingHangoverTexture);
+        }
+        return null;
+    }
+
+    /**
      *
      * @return a new instance of the small font
      */
     public static BitmapFont getFontSmall() {
         FileHandle alteDinSmall = new FileHandle("font/Alte-DIN-Small.fnt");
         return new BitmapFont(alteDinSmall);
+    }
+
+    /**
+     * NEW
+     *
+     * @return a new instance of the big font
+     */
+    public static BitmapFont getFontBig() {
+        FileHandle alteDinBig = new FileHandle("font/Alte-DIN-Big.fnt");
+        return new BitmapFont(alteDinBig);
     }
 }
