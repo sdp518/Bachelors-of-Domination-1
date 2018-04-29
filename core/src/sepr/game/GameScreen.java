@@ -295,6 +295,12 @@ public class GameScreen implements Screen, InputProcessor{
         }
     }
 
+    private void resetPostgraduates() {
+        for (int id : map.getSectorIds()){
+            map.getSectorById(id).setPostgraduateStatus(false);
+        }
+    }
+
     /**
      * MODIFIED - ASSESSMENT 4
      * called when the player ends the MOVEMENT phase of their turn to advance the game to the next Player's turn
@@ -303,6 +309,7 @@ public class GameScreen implements Screen, InputProcessor{
      */
     private void nextPlayer() {
         removeEliminatedPlayers(); // check no players have been eliminated
+        resetPostgraduates(); // resets the counter for postgraduate cast ability
         previousPlayerPointer = currentPlayerPointer;
         this.currentPlayerPointer++;
         if (currentPlayerPointer == turnOrder.size()) { // reached end of players, reset to 0

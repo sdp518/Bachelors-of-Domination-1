@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import javafx.geometry.Pos;
 import org.lwjgl.Sys;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import sepr.game.gangmembers.GangMembers;
@@ -194,6 +195,35 @@ public class Sector implements ApplicationListener {
         return this.unitsInSector.size() - count;
     }
 
+    public int getPostgraduateStatus() {
+        Iterator<GangMembers> iterator = this.unitsInSector.iterator();
+        while (iterator.hasNext()) {
+            GangMembers g = iterator.next();
+            if (g.getName().equals("Postgraduate")) {
+                if (g.getCastUsed() == false) {
+                    return 0;
+                }
+                else {
+                    return 1;
+                }
+            }
+        }
+        return -1; // error if there is no postgraduate in sector
+    }
+
+    public void setPostgraduateStatus(Boolean status) {
+        System.out.println("Called");
+        Iterator<GangMembers> iterator = this.unitsInSector.iterator();
+        while (iterator.hasNext()) {
+            GangMembers g = iterator.next();
+            if (g.getName().equals("Postgraduate")) {
+                System.out.println("Updated");
+                g.setCastStatus(status);
+                break;
+            }
+        }
+    }
+
     /**
      *
      * @return the texture used for drawing the sectorNeutral
@@ -303,9 +333,9 @@ public class Sector implements ApplicationListener {
             int count = -amount;
             for (Iterator<GangMembers> iterator = this.unitsInSector.iterator(); iterator.hasNext();) {
                 GangMembers g = iterator.next();
-                System.out.println(count);
+                //System.out.println(count);
                 if (g.getName().equals("Undergraduates") && count > 0) {
-                    System.out.println("Removed");
+                    //System.out.println("Removed");
                     iterator.remove();
                     count--;
                 }
@@ -324,9 +354,9 @@ public class Sector implements ApplicationListener {
      * Adds a postgrad to the sector
      */
     public void addPostgraduate(int amount) {
-        System.out.println("Entered");
+        //System.out.println("Entered");
         if (amount > 0) {
-            System.out.println("Added");
+            //System.out.println("Added");
             Postgraduates postgraduate = new Postgraduates();
             this.unitsInSector.add(postgraduate);
         }
@@ -334,7 +364,7 @@ public class Sector implements ApplicationListener {
             for (Iterator<GangMembers> iterator = this.unitsInSector.iterator(); iterator.hasNext();) {
                 GangMembers g = iterator.next();
                 if (g.getName().equals("Postgraduate")) {
-                    System.out.println("Removed");
+                    //System.out.println("Removed");
                     iterator.remove();
                     break;
                 }

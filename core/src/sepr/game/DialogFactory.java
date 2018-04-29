@@ -1,8 +1,6 @@
 package sepr.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -463,6 +461,29 @@ public class DialogFactory {
         };
         dialog.text("Minigame complete!\nYou have received " + troops + " additional troops");
         dialog.button("Ok", "0");
+        dialog.show(stage);
+    }
+
+    /**
+     * creates a dialog where the player can confirm if they want to exit the program
+     *
+     * @param stage The stage to draw the box onto
+     */
+    public static void selectUnitTypeDialog(Stage stage, final PhaseAttack phaseAttack) {
+        Dialog dialog = new Dialog("Select Unit Type", DialogFactory.skin) {
+            protected void result(Object object) {
+                if (object.toString().equals("1")){
+                    phaseAttack.showUndergraduateSelection();
+                }
+                else {
+                    phaseAttack.postgraduateAttack();
+                    phaseAttack.arrowTailPosition = phaseAttack.arrowHeadPosition;
+                }
+            }
+        };
+        dialog.text("Which unit would you like to use?");
+        dialog.button("Undergraduate", "1");
+        dialog.button("Postgraduate", "0");
         dialog.show(stage);
     }
 }

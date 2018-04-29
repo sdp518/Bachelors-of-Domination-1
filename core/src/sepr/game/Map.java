@@ -275,7 +275,7 @@ public class Map {
 
 
             attacker.addUndergraduatesToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
-            sectors.get(defendingSectorId).setOwner(attacker); //TODO fix the movement after attack
+            sectors.get(defendingSectorId).setOwner(attacker);
 
             DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUndergraduatesInSector(), sectors.get(attackingSectorId).getPostgraduatesInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 

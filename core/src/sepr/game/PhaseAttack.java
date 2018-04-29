@@ -2,7 +2,10 @@ package sepr.game;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import org.lwjgl.Sys;
 import sepr.game.utils.TurnPhaseType;
+
+import java.util.Random;
 
 /**
  * handles input, updating and rendering for the attack phase
@@ -30,7 +33,30 @@ public class PhaseAttack extends PhaseAttackMove{
         }
         troopsToMove = new int[1];
         troopsToMove[0] = -1;
+        DialogFactory.selectUnitTypeDialog(this, this);
+    }
+
+    public void showUndergraduateSelection() {
         DialogFactory.attackDialog(startingSector.getUndergraduatesInSector(), destinationSector.getUndergraduatesInSector(), troopsToMove, this);
+    }
+
+    public void postgraduateAttack() {
+        System.out.println(startingSector.getPostgraduateStatus());
+        if (startingSector.getPostgraduateStatus() == 1) {
+            DialogFactory.basicDialogBox("Postgraduate", "Postgraduates may only cast once per turn", this);
+        }
+        else if (startingSector.getPostgraduateStatus() == 0) {
+            System.out.println("Attack");
+            Random random = new Random();
+            int damage = random.nextInt(4) + 1; // random amount of damage between 1 and 5
+            if (damage > destinationSector.getUndergraduatesInSector()) { // prevents damage from being greater than the number of units in the sector
+                damage = destinationSector.getUndergraduatesInSector();
+            }
+            startingSector.setPostgraduateStatus(true);
+            if (gameScreen.getMap().attackSector(startingSector.getId(), destinationSector.getId(), 0, damage, gameScreen.getPlayerById(startingSector.getOwnerId()), gameScreen.getPlayerById(destinationSector.getOwnerId()), gameScreen.getPlayerById(gameScreen.NEUTRAL_PLAYER_ID), this)) {
+                updateTroopReinforcementLabel();
+            }
+        }
     }
 
     /**
@@ -169,7 +195,8 @@ public class PhaseAttack extends PhaseAttackMove{
                     this.arrowHeadPosition.set(worldCoord.x, worldCoord.y); // Finalise the end position of the arrow
                     this.destinationSector = selected;
 
-                    getNumberOfAttackers(); // attacking and defending sector selected so find out how many units the player wants to attack with
+
+                    getNumberOfAttackers();
                 } else { // cancel attack as selected defending sector cannot be attack: may not be adjacent or may be owned by the attacker
                     this.startingSector = null;
                 }
