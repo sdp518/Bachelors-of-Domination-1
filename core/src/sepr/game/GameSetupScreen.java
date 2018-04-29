@@ -419,7 +419,7 @@ public class GameSetupScreen implements Screen{
                 continue;
             }
 
-            Pattern p = Pattern.compile("[^a-z0-9]", Pattern.CASE_INSENSITIVE);
+            Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(playerNames[i].getText());
             boolean containsInvalidChars = m.find(); // set to true if name contains none alphanumeric characters
 
