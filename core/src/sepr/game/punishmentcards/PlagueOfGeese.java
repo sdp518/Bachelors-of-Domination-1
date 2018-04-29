@@ -23,7 +23,7 @@ public class PlagueOfGeese extends Card {
                 else {
                     // TODO Work out this case
                     sector.addUndergraduates((sector.getUndergraduatesInSector() * -1));
-                    sector.setOwner(gameScreen.getCurrentPlayer());
+                    sector.setOwner(gameScreen.getPlayers().get(gameScreen.NEUTRAL_PLAYER_ID));
                 }
             }
         }
