@@ -15,9 +15,7 @@ public class Strike extends Card {
      */
     @Override
     public boolean act(GameScreen gameScreen) {
-        System.out.println(type.getCardType());
 
-        // TODO only add cards to deck when PVC spawned?
         if (gameScreen.getMap().getProViceChancellor().isPVCSpawned()) {
             for (Player p : gameScreen.getPlayers().values()) {
                 if (p.getOwnsPVC()) {

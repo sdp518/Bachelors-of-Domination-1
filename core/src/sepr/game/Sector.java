@@ -143,7 +143,7 @@ public class Sector implements ApplicationListener {
 
     /**
      *
-     * @return if sector is PVC sector
+     * set's true if sector is PVC tile, false if not
      */
     public void setIsPVCTile(boolean value) { this.isPVCTile = value; }
 
@@ -198,8 +198,7 @@ public class Sector implements ApplicationListener {
      */
     private void setNewSectorTexture(Pixmap newPixmap) {
         this.sectorTexture.dispose();
-        Texture temp = new Texture(newPixmap);
-        this.sectorTexture = temp;
+        this.sectorTexture = new Texture(newPixmap);
     }
 
     /**
@@ -265,7 +264,7 @@ public class Sector implements ApplicationListener {
      *
      * @return the filename of the sector image
      */
-    public String getFileName() {
+    private String getFileName() {
         return fileName;
     }
 

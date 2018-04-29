@@ -14,7 +14,6 @@ public class FreshersFlu extends Card {
      */
     @Override
     public void act(Player player, GameScreen gameScreen) {
-        System.out.println(player.getPlayerName() + ": " + type.getCardType());
         for (Sector sector : gameScreen.getMap().getSectors().values()) {
             if (sector.getOwnerId() == player.getId()) {
 

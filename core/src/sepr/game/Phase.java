@@ -23,7 +23,6 @@ import sepr.game.utils.TurnPhaseType;
 public abstract class Phase extends Stage {
     GameScreen gameScreen;
     Player currentPlayer;
-    Player previousPlayer;
     AudioManager Audio = AudioManager.getInstance();
 
 
@@ -196,7 +195,7 @@ public abstract class Phase extends Stage {
      *
      * @return the top bar of the HUD for the specified phase
      */
-    public Table genGameHUDTopBar() {
+    private Table genGameHUDTopBar() {
         TextButton.TextButtonStyle btnStyle = new TextButton.TextButtonStyle();
         btnStyle.font = WidgetFactory.getFontSmall();
         TextButton exitButton = new TextButton("PAUSE", btnStyle);
@@ -323,7 +322,7 @@ public abstract class Phase extends Stage {
 
     /**
      * abstract method for writing phase specific rendering
-     * @param batch
+     * @param batch the batch for drawing
      */
     protected abstract void visualisePhase(SpriteBatch batch);
 

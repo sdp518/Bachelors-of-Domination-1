@@ -6,16 +6,12 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import sepr.game.punishmentcards.CardType;
-import sepr.game.punishmentcards.PlagueOfGeese;
-import sepr.game.utils.TurnPhaseType;
-import sun.net.www.content.image.png;
 
 /**
  * class that generates widgets for using in the UI
@@ -181,7 +177,7 @@ public class WidgetFactory {
      *
      * @param buttonText the text on the escape button
      * @param changeListener action to be performed when the escape button is pressed
-     * @return
+     * @return the table containing the bottom bar
      */
     public static Table genBottomBar(String buttonText, ChangeListener changeListener){
 

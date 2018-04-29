@@ -13,7 +13,6 @@ public class GoldenGoose extends Card {
      */
     @Override
     public void act(Player player, GameScreen gameScreen) {
-        System.out.println(player.getPlayerName() + ": " + type.getCardType());
         player.switchGoldenGoose();
     }
 

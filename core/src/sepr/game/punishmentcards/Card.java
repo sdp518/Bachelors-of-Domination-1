@@ -6,9 +6,9 @@ import sepr.game.Player;
 
 public class Card {
 
-    CardType type;
-    boolean playerRequired;
-    boolean affectsNeutral;
+    private CardType type;
+    private boolean playerRequired;
+    private boolean affectsNeutral;
 
     public Card(CardType type, boolean playerRequired, boolean affectsNeutral) {
         this.type = type;

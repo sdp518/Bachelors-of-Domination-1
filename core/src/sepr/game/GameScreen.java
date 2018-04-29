@@ -18,12 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sun.xml.internal.bind.v2.TODO;
-import javafx.scene.shape.Shape;
 import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
@@ -178,7 +175,7 @@ public class GameScreen implements Screen, InputProcessor{
         gameSetup = true; // game is now setup
     }
 
-    public void setUpPhases(){
+    private void setUpPhases(){
         // create the game phases and add them to the phases hashmap
         this.phases = new HashMap<TurnPhaseType, Phase>();
         this.phases.put(TurnPhaseType.REINFORCEMENT, new PhaseReinforce(this));
@@ -234,7 +231,7 @@ public class GameScreen implements Screen, InputProcessor{
      * NEW Assessment 4
      * records the time at which the timer was paused
      */
-    public void pauseTimer(){
+    private void pauseTimer(){
         this.pauseStartTime = System.currentTimeMillis();
         this.timerPaused = true;
     }
@@ -732,7 +729,7 @@ public class GameScreen implements Screen, InputProcessor{
      * Sets up the card menu overlay for choosing what player to use the card on and swaps
      * it in for rendering
      */
-    public void clickCard(int i) {
+    private void clickCard(int i) {
         Table tableCardBackground = new Table();
         tableCardBackground.setDebug(false);
         tableCardBackground.setBackground(openCardImages[i].getDrawable());
