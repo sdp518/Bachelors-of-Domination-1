@@ -30,4 +30,21 @@ public class Card {
         return playerRequired;
     }
 
+    public static Card initiateCard(CardType cardType) {
+        switch (cardType) {
+            case STRIKE: return new Strike();
+            case FRESHERS_FLU: return new FreshersFlu();
+            case GOLDEN_GOOSE: return new GoldenGoose();
+            case PLAGUE_OF_GEESE: return new PlagueOfGeese();
+            case CRIPPLING_HANGOVER: return new CripplingHangover();
+            case EXCEPTIONAL_CIRCUMSTANCES: return new ExceptionalCircumstances();
+            default: throw new IllegalArgumentException("That card doesn't exist");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.type.toString();
+    }
+
 }

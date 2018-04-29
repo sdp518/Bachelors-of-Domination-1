@@ -30,4 +30,9 @@ public enum CardType {
         }
         throw new IllegalArgumentException("Text parameter must match one of the enums");
     }
+
+    @Override
+    public String toString() {
+        return this.shortCode;
+    }
 }

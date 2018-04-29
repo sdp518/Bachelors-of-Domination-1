@@ -112,6 +112,7 @@ public class SaveLoadManager {
         this.updateSectors(this.gameScreen.getMap().getSectors(), id);
         this.gameScreen.setTurnOrder(this.loadedStates[id].turnOrder);
         this.gameScreen.setCurrentPlayerPointer(this.loadedStates[id].currentPlayerPointer);
+        this.gameScreen.setCardDeck(this.loadedStates[id].cardDeck);
 
         if (this.loadedStates[id].currentPhase == TurnPhaseType.REINFORCEMENT) {
             gameScreen.getCurrentPlayer().addTroopsToAllocate(-5);
@@ -208,6 +209,7 @@ public class SaveLoadManager {
         gameState.turnTimeElapsed = this.gameScreen.getTurnTimeElapsed();
         gameState.turnOrder = this.gameScreen.getTurnOrder(); // Store the turn order
         gameState.currentPlayerPointer = this.gameScreen.getCurrentPlayerPointer(); // Store the pointer to the current player
+        gameState.cardDeck = this.gameScreen.getCardDeck();
 
         this.loadedStates[id] = gameState;
 

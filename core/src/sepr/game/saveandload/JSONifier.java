@@ -6,9 +6,12 @@ import org.json.simple.JSONObject;
 import sepr.game.GameSetupScreen.CollegeName;
 import sepr.game.Player;
 import sepr.game.Sector;
+import sepr.game.punishmentcards.Card;
+import sepr.game.punishmentcards.CardType;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -44,6 +47,12 @@ public class JSONifier {
         gameState.turnTimeElapsed = Long.parseLong(this.saveState.get("TurnTimeElapsed").toString());
         gameState.maxTurnTime = Integer.parseInt(this.saveState.get("MaxTurnTime").toString());
         gameState.turnTimerEnabled = Boolean.parseBoolean(this.saveState.get("TurnTimerEnabled").toString());
+        JSONArray cardDeckJSON = (JSONArray) this.saveState.get("CardDeck");
+        ArrayList<Card> cardDeck = new ArrayList<Card>();
+        for (Object card : cardDeckJSON) {
+            cardDeck.add(Card.initiateCard(CardType.fromString(card.toString())));
+        }
+        gameState.cardDeck = cardDeck;
 
         JSONArray sectors = (JSONArray) this.saveState.get("MapState");
         HashMap<Integer, Sector> tempSectors = new HashMap<Integer, Sector>();
@@ -85,6 +94,10 @@ public class JSONifier {
                 player = Player.createHumanPlayer(id, collegeName, color, playerName);
                 player.setTroopsToAllocate(troopsToAllocate);
                 player.setOwnsPVC(ownsPVC);
+                JSONArray cards = (JSONArray) temp.get("Cards");
+                for (Object card : cards) {
+                    player.addCard(Card.initiateCard(CardType.fromString(card.toString())));
+                }
             } else {
                 player = Player.createNeutralPlayer(id);
             }
@@ -119,6 +132,11 @@ public class JSONifier {
         gameStateObject.put("MaxTurnTime", this.state.maxTurnTime); // Store the max turn time
         gameStateObject.put("TurnTimeElapsed", this.state.turnTimeElapsed);
         gameStateObject.put("CurrentPlayerPointer", this.state.currentPlayerPointer); // Store the pointer to the current player
+        JSONArray cardDeck = new JSONArray();
+        for(Card card : this.state.cardDeck) {
+            cardDeck.add(card.toString());
+        }
+        gameStateObject.put("CardDeck", cardDeck);
 
         JSONArray sectorStates = new JSONArray(); // JSONArray of sector states
 
@@ -154,6 +172,12 @@ public class JSONifier {
             playerState.put("TroopsToAllocate", player.getTroopsToAllocate());
             playerState.put("OwnsPVC", player.getOwnsPVC());
             playerState.put("PlayerType", player.getPlayerType().toString()); // Store the Player's type
+
+            JSONArray cards = new JSONArray();
+            for(Card card : player.getCardHand()) {
+                cards.add(card.toString());
+            }
+            playerState.put("Cards", cards);
 
             JSONObject colour = new JSONObject(); // Store the Player's colour
             colour.put("R", player.getSectorColour().r);

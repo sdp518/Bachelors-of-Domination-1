@@ -2,8 +2,10 @@ package sepr.game.saveandload;
 
 import sepr.game.Player;
 import sepr.game.Sector;
+import sepr.game.punishmentcards.Card;
 import sepr.game.utils.TurnPhaseType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,4 +21,5 @@ public class GameState {
     public long turnTimeElapsed;
     public List<Integer> turnOrder; // The order in which players take their turn
     public int currentPlayerPointer; // The player currently taking their turn
+    public ArrayList<Card> cardDeck;
 }

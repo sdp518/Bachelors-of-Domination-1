@@ -846,7 +846,7 @@ public class GameScreen implements Screen, InputProcessor{
     @Override
     public void render(float delta) {
         if (!gameSetup) throw new RuntimeException("Game must be setup before attempting to play it"); // throw exception if attempt to run game before its setup
-
+        System.out.println(this.cardDeck.size());
         this.controlCamera(); // move camera
 
         gameplayCamera.update();
@@ -1054,5 +1054,13 @@ public class GameScreen implements Screen, InputProcessor{
 
     public int getCurrentPlayerPointer(){
         return this.currentPlayerPointer;
+    }
+
+    public ArrayList<Card> getCardDeck() {
+        return this.cardDeck;
+    }
+
+    public void setCardDeck(ArrayList<Card> cardDeck) {
+        this.cardDeck = cardDeck;
     }
 }
