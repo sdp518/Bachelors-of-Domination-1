@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import sepr.game.saveandload.SaveLoadManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,23 +44,41 @@ public class OptionsScreen implements Screen {
     private SelectBox<String> resolutionSelector;
     private CheckBox fullscreenSwitch;
 
+    private EntryPoint entryPoint;
+    private SaveLoadManager saveLoadManager;
+
     /**
      * sets up the screen
      *
      * @param main for changing back to the menu screen
      */
-    public OptionsScreen(final Main main) {
+    public OptionsScreen(final Main main, EntryPoint entryPoint, SaveLoadManager saveLoadManager) {
         this.main = main;
+        this.entryPoint = entryPoint;
+        this.saveLoadManager = saveLoadManager;
 
-        this.stage = new Stage(){
-            @Override
-            public boolean keyUp(int keyCode) {
-                if (keyCode == Input.Keys.ESCAPE) { // change back to the menu screen if the player presses esc
-                    main.setMenuScreen();
+        if (entryPoint == EntryPoint.MENU_SCREEN) {
+            this.stage = new Stage() {
+                @Override
+                public boolean keyUp(int keyCode) {
+                    if (keyCode == Input.Keys.ESCAPE) { // change back to the menu screen if the player presses esc
+                        main.setMenuScreen();
+                    }
+                    return super.keyUp(keyCode);
                 }
-                return super.keyUp(keyCode);
-            }
-        };
+            };
+        }
+        else {
+            this.stage = new Stage() {
+                @Override
+                public boolean keyUp(int keyCode) {
+                    if (keyCode == Input.Keys.ESCAPE) { // change back to the game screen if the player presses esc
+                        main.returnGameScreen();
+                    }
+                    return super.keyUp(keyCode);
+                }
+            };
+        }
 
         this.stage.setViewport(new ScreenViewport());
         this.table = new Table();
@@ -140,7 +159,12 @@ public class OptionsScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 acceptChanges(); // save and apply changes when CONFIRM CHANGES button is pressed
-                main.setMenuScreen(); // revert to the menu screen
+                if (entryPoint == EntryPoint.MENU_SCREEN) {
+                    main.setMenuScreen(); // revert to the menu screen
+                }
+                else {
+                    main.returnGameScreen(); // revert to the game screen
+                }
             }
         });
 
@@ -152,6 +176,7 @@ public class OptionsScreen implements Screen {
         return table;
     }
 
+    @SuppressWarnings("Duplicates")
     private void setupUi() {
         table.background(new TextureRegionDrawable(new TextureRegion(new Texture("uiComponents/menuBackground.png"))));
 
@@ -163,13 +188,26 @@ public class OptionsScreen implements Screen {
 
         table.add(WidgetFactory.genOptionsGraphic()).height(700).width(540).pad(30);
 
-        table.row();
-        table.add(WidgetFactory.genBottomBar("MAIN MENU", new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                main.setMenuScreen();}
+        if (entryPoint == EntryPoint.MENU_SCREEN) {
+            table.row();
+            table.add(WidgetFactory.genBottomBar("MAIN MENU", new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    main.setMenuScreen();
+                }
 
-        })).colspan(2);
+            })).colspan(2);
+        }
+        else {
+            table.row();
+            table.add(WidgetFactory.genBottomBar("RETURN", new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    main.returnGameScreen();
+                }
+
+            })).colspan(2);
+        }
     }
 
     /**
@@ -193,7 +231,10 @@ public class OptionsScreen implements Screen {
         prefs.putBoolean(FULLSCREEN_PREF, fullscreenSwitch.isChecked());
 
         prefs.flush(); // save the updated preferences to file
+        saveLoadManager.saveByID(4);
         main.applyPreferences(); // apply the changes to the game
+        main.refreshGameScreen();
+        saveLoadManager.loadSaveByID(4);
     }
 
     /**

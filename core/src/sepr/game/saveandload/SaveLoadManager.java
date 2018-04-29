@@ -24,7 +24,7 @@ public class SaveLoadManager {
     private GameScreen gameScreen; // Game screen to read data from
 
     private String save_path = ""; // Path to the saves file
-    private GameState[] loadedStates = new GameState[4]; // The state that has just been loaded
+    private GameState[] loadedStates = new GameState[5]; // The state that has just been loaded
 
     private boolean directoryExists;
 
@@ -98,6 +98,10 @@ public class SaveLoadManager {
         } catch (ParseException e){
             e.printStackTrace();
         }
+    }
+
+    public void setGameScreen(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
     }
 
     /**

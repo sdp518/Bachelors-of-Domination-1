@@ -535,7 +535,7 @@ public class GameScreen implements Screen, InputProcessor{
         optionsButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // TODO Link in-game options screen
+                main.setInGameOptionsScreen();
             }
         });
 
