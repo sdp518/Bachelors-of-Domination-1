@@ -240,7 +240,7 @@ public class Sector implements ApplicationListener {
         }
     }
 
-    public void setUnitsInSector(int unitsInSector) {
+    public void setUnitsInSector(ArrayList<GangMembers> unitsInSector) {
         this.unitsInSector = unitsInSector;
     }
 

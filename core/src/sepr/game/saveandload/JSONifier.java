@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+//Todo recomment this
 
 /**
  * Class to convert the game state to and from a JSON representation
@@ -63,7 +64,8 @@ public class JSONifier {
             JSONObject sector = (JSONObject) obj;
             temp.setOwnerId(Integer.parseInt(sector.get("OwnerID").toString()));
             temp.setDisplayName(sector.get("DisplayName").toString());
-            temp.setUnitsInSector(Integer.parseInt(sector.get("UnitsInSector").toString()));
+            temp.addUndergraduates(Integer.parseInt(sector.get("UndergraduatesInSector").toString()));
+            temp.addPostgraduate(Integer.parseInt(sector.get("PostgraduatesInSector").toString()));
             temp.setReinforcementsProvided(Integer.parseInt(sector.get("ReinforcementsProvided").toString()));
             temp.setNeutral(Boolean.parseBoolean(sector.get("Neutral").toString()));
             temp.setIsPVCTile(Boolean.parseBoolean(sector.get("PVCTile").toString()));
@@ -83,7 +85,11 @@ public class JSONifier {
             int id = Integer.parseInt(temp.get("ID").toString());
             CollegeName collegeName = CollegeName.fromString(temp.get("CollegeName").toString());
             String playerName = temp.get("PlayerName").toString();
-            int troopsToAllocate = Integer.parseInt(temp.get("TroopsToAllocate").toString());
+            JSONArray troops = (JSONArray) temp.get("TroopsToAllocate");
+            int[] troopsToAllocate = new int[2];
+            for (int i = 0; i < troops.size(); i++) {
+                troopsToAllocate[i] = Integer.parseInt(troops.get(i).toString());
+            }
             boolean ownsPVC = Boolean.parseBoolean(temp.get("OwnsPVC").toString());
             PlayerType playerType = PlayerType.fromString(temp.get("PlayerType").toString());
             JSONObject colors = (JSONObject) temp.get("SectorColour");
@@ -92,7 +98,8 @@ public class JSONifier {
 
             if (playerType.equals(PlayerType.HUMAN)) {
                 player = Player.createHumanPlayer(id, collegeName, color, playerName);
-                player.setTroopsToAllocate(troopsToAllocate);
+                player.addUndergraduatesToAllocate(troopsToAllocate[0]);
+                player.addPostGraduatesToAllocate(troopsToAllocate[1]);
                 player.setOwnsPVC(ownsPVC);
                 JSONArray cards = (JSONArray) temp.get("Cards");
                 for (Object card : cards) {
@@ -148,7 +155,8 @@ public class JSONifier {
             sectorState.put("ID", sector.getId()); // Store the Sector's ID
             sectorState.put("OwnerID", sector.getOwnerId()); // Store the Sector's Owner's ID
             sectorState.put("DisplayName", sector.getDisplayName()); // Store the Sector's display name
-            sectorState.put("UnitsInSector", sector.getUnitsInSector()); // Store the number of units in the Sector
+            sectorState.put("UndergraduatesInSector", sector.getUndergraduatesInSector()); // Store the number of units in the Sector
+            sectorState.put("PostgraduatesInSector", sector.getPostgraduatesInSector());
             sectorState.put("ReinforcementsProvided", sector.getReinforcementsProvided()); // Store the number of reinforcements provided to the sector
             sectorState.put("College", sector.getCollege()); // Store the college that the Sector belongs to
             sectorState.put("Neutral", sector.isNeutral()); // Store whether the Sector is neutral

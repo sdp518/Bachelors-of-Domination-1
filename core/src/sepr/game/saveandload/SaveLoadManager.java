@@ -115,7 +115,8 @@ public class SaveLoadManager {
         this.gameScreen.setCardDeck(this.loadedStates[id].cardDeck);
 
         if (this.loadedStates[id].currentPhase == TurnPhaseType.REINFORCEMENT) {
-            gameScreen.getCurrentPlayer().addTroopsToAllocate(-5);
+            gameScreen.getCurrentPlayer().addPostGraduatesToAllocate(-1);
+            gameScreen.getCurrentPlayer().addUndergraduatesToAllocate(-5);
         }
         gameScreen.setCurrentPhase(loadedStates[id].currentPhase);
 
@@ -149,7 +150,8 @@ public class SaveLoadManager {
                 }
             }
             fullSector.setDisplayName(smallSector.getDisplayName());
-            fullSector.setUnitsInSector(smallSector.getUnitsInSector());
+            fullSector.addPostgraduate(smallSector.getPostgraduatesInSector());
+            fullSector.addUndergraduates(smallSector.getUndergraduatesInSector());
             fullSector.setReinforcementsProvided(smallSector.getReinforcementsProvided());
             fullSector.setCollege(smallSector.getCollege());
             fullSector.setNeutral(smallSector.isNeutral());

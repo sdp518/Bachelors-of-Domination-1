@@ -17,12 +17,12 @@ public class PlagueOfGeese extends Card {
     public boolean act(Player player, GameScreen gameScreen) {
         for (Sector sector : gameScreen.getMap().getSectors().values()) {
             if (sector.getOwnerId() == player.getId()) {
-                if (sector.getUnitsInSector() > 3){
-                    sector.addUnits(-3);
+                if (sector.getUndergraduatesInSector() > 3){
+                    sector.addUndergraduates(-3);
                 }
                 else {
                     // TODO Work out this case
-                    sector.addUnits((sector.getUnitsInSector() * -1));
+                    sector.addUndergraduates((sector.getUndergraduatesInSector() * -1));
                     sector.setOwner(gameScreen.getCurrentPlayer());
                 }
             }
