@@ -14,7 +14,7 @@ public class PlagueOfGeese extends Card {
      * Effect: Remove 3 units from all sectors of affected player
      */
     @Override
-    public void act(Player player, GameScreen gameScreen) {
+    public boolean act(Player player, GameScreen gameScreen) {
         for (Sector sector : gameScreen.getMap().getSectors().values()) {
             if (sector.getOwnerId() == player.getId()) {
                 if (sector.getUnitsInSector() > 3){
@@ -27,5 +27,6 @@ public class PlagueOfGeese extends Card {
                 }
             }
         }
+        return true;
     }
 }

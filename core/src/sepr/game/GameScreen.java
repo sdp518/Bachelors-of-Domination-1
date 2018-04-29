@@ -778,10 +778,11 @@ public class GameScreen implements Screen, InputProcessor{
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         event.stop();
-                        getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player, GameScreen.this);
-                        cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
-                        updateInputProcessor();
-                        setupCardUI();
+                        if (getCurrentPlayer().getCardHand().get(clickedCard.indexOf(true)).act(player, GameScreen.this)) {
+                            cardDeck.add(getCurrentPlayer().removeCard(clickedCard.indexOf(true)));
+                            updateInputProcessor();
+                            setupCardUI();
+                        }
                     }
                 });
                 playerLabels.add(l);

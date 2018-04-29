@@ -16,8 +16,8 @@ public class Card {
         this.affectsNeutral = affectsNeutral;
     }
 
-    public void act(Player player, GameScreen gameScreen) {
-
+    public boolean act(Player player, GameScreen gameScreen) {
+        return false;
     }
 
     public boolean act(GameScreen gameScreen) {

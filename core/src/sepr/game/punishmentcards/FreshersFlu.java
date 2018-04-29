@@ -13,11 +13,12 @@ public class FreshersFlu extends Card {
      * Effect: Debuffs affected player (half strength) for remainder of turn
      */
     @Override
-    public void act(Player player, GameScreen gameScreen) {
+    public boolean act(Player player, GameScreen gameScreen) {
         for (Sector sector : gameScreen.getMap().getSectors().values()) {
             if (sector.getOwnerId() == player.getId()) {
 
             }
         }
+        return true;
     }
 }

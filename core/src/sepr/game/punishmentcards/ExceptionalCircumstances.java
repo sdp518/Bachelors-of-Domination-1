@@ -15,7 +15,7 @@ public class ExceptionalCircumstances extends Card {
      * Effect: Swap sectors with chosen player
      */
     @Override
-    public void act(Player player, GameScreen gameScreen) {
+    public boolean act(Player player, GameScreen gameScreen) {
         for (Sector sector : gameScreen.getMap().getSectors().values()) {
             ArrayList<Sector> currentPlayerSectors = new ArrayList<Sector>();
             ArrayList<Sector> otherPlayerSectors = new ArrayList<Sector>();
@@ -33,5 +33,6 @@ public class ExceptionalCircumstances extends Card {
                 sector.setOwner(player);
             }
         }
+        return true;
     }
 }
