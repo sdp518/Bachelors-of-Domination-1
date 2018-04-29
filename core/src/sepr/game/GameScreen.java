@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.scene.shape.Shape;
 import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
@@ -370,7 +371,6 @@ public class GameScreen implements Screen, InputProcessor{
         this.updateInputProcessor(); // phase changed so update input handling
 
         this.phases.get(currentPhase).enterPhase(getCurrentPlayer()); // setup the new phase for the current player
-        // TODO Check and fix if next player eliminated game crashes (prev 2 lines swapped)
     }
 
     /**
@@ -524,8 +524,6 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 main.setSaveScreen();
-                // TODO Add save and load to pause menu
-                //main.saveGame();
             }
         });
 
@@ -549,7 +547,6 @@ public class GameScreen implements Screen, InputProcessor{
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // TODO Fix quit box appearance
                 DialogFactory.leaveGameDialogBox(GameScreen.this, pauseMenuStage);
             }
         });
@@ -669,10 +666,11 @@ public class GameScreen implements Screen, InputProcessor{
                         clickCard(finalI);
                     }
                     else {
-                        getCurrentPlayer().getCardHand().get(finalI).act(GameScreen.this);
-                        cardDeck.add(getCurrentPlayer().removeCard(finalI));
-                        updateInputProcessor();
-                        setupCardUI();
+                        if (getCurrentPlayer().getCardHand().get(finalI).act(GameScreen.this)) {
+                            cardDeck.add(getCurrentPlayer().removeCard(finalI));
+                            updateInputProcessor();
+                            setupCardUI();
+                        }
                     }
 
                 }
@@ -813,6 +811,13 @@ public class GameScreen implements Screen, InputProcessor{
      */
     private void unclickCard(int i) {
         cardTable.getCell(clickedCardStack).setActor(openCardImages[i]);
+    }
+
+    /**
+     * @return the cardStage for drawing dialog boxes onto it
+     */
+    public Stage getCardStage() {
+        return cardStage;
     }
 
     /**
@@ -964,14 +969,6 @@ public class GameScreen implements Screen, InputProcessor{
         if (keycode == Input.Keys.ESCAPE) {
             //DialogFactory.leaveGameDialogBox(this, phases.get(currentPhase)); // confirm if the player wants to leave if escape is pressed
             this.pause();
-        }
-        // TODO Decide if keeping -- DEFINITLY FUCKING NOT
-        if (keycode == Input.Keys.S) {
-            //System.out.println("SAVING");
-            //this.main.saveGame();
-        }
-        if (keycode == Input.Keys.L) {
-            //this.main.loadGame();
         }
         return true;
     }

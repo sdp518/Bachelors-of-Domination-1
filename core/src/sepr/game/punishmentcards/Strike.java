@@ -1,5 +1,6 @@
 package sepr.game.punishmentcards;
 
+import sepr.game.DialogFactory;
 import sepr.game.GameScreen;
 import sepr.game.Player;
 import sepr.game.Sector;
@@ -13,7 +14,7 @@ public class Strike extends Card {
      * Effect: Steal PVC sector from player that currently holds it
      */
     @Override
-    public void act(GameScreen gameScreen) {
+    public boolean act(GameScreen gameScreen) {
         System.out.println(type.getCardType());
 
         // TODO only add cards to deck when PVC spawned?
@@ -31,6 +32,11 @@ public class Strike extends Card {
                     break;
                 }
             }
+            return true;
+        }
+        else {
+            DialogFactory.basicDialogBox("PVC not found yet!", "You can't use this card just yet as the PVC has not been found. Save it for later though, it may come in useful!", gameScreen.getCardStage());
+            return false;
         }
 
     }

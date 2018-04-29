@@ -20,8 +20,8 @@ public class Card {
 
     }
 
-    public void act(GameScreen gameScreen) {
-
+    public boolean act(GameScreen gameScreen) {
+        return false;
     }
 
     public CardType getType() {
