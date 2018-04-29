@@ -2,6 +2,7 @@ package sepr.game;
 
 import com.badlogic.gdx.graphics.Color;
 import sepr.game.punishmentcards.Card;
+import sepr.game.punishmentcards.FreshersFlu;
 import sepr.game.utils.PlayerType;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class Player {
 
     private boolean cripplingHangover;
     private boolean goldenGoose;
+    private boolean freshersFlu;
+    private FreshersFlu freshersFluCard;
     private ArrayList<Card> cardHand;
 
     /**
@@ -43,6 +46,8 @@ public class Player {
         this.ownsPVC = false;
         this.cripplingHangover = false;
         this.goldenGoose = false;
+        this.freshersFlu = false;
+        this.freshersFluCard = null;
         this.cardHand = new ArrayList<Card>();
     }
 
@@ -204,5 +209,30 @@ public class Player {
      */
     public void switchGoldenGoose() {
         goldenGoose = !goldenGoose;
+    }
+
+    /**
+     * @return true if player has freshers flu, false otherwise
+     */
+    public boolean hasFreshersFlu() {
+        return freshersFlu;
+    }
+
+    /**
+     * switches boolean value of goldenGoose
+     */
+    public void switchFreshersFlu() {
+        freshersFlu = !freshersFlu;
+    }
+
+    /**
+     * @return currently active freshers flu card
+     */
+    public FreshersFlu getFreshersFluCard() {
+        return this.freshersFluCard;
+    }
+
+    public void setFreshersFluCard(FreshersFlu freshersFluCard) {
+        this.freshersFluCard = freshersFluCard;
     }
 }

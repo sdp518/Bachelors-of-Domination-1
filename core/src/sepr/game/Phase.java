@@ -167,27 +167,6 @@ public abstract class Phase extends Stage {
         collegeLogo.setDrawable(WidgetFactory.genCollegeLogoDrawable(player.getCollegeName()));
         updateTroopReinforcementLabel();
         this.updatePhaseLabelColour();
-
-        // NEW ASSESSMENT 4
-        if (player.hasCripplingHangover()) {
-            gameScreen.setMaxTurnTime((Constants.MAX_TURN_TIME / 2));
-            player.switchCripplingHangover();
-        }
-        else {
-            gameScreen.setMaxTurnTime(Constants.MAX_TURN_TIME);
-        }
-
-        if (player.hasGoldenGoose()) {
-            Audio.loadMusic("sound/GoldenGoose/geese.mp3");
-            player.switchGoldenGoose();
-        }
-        else {
-            if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
-                Audio.disposeMusic("sound/GoldenGoose/geese.mp3");
-            }
-        }
-
-        gameScreen.setupCardUI();
     }
 
     /**MOVED FROM WIDGET FACTORY ASSESSMENT 4
@@ -296,9 +275,16 @@ public abstract class Phase extends Stage {
     }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * method for tidying up phase for next player to use
      */
     public void endPhase () {
+        System.out.println("End of phase");
+        if (currentPlayer.hasFreshersFlu()) {
+            currentPlayer.getFreshersFluCard().reverseEffect(gameScreen);
+            currentPlayer.switchFreshersFlu();
+        }
+
         this.currentPlayer = null;
     }
 

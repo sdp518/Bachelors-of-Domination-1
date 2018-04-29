@@ -3,6 +3,7 @@ package sepr.game;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import sepr.game.utils.Constants;
 import sepr.game.utils.TurnPhaseType;
 
 import java.util.Random;
@@ -33,6 +34,27 @@ public class PhaseReinforce extends Phase {
             currentPlayer.addUndergraduatesToAllocate(2);
 
         }
+
+        // NEW ASSESSMENT 4
+        if (player.hasCripplingHangover()) {
+            gameScreen.setMaxTurnTime((Constants.MAX_TURN_TIME / 2));
+            player.switchCripplingHangover();
+        }
+        else {
+            gameScreen.setMaxTurnTime(Constants.MAX_TURN_TIME);
+        }
+
+        if (player.hasGoldenGoose()) {
+            Audio.loadMusic("sound/GoldenGoose/geese.mp3");
+            player.switchGoldenGoose();
+        }
+        else {
+            if (Audio.getCurrentPlayingMusic().contains("sound/GoldenGoose/geese.mp3")) {
+                Audio.disposeMusic("sound/GoldenGoose/geese.mp3");
+            }
+        }
+
+        gameScreen.setupCardUI();
 
         updateTroopReinforcementLabel();
         DialogFactory.nextTurnDialogBox(currentPlayer.getPlayerName(), currentPlayer.getTroopsToAllocate(), this);

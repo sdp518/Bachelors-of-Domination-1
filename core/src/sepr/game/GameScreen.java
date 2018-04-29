@@ -357,6 +357,14 @@ public class GameScreen implements Screen, InputProcessor{
      * MODIFIED 23/4/18 - Fixed crash caused by eliminating a player by moving check for eliminated players to top
      */
     private void nextPlayer() {
+        for (Player player : players.values()){
+            if (player.hasFreshersFlu()) {
+                player.getFreshersFluCard().reverseEffect(this);
+                player.switchFreshersFlu();
+                player.setFreshersFluCard(null);
+            }
+        }
+
         removeEliminatedPlayers(); // check no players have been eliminated
         resetPostgraduates(); // resets the counter for postgraduate cast ability
         previousPlayerPointer = currentPlayerPointer;
