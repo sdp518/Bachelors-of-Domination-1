@@ -137,9 +137,7 @@ public class Sector implements ApplicationListener {
 
 
         this.ownerId = player.getId();
-        if(!this.isPVCTile){
-            this.changeSectorColor(player.getSectorColour());
-        }
+        this.changeSectorColor(player.getSectorColour());
         this.allocated = true;
     }
 

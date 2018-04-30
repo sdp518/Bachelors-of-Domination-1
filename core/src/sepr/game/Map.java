@@ -30,7 +30,7 @@ public class Map {
     private GlyphLayout layout = new GlyphLayout();
 
     private Texture troopCountOverlay = new Texture("uiComponents/troopCountOverlay.png");
-    private Texture pvcStar = new Texture("uiComponents/pvcStar.png");
+    private Texture pvcOutline = new Texture("uiComponents/pvcOutline.png");
 
     private int[] unitsToMove; // units to move from an attacking to conquered sector, 3 index array : [0] amount to move; [1] source sector id ; [2] target sector id
 
@@ -471,8 +471,8 @@ public class Map {
                 layout.setText(font, text);
 
                 if (sector.getIsPVCTile()){
-                    float pvcOverlaySize = 80.0f;
-                    batch.draw(pvcStar, sector.getSectorCentreX() - pvcOverlaySize / 2, sector.getSectorCentreY() - (pvcOverlaySize - 10f) / 2, pvcOverlaySize, pvcOverlaySize);
+                    float pvcOverlaySize = 50.0f;
+                    batch.draw(pvcOutline, sector.getSectorCentreX() - pvcOverlaySize / 2, sector.getSectorCentreY() - pvcOverlaySize / 2, pvcOverlaySize, pvcOverlaySize);
                 }
                 float overlaySize = 40.0f;
                 batch.draw(troopCountOverlay, sector.getSectorCentreX() - overlaySize / 2, sector.getSectorCentreY() - overlaySize / 2, overlaySize, overlaySize);
