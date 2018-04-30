@@ -23,7 +23,7 @@ public class SaveLoadManager {
     private Main main; // The main class
     private GameScreen gameScreen; // Game screen to read data from
 
-    private String save_path = ""; // Path to the saves file
+    private String savePath = ""; // Path to the saves file
     private GameState[] loadedStates = new GameState[4]; // The state that has just been loaded
 
     private boolean directoryExists;
@@ -44,7 +44,7 @@ public class SaveLoadManager {
         String path = home + File.separator + "Bachelors-of-Domination" + File.separator + "saves" + File.separator + "saves.json"; // Generate the path to the saves.json file
         this.directoryExists = new File(path).exists();
 
-        this.save_path = path;
+        this.savePath = path;
 
         if(directoryExists) { // Check that the directory exists
             loadFromFile(); // Load the file if it exists
@@ -58,7 +58,7 @@ public class SaveLoadManager {
                 savesTemplate.add(new JSONObject().put("CurrentSaveID", 0));
 
                 try {
-                    FileWriter fileWriter = new FileWriter(this.save_path);
+                    FileWriter fileWriter = new FileWriter(this.savePath);
                     fileWriter.write(savesTemplate.toJSONString());
                     fileWriter.flush();
                 } catch (Exception e) {
@@ -77,7 +77,7 @@ public class SaveLoadManager {
 
         JSONParser parser = new JSONParser(); // Create JSON parser
         try {
-            Object fullFile = parser.parse(new FileReader(save_path)); // Read file
+            Object fullFile = parser.parse(new FileReader(savePath)); // Read file
             JSONArray allSaves = (JSONArray) fullFile;
 
             for(Object obj: allSaves) {
@@ -183,12 +183,12 @@ public class SaveLoadManager {
 
         try {
             if (!directoryExists) {
-                File file = new File(this.save_path);
+                File file = new File(this.savePath);
                 file.getParentFile().mkdirs();
                 file.createNewFile();
                 this.directoryExists = true;
             }
-            FileWriter fileWriter = new FileWriter(this.save_path);
+            FileWriter fileWriter = new FileWriter(this.savePath);
             fileWriter.write(allSaves.toJSONString());
             fileWriter.flush();
         } catch (Exception e) {
@@ -217,6 +217,7 @@ public class SaveLoadManager {
 
         return true;
     }
+
 
     public GameState[] getLoadedStates() {
         return this.loadedStates;

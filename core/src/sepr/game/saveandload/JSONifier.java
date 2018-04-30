@@ -3,6 +3,7 @@ package sepr.game.saveandload;
 import com.badlogic.gdx.graphics.Color;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import sepr.game.GameScreen;
 import sepr.game.GameSetupScreen.CollegeName;
 import sepr.game.Player;
 import sepr.game.Sector;
@@ -220,4 +221,20 @@ public class JSONifier {
         return TurnPhaseType.INVALID;
     }
 
+    //TestCode
+    public JSONObject getSaveState() {
+        return this.saveState;
+    }
+
+    public void setSaveState(JSONObject saveState) {
+        this.saveState = saveState;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public GameState getState() {
+        return state;
+    }
 }
