@@ -33,18 +33,9 @@ public class FreshersFlu extends Card {
                     sector.addUndergraduates((Math.round(sector.getUndergraduatesInSector()/2) * -1));
                 }
             }
-            player.setFreshersFluCard(this);
+            player.setFreshersFluPrevUnits(previousUnits);
             return true;
         }
 
-    }
-
-    public void reverseEffect(GameScreen gameScreen) {
-        for (Sector sector : gameScreen.getMap().getSectors().values()) {
-            if (previousUnits.containsKey(sector.getId())) {
-                int unitsToAdd = previousUnits.get(sector.getId()) - sector.getUndergraduatesInSector();
-                sector.addUndergraduates(unitsToAdd);
-            }
-        }
     }
 }

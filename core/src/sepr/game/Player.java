@@ -6,6 +6,7 @@ import sepr.game.punishmentcards.FreshersFlu;
 import sepr.game.utils.PlayerType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * base class for storing Neutral and Human player data
@@ -22,7 +23,7 @@ public class Player {
     private boolean cripplingHangover;
     private boolean goldenGoose;
     private boolean freshersFlu;
-    private FreshersFlu freshersFluCard;
+    private HashMap<Integer, Integer> freshersFluPrevUnits;
     private ArrayList<Card> cardHand;
 
     /**
@@ -47,7 +48,7 @@ public class Player {
         this.cripplingHangover = false;
         this.goldenGoose = false;
         this.freshersFlu = false;
-        this.freshersFluCard = null;
+        this.freshersFluPrevUnits = null;
         this.cardHand = new ArrayList<Card>();
     }
 
@@ -228,11 +229,11 @@ public class Player {
     /**
      * @return currently active freshers flu card
      */
-    public FreshersFlu getFreshersFluCard() {
-        return this.freshersFluCard;
+    public HashMap<Integer, Integer> getFreshersFluPrevUnits() {
+        return this.freshersFluPrevUnits;
     }
 
-    public void setFreshersFluCard(FreshersFlu freshersFluCard) {
-        this.freshersFluCard = freshersFluCard;
+    public void setFreshersFluPrevUnits(HashMap<Integer, Integer> freshersFluPrevUnits) {
+        this.freshersFluPrevUnits = freshersFluPrevUnits;
     }
 }
