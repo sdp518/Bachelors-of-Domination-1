@@ -3,7 +3,6 @@ package sepr.game.saveandload;
 import com.badlogic.gdx.graphics.Color;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import sepr.game.GameScreen;
 import sepr.game.GameSetupScreen.CollegeName;
 import sepr.game.Player;
 import sepr.game.Sector;
@@ -69,7 +68,7 @@ public class JSONifier {
             temp.setUnitsInSector(new ArrayList<GangMembers>());
             temp.addUndergraduates(Integer.parseInt(sector.get("UndergraduatesInSector").toString()));
             temp.addPostgraduate(Integer.parseInt(sector.get("PostgraduatesInSector").toString()));
-            temp.setReinforcementsProvided(Integer.parseInt(sector.get("ReinforcementsProvided").toString()));
+            temp.setUndergraduatesProvided(Integer.parseInt(sector.get("ReinforcementsProvided").toString()));
             temp.setNeutral(Boolean.parseBoolean(sector.get("Neutral").toString()));
             temp.setIsPVCTile(Boolean.parseBoolean(sector.get("PVCTile").toString()));
             temp.setCollege(sector.get("College").toString());
@@ -155,7 +154,7 @@ public class JSONifier {
             sectorState.put("DisplayName", sector.getDisplayName()); // Store the Sector's display name
             sectorState.put("UndergraduatesInSector", sector.getUndergraduatesInSector()); // Store the number of units in the Sector
             sectorState.put("PostgraduatesInSector", sector.getPostgraduatesInSector());
-            sectorState.put("ReinforcementsProvided", sector.getReinforcementsProvided()); // Store the number of reinforcements provided to the sector
+            sectorState.put("ReinforcementsProvided", sector.getUndergraduatesProvided()); // Store the number of reinforcements provided to the sector
             sectorState.put("College", sector.getCollege()); // Store the college that the Sector belongs to
             sectorState.put("Neutral", sector.isNeutral()); // Store whether the Sector is neutral
             sectorState.put("PVCTile", sector.getIsPVCTile());

@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import sepr.game.utils.Constants;
 import sepr.game.utils.TurnPhaseType;
 
 /**
@@ -153,7 +152,7 @@ public abstract class Phase extends Stage {
             int unitsGiven;
             if (sector.givesUndergraduates() == true) {
                 unitType = " Undergraduates";
-                unitsGiven = sector.getReinforcementsProvided();
+                unitsGiven = sector.getUndergraduatesProvided();
             }
             else {
                 unitType = " Postgraduates";

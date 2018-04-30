@@ -152,7 +152,7 @@ public class SaveLoadManager {
             fullSector.setDisplayName(smallSector.getDisplayName());
             fullSector.addPostgraduate(smallSector.getPostgraduatesInSector());
             fullSector.addUndergraduates(smallSector.getUndergraduatesInSector());
-            fullSector.setReinforcementsProvided(smallSector.getReinforcementsProvided());
+            fullSector.setUndergraduatesProvided(smallSector.getUndergraduatesProvided());
             fullSector.setCollege(smallSector.getCollege());
             fullSector.setNeutral(smallSector.isNeutral());
             fullSector.setIsPVCTile(smallSector.getIsPVCTile());

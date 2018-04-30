@@ -193,7 +193,7 @@ public class Map {
                 }
                 this.getSectorById(i).setOwner(players.get(lowestReinforcementId));
 
-                playerReinforcements.put(lowestReinforcementId, new Integer[]{playerReinforcements.get(lowestReinforcementId)[0] + this.getSectorById(i).getReinforcementsProvided(), playerReinforcements.get(lowestReinforcementId)[1] + this.getSectorById(i).getPostgraduatesProvided()}); // updates player reinforcements hashmap
+                playerReinforcements.put(lowestReinforcementId, new Integer[]{playerReinforcements.get(lowestReinforcementId)[0] + this.getSectorById(i).getUndergraduatesProvided(), playerReinforcements.get(lowestReinforcementId)[1] + this.getSectorById(i).getPostgraduatesProvided()}); // updates player reinforcements hashmap
 
                 // find the new player with lowest reinforcements
 
@@ -284,7 +284,7 @@ public class Map {
             unitsToMove[3] = defendingSectorId;
 
 
-            attacker.addUndergraduatesToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
+            attacker.addUndergraduatesToAllocate(sectors.get(defendingSectorId).getUndergraduatesProvided());
             attacker.addPostGraduatesToAllocate(sectors.get(defendingSectorId).getPostgraduatesProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
@@ -296,7 +296,7 @@ public class Map {
                 }
             }
 
-            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getReinforcementsProvided(), sectors.get(attackingSectorId).getUndergraduatesInSector(), sectors.get(attackingSectorId).getPostgraduatesInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
+            DialogFactory.attackSuccessDialogBox(sectors.get(defendingSectorId).getUndergraduatesProvided(), sectors.get(attackingSectorId).getUndergraduatesInSector(), sectors.get(attackingSectorId).getPostgraduatesInSector(), unitsToMove, defender.getPlayerName(), attacker.getPlayerName(), sectors.get(defendingSectorId).getDisplayName(), defendingSectorId, attacker, defender, this, stage);
 
 
         } else if (sectors.get(defendingSectorId).getUndergraduatesInSector() == 0 && sectors.get(attackingSectorId).getUndergraduatesInSector() == 1) { // territory conquered but only one attacker remaining so can't move troops onto it

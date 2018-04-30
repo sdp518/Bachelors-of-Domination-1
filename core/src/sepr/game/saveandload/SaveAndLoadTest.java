@@ -1,7 +1,6 @@
 package sepr.game.saveandload;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -85,7 +83,7 @@ public class SaveAndLoadTest {
         testSector.setDisplayName(displayName);
         testSector.setIsPVCTile(isPVCTile);
         testSector.setNeutral(neutral);
-        testSector.setReinforcementsProvided(reinforcementsProvided);
+        testSector.setUndergraduatesProvided(reinforcementsProvided);
         ArrayList<GangMembers> testUnitsInSector = new ArrayList<GangMembers>();
         for (int i = 0; i < undergraduates; i++ ) {
             testUnitsInSector.add(new Undergraduates());
