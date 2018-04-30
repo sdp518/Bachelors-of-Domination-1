@@ -149,7 +149,17 @@ public abstract class Phase extends Stage {
             if (ownerColour.equals("7f7f7fff")) {
                 ownerColour = "000000ff"; // Neutral player displays as black for readability
             }
-            this.bottomBarRightPart.setText("College: " + sector.getCollege() + " - " + sector.getDisplayName() + " - " + "Owned By: [#" + ownerColour + "]" + gameScreen.getPlayerById(sector.getOwnerId()).getPlayerName() + "[] - " + "Grants +" + sector.getReinforcementsProvided() + " Troops");
+            String unitType = null;
+            int unitsGiven;
+            if (sector.givesUndergraduates() == true) {
+                unitType = " Undergraduates";
+                unitsGiven = sector.getReinforcementsProvided();
+            }
+            else {
+                unitType = " Postgraduates";
+                unitsGiven = sector.getPostgraduatesProvided();
+            }
+            this.bottomBarRightPart.setText("College: " + sector.getCollege() + " - " + sector.getDisplayName() + " - " + "Owned By: [#" + ownerColour + "]" + gameScreen.getPlayerById(sector.getOwnerId()).getPlayerName() + "[] - " + "Grants +" + unitsGiven + unitType);
         }
     }
 

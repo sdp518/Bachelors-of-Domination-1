@@ -18,6 +18,7 @@ public class UnitChangeParticle {
     private Texture overlay;
 
     /**
+     * MODIFIED ASSESSMENT 4 - Changed to account for the addition of pgs
      *
      * @param amount the amount of troops that the sector is changing by
      * @param centrePosition initial position of the particle

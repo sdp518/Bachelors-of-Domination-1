@@ -40,6 +40,7 @@ public class Sector implements ApplicationListener {
     private String fileName;
     private boolean allocated; // becomes true once the sector has been allocated
     private boolean isPVCTile;
+    private int postgraduatesProvided;
 
     public Sector() {
 
@@ -60,7 +61,7 @@ public class Sector implements ApplicationListener {
      * @param sectorCentreY ycoord of sector centre
      * @param decor false if a sector is accessible to a player and true if sector is decorative
      */
-    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor) {
+    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, int postgraduatesProvided) {
         this.id = id;
         this.ownerId = ownerId;
         this.displayName = displayName;
@@ -77,10 +78,11 @@ public class Sector implements ApplicationListener {
         this.decor = decor;
         this.fileName = fileName;
         this.allocated = false;
+        this.postgraduatesProvided = postgraduatesProvided;
     }
 
-    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color) {
-        this(id, ownerId, fileName, new Texture(texturePath), texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor);
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, int postgraduatesProvided) {
+        this(id, ownerId, fileName, new Texture(texturePath), texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor, postgraduatesProvided);
         
         this.allocated = allocated;
         this.sectorCentreY = sectorCentreY;
@@ -90,7 +92,7 @@ public class Sector implements ApplicationListener {
         }
     }
 
-    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test){
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test, int postgraduatesProvided){
         HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
 
         new HeadlessApplication(this, conf);
@@ -111,6 +113,7 @@ public class Sector implements ApplicationListener {
         this.decor = decor;
         this.fileName = fileName;
         this.allocated = allocated;
+        this.postgraduatesProvided = postgraduatesProvided;
     }
 
     /**
@@ -179,8 +182,19 @@ public class Sector implements ApplicationListener {
         return reinforcementsProvided;
     }
 
+    public boolean givesUndergraduates() {
+        if (reinforcementsProvided == 0)
+            return false;
+        else
+            return true;
+    }
+
     public void setReinforcementsProvided(int reinforcementsProvided) {
         this.reinforcementsProvided = reinforcementsProvided;
+    }
+
+    public int getPostgraduatesProvided() {
+       return postgraduatesProvided;
     }
 
     /**

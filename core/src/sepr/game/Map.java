@@ -120,7 +120,7 @@ public class Map {
         Pixmap sectorPixmap = new Pixmap(Gdx.files.internal("mapData/" + sectorData[1]));
         String displayName = sectorData[2];
         int numberUndergraduates = 10 + random.nextInt(15);
-        int numberPostgraduates = 0; // TODO assign initial postgrads
+        int numberPostgraduates = 0;
         ArrayList<GangMembers> unitsInSector = new ArrayList<GangMembers>();
         for (int i = 0; i < numberUndergraduates; i++) {
             Undergraduates u = new Undergraduates();
@@ -131,15 +131,16 @@ public class Map {
             unitsInSector.add(g);
         }
 
-        int reinforcementsProvided = Integer.parseInt(sectorData[4]);
+        int undergraduatesProvided = Integer.parseInt(sectorData[4]);
         String college = sectorData[5];
         boolean neutral = Boolean.parseBoolean(sectorData[6]);
         int[] adjacentSectors = strToIntArray(sectorData[7]);
         int sectorX = Integer.parseInt(sectorData[8]);
         int sectorY = Integer.parseInt(sectorData[9]);
         boolean decor = Boolean.parseBoolean(sectorData[10]);
+        int postgraduatesProvided = Integer.parseInt(sectorData[11]);
 
-        return new Sector(sectorId, ownerId, filename, sectorTexture, texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectors, sectorX, sectorY, decor);
+        return new Sector(sectorId, ownerId, filename, sectorTexture, texturePath, sectorPixmap, displayName, unitsInSector, undergraduatesProvided, college, neutral, adjacentSectors, sectorX, sectorY, decor, postgraduatesProvided);
     }
 
     /**
@@ -174,10 +175,10 @@ public class Map {
             allocateNeutralSectors(players);
         }
 
-        HashMap<Integer, Integer> playerReinforcements = new HashMap<Integer, Integer>(); // mapping of player id to amount of reinforcements they will receive currently
+        HashMap<Integer, Integer[]> playerReinforcements = new HashMap<Integer, Integer[]>(); // mapping of player id to amount of reinforcements they will receive currently
         // set all players to currently be receiving 0 reinforcements, ignoring the neutral player
         for (Integer i : players.keySet()) {
-            if (i != GameScreen.NEUTRAL_PLAYER_ID) playerReinforcements.put(i, 0);
+            if (i != GameScreen.NEUTRAL_PLAYER_ID) playerReinforcements.put(i, new Integer[]{0,0});
         }
 
 
@@ -191,12 +192,19 @@ public class Map {
                     continue; // skip allocating sector if it is a decor sector
                 }
                 this.getSectorById(i).setOwner(players.get(lowestReinforcementId));
-                playerReinforcements.put(lowestReinforcementId, playerReinforcements.get(lowestReinforcementId) + this.getSectorById(i).getReinforcementsProvided()); // updates player reinforcements hashmap
+
+                playerReinforcements.put(lowestReinforcementId, new Integer[]{playerReinforcements.get(lowestReinforcementId)[0] + this.getSectorById(i).getReinforcementsProvided(), playerReinforcements.get(lowestReinforcementId)[1] + this.getSectorById(i).getPostgraduatesProvided()}); // updates player reinforcements hashmap
 
                 // find the new player with lowest reinforcements
-                int minReinforcements = Collections.min(playerReinforcements.values()); // get lowest reinforcement amount
+
+                int minReinforcements = 10000; // get lowest reinforcement amount
+                for (Integer[] vals : playerReinforcements.values()) {
+                    if (vals[0] < minReinforcements)
+                        minReinforcements = vals[0];
+                }
+
                 for (Integer j : playerReinforcements.keySet()) { // find id of player which has the lowest reinforcement amount
-                    if (playerReinforcements.get(j) == minReinforcements) { // if this player has the reinforcements matching the min amount set them to the new lowest player
+                    if (playerReinforcements.get(j)[0] == minReinforcements) { // if this player has the reinforcements matching the min amount set them to the new lowest player
                         lowestReinforcementId = j;
                         break;
                     }
@@ -277,6 +285,7 @@ public class Map {
 
 
             attacker.addUndergraduatesToAllocate(sectors.get(defendingSectorId).getReinforcementsProvided());
+            attacker.addPostGraduatesToAllocate(sectors.get(defendingSectorId).getPostgraduatesProvided());
             sectors.get(defendingSectorId).setOwner(attacker);
 
             // 0.5 chance of getting card on sector capture

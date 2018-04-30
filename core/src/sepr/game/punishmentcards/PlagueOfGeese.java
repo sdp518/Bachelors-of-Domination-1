@@ -23,7 +23,9 @@ public class PlagueOfGeese extends Card {
                 else {
                     // TODO Work out this case
                     sector.addUndergraduates((sector.getUndergraduatesInSector() * -1));
-                    sector.setOwner(gameScreen.getPlayers().get(gameScreen.NEUTRAL_PLAYER_ID));
+                    if (sector.getPostgraduatesInSector() > 0) // if a pg exists in a sector when all ugs are lost, remove it
+                        sector.addPostgraduate(-1);
+                    sector.setOwner(gameScreen.getCurrentPlayer());
                 }
             }
         }
