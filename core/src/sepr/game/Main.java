@@ -178,5 +178,14 @@ public class Main extends Game implements ApplicationListener {
 		gameSetupScreen.dispose();
 		gameScreen.dispose();
 	}
+
+	//Test code:
+    public GameScreen getGameScreen() {
+	    return this.gameScreen;
+    }
+
+    public SaveLoadManager getSaveLoadManager() {
+        return saveLoadManager;
+    }
 }
 
