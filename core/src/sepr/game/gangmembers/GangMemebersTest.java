@@ -20,24 +20,18 @@ public class GangMemebersTest {
     @Test
     public void testGangMemebers() {
         assertEquals("test", this.gangMembers.getName());
-        assertEquals(false, this.gangMembers.getCastUsed());
-        this.gangMembers.setCastStatus(true);
-        assertEquals(true, this.gangMembers.getCastUsed());
     }
 
     @Test
     public void testUndergraduates() {
         assertEquals("Undergraduate", this.undergraduates.getName());
-        assertEquals(false, this.undergraduates.getCastUsed());
-        this.undergraduates.setCastStatus(true);
-        assertEquals(true, this.undergraduates.getCastUsed());
     }
 
     @Test
     public void testPostgraduates() {
         assertEquals("Postgraduate", this.postgraduates.getName());
-        assertEquals(false, this.postgraduates.getCastUsed());
-        this.postgraduates.setCastStatus(true);
-        assertEquals(true, this.postgraduates.getCastUsed());
+        assertEquals(false, this.postgraduates.getAttacked());
+        this.postgraduates.setAttacked(true);
+        assertEquals(true, this.postgraduates.getAttacked());
     }
 }

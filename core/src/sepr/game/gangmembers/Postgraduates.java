@@ -2,19 +2,19 @@ package sepr.game.gangmembers;
 
 public class Postgraduates extends GangMembers {
 
-    private Boolean castUsed;
+    private Boolean attacked;
 
     public Postgraduates() {
         super("Postgraduate");
 
-        this.castUsed = false;
+        this.attacked = false;
     }
 
-    public Boolean getCastUsed() {
-        return this.castUsed;
+    public Boolean getAttacked() {
+        return this.attacked;
     }
 
-    public void setCastStatus(Boolean status) {
-        this.castUsed = status;
+    public void setAttacked(Boolean status) {
+        this.attacked = status;
     }
 }
