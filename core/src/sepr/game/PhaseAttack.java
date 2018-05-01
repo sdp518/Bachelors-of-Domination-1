@@ -41,12 +41,10 @@ public class PhaseAttack extends PhaseAttackMove{
     }
 
     public void postgraduateAttack() {
-        System.out.println(startingSector.getPostgraduateStatus());
         if (startingSector.getPostgraduateStatus() == 1) {
             DialogFactory.basicDialogBox("Postgraduate", "Postgraduates may only cast once per turn", this);
         }
         else if (startingSector.getPostgraduateStatus() == 0) {
-            System.out.println("Attack");
             Random random = new Random();
             int damage = random.nextInt(4) + 1; // random amount of damage between 1 and 5
             if (damage > destinationSector.getUndergraduatesInSector()) { // prevents damage from being greater than the number of units in the sector

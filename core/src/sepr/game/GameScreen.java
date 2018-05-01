@@ -662,7 +662,6 @@ public class GameScreen implements Screen, InputProcessor{
 
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    //System.out.println("closed click");
                     Gdx.input.setInputProcessor(cardStage);
                     openCards();
                 }
@@ -673,7 +672,6 @@ public class GameScreen implements Screen, InputProcessor{
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     event.stop();
-                    //System.out.println("open click");
                     if (getCurrentPlayer().getCardHand().get(finalI).getPlayerRequired()) {
                         if (clickedCard.contains(true)) {
                             unclickCard(clickedCard.indexOf(true));
@@ -707,7 +705,6 @@ public class GameScreen implements Screen, InputProcessor{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (!event.isStopped()) {
-                    //System.out.println("outside click");
                     updateInputProcessor();
                     if (clickedCard.contains(true)){
                         unclickCard(clickedCard.indexOf(true));
@@ -820,7 +817,6 @@ public class GameScreen implements Screen, InputProcessor{
         clickedCardStack.add(tableCardBackground);
         clickedCardStack.add(tableOverlay);
 
-        //System.out.println("swapping");
         cardTable.getCell(openCardImages[i]).setActor(clickedCardStack);
     }
 

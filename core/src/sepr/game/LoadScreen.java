@@ -308,7 +308,6 @@ public class LoadScreen implements Screen{
                 saveLoadManager.loadSaveByID(saveID);
                 main.returnGameScreen();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
                 e.printStackTrace();
                 DialogFactory.basicDialogBox("Load Failure","Load has been Unsuccessful", stage);
             }

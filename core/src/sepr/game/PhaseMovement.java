@@ -36,7 +36,6 @@ public class PhaseMovement extends PhaseAttackMove {
      */
     private void executeMoveTroops() {
 
-        System.out.println("MOVED BOII");
         int startUndergraduates = troopsToMove[0];
         int endUndergraduates = troopsToMove[0];
         int startPostgraduates = troopsToMove[1];
