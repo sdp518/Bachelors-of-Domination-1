@@ -1,7 +1,6 @@
 package sepr.game.saveandload;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import sepr.game.punishmentcards.*;
 import sepr.game.utils.PlayerType;
 import sepr.game.utils.TurnPhaseType;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,7 +39,7 @@ public class SaveAndLoadTest {
         Player testPlayer1 = new Player(0, GameSetupScreen.CollegeName.UNI_OF_YORK, Color.WHITE, PlayerType.NEUTRAL_AI, "THE NEUTRAL PLAYER");
         Player testPlayer2 = new Player(1, GameSetupScreen.CollegeName.ALCUIN, Color.RED, PlayerType.HUMAN, "TestPlayer2");
         Player testPlayer3 = new Player(2, GameSetupScreen.CollegeName.WENTWORTH, Color.YELLOW, PlayerType.HUMAN, "TestPlayer3");
-        this.players = new HashMap<>();
+        this.players = new HashMap<Integer, Player>();
         testPlayer2.addCard(new GoldenGoose());
         testPlayer3.addCard(new FreshersFlu());
         testPlayer3.addCard(new CripplingHangover());
@@ -56,12 +54,12 @@ public class SaveAndLoadTest {
         sector2.setOwnerId(testPlayer2.getId());
         sector3.setOwnerId(testPlayer3.getId());
         sector4.setOwnerId(testPlayer1.getId());
-        this.sectors = new HashMap<>();
+        this.sectors = new HashMap<Integer, Sector>();
         this.sectors.put(0,sector1);
         this.sectors.put(1,sector2);
         this.sectors.put(2,sector3);
         this.sectors.put(3,sector4);
-        this.turnOrder = new LinkedList<>();
+        this.turnOrder = new LinkedList<Integer>();
         this.turnOrder.add(0);
         this.turnOrder.add(1);
         this.currentPhase = TurnPhaseType.REINFORCEMENT;
@@ -69,7 +67,7 @@ public class SaveAndLoadTest {
         this.turnTimerEnabled = true;
         this.maxTurnTime = 450;
         this.turnTimeElapsed = 0;
-        this.cardDeck = new ArrayList<>();
+        this.cardDeck = new ArrayList<Card>();
         this.cardDeck.add(new ExceptionalCircumstances());
         this.cardDeck.add(new FreshersFlu());
         this.cardDeck.add(new GoldenGoose());
@@ -141,6 +139,41 @@ public class SaveAndLoadTest {
         for(int i = 0; i < cards.size(); i++) {
             Card temp = Card.initiateCard(CardType.fromString(cards.get(i).toString()));
             assertEquals(this.cardDeck.get(i).getType(), temp.getType());
+        }
+    }
+
+    @Test
+    public void testTransformFromJSON() {
+        this.state = new GameState();
+        this.state.players = this.players;
+        this.state.sectors = this.sectors;
+        this.state.currentPhase = this.currentPhase;
+        this.state.currentPlayerPointer = this.currentPlayerPointer;
+        this.state.maxTurnTime = this.maxTurnTime;
+        this.state.turnOrder = this.turnOrder;
+        this.state.turnTimeElapsed = this.turnTimeElapsed;
+        this.state.turnTimerEnabled = this.turnTimerEnabled;
+        this.state.cardDeck = this.cardDeck;
+        this.jifier.setState(this.state);
+        JSONObject JSONState = this.jifier.getJSONGameState();
+        this.jifier.setSaveState(JSONState);
+        GameState transformState = this.jifier.getStateFromJSON();
+        for (int i = 0; i < this.state.players.size(); i++) {
+            assertEquals(this.state.players.get(i).getId(), transformState.players.get(i).getId());
+        }
+        for (int i = 0; i < this.state.sectors.size(); i++) {
+            assertEquals(this.state.sectors.get(i).getId(), transformState.sectors.get(i).getId());
+        }
+        assertEquals(this.state.currentPhase, transformState.currentPhase);
+        assertEquals(this.state.currentPlayerPointer, transformState.currentPlayerPointer);
+        assertEquals(this.state.maxTurnTime, transformState.maxTurnTime);
+        for (int i = 0; i < this.state.turnOrder.size(); i++) {
+            assertEquals(this.state.turnOrder.get(i), transformState.turnOrder.get(i));
+        }
+        assertEquals(this.state.turnTimeElapsed, transformState.turnTimeElapsed);
+        assertEquals(this.state.turnTimerEnabled, transformState.turnTimerEnabled);
+        for(int i = 0; i < this.state.cardDeck.size(); i++) {
+            assertEquals(this.cardDeck.get(i).getType(), transformState.cardDeck.get(i).getType());
         }
     }
 }

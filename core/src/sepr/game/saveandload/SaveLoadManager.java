@@ -20,7 +20,6 @@ import java.util.HashMap;
  * Class to manage saving and loading from files
  */
 public class SaveLoadManager {
-    private Main main; // The main class
     private GameScreen gameScreen; // Game screen to read data from
 
     private String savePath = ""; // Path to the saves file
@@ -32,11 +31,9 @@ public class SaveLoadManager {
 
     /**
      * Initializes the SaveLoadManager
-     * @param main Main class
      * @param gameScreen GameScreen to save data from
      */
-    public SaveLoadManager(final Main main, GameScreen gameScreen) {
-        this.main = main;
+    public SaveLoadManager( GameScreen gameScreen) {
         this.gameScreen = gameScreen;
 
         String home = System.getProperty("user.home"); // Get the user's home directory
@@ -48,25 +45,6 @@ public class SaveLoadManager {
 
         if(directoryExists) { // Check that the directory exists
             loadFromFile(); // Load the file if it exists
-        } else { // Create a blank saves file
-            /*File file = new File(path);
-            try {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-
-                JSONArray savesTemplate = new JSONArray();
-                savesTemplate.add(new JSONObject().put("CurrentSaveID", 0));
-
-                try {
-                    FileWriter fileWriter = new FileWriter(this.savePath);
-                    fileWriter.write(savesTemplate.toJSONString());
-                    fileWriter.flush();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
         }
     }
 
@@ -130,7 +108,6 @@ public class SaveLoadManager {
         if(loadedStates[id].turnTimerEnabled) {
             this.gameScreen.setTurnTimeStart(System.currentTimeMillis() - loadedStates[id].turnTimeElapsed);
         }
-        this.main.returnGameScreen();
         this.gameScreen.getPhases().get(gameScreen.getCurrentPhase()).enterPhase(gameScreen.getCurrentPlayer());
         this.gameScreen.resetPausedTime();
     }
