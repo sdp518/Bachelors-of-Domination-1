@@ -42,7 +42,7 @@ public class Main extends Game implements ApplicationListener {
 		this.gameScreen = new GameScreen(this);
 		this.optionsScreen = new OptionsScreen(this);
 		this.gameSetupScreen = new GameSetupScreen(this);
-		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
+		this.saveLoadManager = new SaveLoadManager(gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
 		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, saveLoadManager);
 
@@ -55,7 +55,7 @@ public class Main extends Game implements ApplicationListener {
 		this.gameScreen = new GameScreen(this);
 		this.optionsScreen = new OptionsScreen(this);
 		this.gameSetupScreen = new GameSetupScreen(this);
-		this.saveLoadManager = new SaveLoadManager(this, gameScreen);
+		this.saveLoadManager = new SaveLoadManager(gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
 		this.saveScreen = new LoadScreen(this, EntryPoint.GAME_SCREEN, saveLoadManager);
 	}

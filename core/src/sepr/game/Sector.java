@@ -7,17 +7,12 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import javafx.geometry.Pos;
-import org.lwjgl.Sys;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import sepr.game.gangmembers.GangMembers;
 import sepr.game.gangmembers.Postgraduates;
 import sepr.game.gangmembers.Undergraduates;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.ListIterator;
 
 /**
  * class for specifying properties of a sector that is part of a map
@@ -27,7 +22,7 @@ public class Sector implements ApplicationListener {
     private int ownerId;
     private String displayName;
     private ArrayList<GangMembers> unitsInSector;
-    private int reinforcementsProvided;
+    private int undergraduatesProvided;
     private String college; // name of the college this sector belongs to
     private boolean neutral; // is this sector a default neutral sector
     private int[] adjacentSectorIds; // ids of sectors adjacent to this one
@@ -46,12 +41,12 @@ public class Sector implements ApplicationListener {
 
     }
 
-    /**
+    /** MODIFIED ASSESSMENT 4 - Added support for pgs
      * @param id sector id
      * @param ownerId id of player who owns sector
      * @param displayName sector display name
      * @param unitsInSector number of units in sector
-     * @param reinforcementsProvided number of reinforcements the sector provides
+     * @param undergraduatesProvided number of ugs the sector provides
      * @param college unique id of the college this sector belongs to
      * @param adjacentSectorIds ids of adjacent sectors
      * @param sectorTexture sector texture from assets
@@ -61,12 +56,12 @@ public class Sector implements ApplicationListener {
      * @param sectorCentreY ycoord of sector centre
      * @param decor false if a sector is accessible to a player and true if sector is decorative
      */
-    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, int postgraduatesProvided) {
+    public Sector(int id, int ownerId, String fileName, Texture sectorTexture, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int undergraduatesProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, int postgraduatesProvided) {
         this.id = id;
         this.ownerId = ownerId;
         this.displayName = displayName;
         this.unitsInSector = unitsInSector;
-        this.reinforcementsProvided = reinforcementsProvided;
+        this.undergraduatesProvided = undergraduatesProvided;
         this.college = college;
         this.neutral = neutral;
         this.adjacentSectorIds = adjacentSectorIds;
@@ -81,8 +76,8 @@ public class Sector implements ApplicationListener {
         this.postgraduatesProvided = postgraduatesProvided;
     }
 
-    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, int postgraduatesProvided) {
-        this(id, ownerId, fileName, new Texture(texturePath), texturePath, sectorPixmap, displayName, unitsInSector, reinforcementsProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor, postgraduatesProvided);
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int undergraduatesProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, int postgraduatesProvided) {
+        this(id, ownerId, fileName, new Texture(texturePath), texturePath, sectorPixmap, displayName, unitsInSector, undergraduatesProvided, college, neutral, adjacentSectorIds, sectorCentreX, sectorCentreY, decor, postgraduatesProvided);
         
         this.allocated = allocated;
         this.sectorCentreY = sectorCentreY;
@@ -92,7 +87,7 @@ public class Sector implements ApplicationListener {
         }
     }
 
-    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int reinforcementsProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test, int postgraduatesProvided){
+    public Sector(int id, int ownerId, String fileName, String texturePath, Pixmap sectorPixmap, String displayName, ArrayList<GangMembers> unitsInSector, int undergraduatesProvided, String college, boolean neutral, int[] adjacentSectorIds, int sectorCentreX, int sectorCentreY, boolean decor, boolean allocated, Color color, boolean test, int postgraduatesProvided){
         HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
 
         new HeadlessApplication(this, conf);
@@ -101,7 +96,7 @@ public class Sector implements ApplicationListener {
         this.ownerId = ownerId;
         this.displayName = displayName;
         this.unitsInSector = unitsInSector;
-        this.reinforcementsProvided = reinforcementsProvided;
+        this.undergraduatesProvided = undergraduatesProvided;
         this.college = college;
         this.neutral = neutral;
         this.adjacentSectorIds = adjacentSectorIds;
@@ -113,7 +108,7 @@ public class Sector implements ApplicationListener {
         this.decor = decor;
         this.fileName = fileName;
         this.allocated = allocated;
-        this.postgraduatesProvided = postgraduatesProvided;
+        this.postgraduatesProvided = postgraduatesProvided; // new assessment 4
     }
 
     /**
@@ -178,21 +173,33 @@ public class Sector implements ApplicationListener {
      *
      * @return number of troops rewarded for conquering this territory
      */
-    public int getReinforcementsProvided() {
-        return reinforcementsProvided;
+    public int getUndergraduatesProvided() {
+        return undergraduatesProvided;
     }
 
+    /**
+     * NEW ASSESSMENT 4
+     * @return boolean for whether the sector gives ugs as reinforcements (false indicates pgs instead)
+     */
     public boolean givesUndergraduates() {
-        if (reinforcementsProvided == 0)
+        if (undergraduatesProvided == 0)
             return false;
         else
             return true;
     }
 
-    public void setReinforcementsProvided(int reinforcementsProvided) {
-        this.reinforcementsProvided = reinforcementsProvided;
+    /**
+     * MODIFIED ASSESSMENT 4 - Renamed to provide support for pgs
+     * @param undergraduatesProvided
+     */
+    public void setUndergraduatesProvided(int undergraduatesProvided) {
+        this.undergraduatesProvided = undergraduatesProvided;
     }
 
+    /**
+     * NEW ASSESSMENT 4 - Gets the number of pgs in a sector
+     * @return the number of pgs given to a player on sector capture
+     */
     public int getPostgraduatesProvided() {
        return postgraduatesProvided;
     }
@@ -213,6 +220,10 @@ public class Sector implements ApplicationListener {
         return this.unitsInSector.size() - count;
     }
 
+    /**
+     * NEW ASSESSMENT 4
+     * @return the number of pgs in a sector
+     */
     public int getPostgraduatesInSector() {
         Iterator<GangMembers> iterator = this.unitsInSector.iterator();
         int count = 0;
@@ -225,6 +236,11 @@ public class Sector implements ApplicationListener {
         return this.unitsInSector.size() - count;
     }
 
+    /**
+     * NEW ASSESSMENT 4
+     * Gets the status (whether it has attacked this turn) of a pg
+     * @return0 if set to false, 1 if set to true, -1 if no pg exists in the sector
+     */
     public int getPostgraduateStatus() {
         Iterator<GangMembers> iterator = this.unitsInSector.iterator();
         while (iterator.hasNext()) {
@@ -241,6 +257,11 @@ public class Sector implements ApplicationListener {
         return -1; // error if there is no postgraduate in sector
     }
 
+    /**
+     * NEW ASSESSMENT 4
+     * Sets the status (whether it has attacked this turn) of a pg
+     * @param status the value to set the status to
+     */
     public void setPostgraduateStatus(Boolean status) {
         System.out.println("Called");
         Iterator<GangMembers> iterator = this.unitsInSector.iterator();
@@ -254,6 +275,10 @@ public class Sector implements ApplicationListener {
         }
     }
 
+    /**
+     * MODIFIED ASSESSMENT 4 - Changed to add support for pgs
+     * @param unitsInSector
+     */
     public void setUnitsInSector(ArrayList<GangMembers> unitsInSector) {
         this.unitsInSector = unitsInSector;
     }
@@ -357,6 +382,7 @@ public class Sector implements ApplicationListener {
     }
 
     /**
+     * MODIFIED ASSESSMENT 4 - Changed to add support for pgs
      * Changes the number of units in this sector
      * If there are 0 units in sector then ownerId should be -1 (neutral)
      * @param amount number of units to change by, (can be negative to subtract units
