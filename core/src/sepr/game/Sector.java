@@ -229,7 +229,7 @@ public class Sector implements ApplicationListener {
         int count = 0;
         while (iterator.hasNext()) {
             GangMembers g = iterator.next();
-            if (g.getName().equals("Postgraduates")) {
+            if (g.getName().equals("Postgraduate")) {
                 count++;
             }
         }
