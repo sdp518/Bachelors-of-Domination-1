@@ -127,6 +127,8 @@ public class SaveLoadManager {
                 }
             }
             fullSector.setDisplayName(smallSector.getDisplayName());
+            fullSector.addPostgraduate(-1 * fullSector.getPostgraduatesInSector());
+            fullSector.addUndergraduates(-1 * fullSector.getUndergraduatesInSector());
             fullSector.addPostgraduate(smallSector.getPostgraduatesInSector());
             fullSector.addUndergraduates(smallSector.getUndergraduatesInSector());
             fullSector.setUndergraduatesProvided(smallSector.getUndergraduatesProvided());
