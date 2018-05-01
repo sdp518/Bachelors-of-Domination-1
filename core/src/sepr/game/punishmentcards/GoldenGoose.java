@@ -23,6 +23,4 @@ public class GoldenGoose extends Card {
             return true;
         }
     }
-
-    // TODO See Trello comment
 }
