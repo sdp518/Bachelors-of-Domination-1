@@ -83,7 +83,7 @@ public class SaveAndLoadTest {
         testSector.setDisplayName(displayName);
         testSector.setIsPVCTile(isPVCTile);
         testSector.setNeutral(neutral);
-        testSector.setReinforcementsProvided(reinforcementsProvided);
+        testSector.setUndergraduatesProvided(reinforcementsProvided);
         ArrayList<GangMembers> testUnitsInSector = new ArrayList<GangMembers>();
         for (int i = 0; i < undergraduates; i++ ) {
             testUnitsInSector.add(new Undergraduates());
