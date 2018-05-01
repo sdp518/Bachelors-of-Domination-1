@@ -6,7 +6,7 @@ public enum CardType {
     FRESHERS_FLU("FRESHERS FLU"),
     GOLDEN_GOOSE("GOLDEN GOOSE"),
     STRIKE("STRIKE"),
-    CRIPPLING_HANGOVER("CRIPPLING_HANGOVER");
+    CRIPPLING_HANGOVER("CRIPPLING HANGOVER");
 
     private final String shortCode;
 
