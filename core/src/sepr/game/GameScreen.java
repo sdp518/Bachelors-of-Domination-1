@@ -135,7 +135,7 @@ public class GameScreen implements Screen, InputProcessor{
         this.turnOrder = turnOrder;
         this.currentPlayerPointer = currentPlayerPointer;
         this.phases.get(this.currentPhase).enterPhase(getCurrentPlayer());
-        this.ProViceChancellor = new PVC((float)1.00,this); // TODO Change PVC spawn chance
+        this.ProViceChancellor = new PVC((float)0.2,this); // TODO Change PVC spawn chance
         this.gameSetup = true;
     }
 
@@ -162,7 +162,7 @@ public class GameScreen implements Screen, InputProcessor{
 
         this.turnTimerEnabled = turnTimerEnabled;
         this.maxTurnTime = maxTurnTime;
-        this.ProViceChancellor = new PVC((float)1.00,this); // TODO Change PVC spawn chance
+        this.ProViceChancellor = new PVC((float)0.2,this); // TODO Change PVC spawn chance
         this.map = new Map(this.players, allocateNeutralPlayer, ProViceChancellor, this); // setup the game map and allocate the sectors
 
         setUpPhases();
