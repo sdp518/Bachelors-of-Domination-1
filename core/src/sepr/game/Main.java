@@ -21,6 +21,7 @@ public class Main extends Game implements ApplicationListener {
 	private MenuScreen menuScreen;
 	private GameScreen gameScreen;
 	private OptionsScreen optionsScreen;
+	private OptionsScreen inGameOptionsScreen;
 	private GameSetupScreen gameSetupScreen;
 	private LoadScreen saveScreen;
 	private SaveLoadManager saveLoadManager;
@@ -40,7 +41,8 @@ public class Main extends Game implements ApplicationListener {
 
 		this.menuScreen = new MenuScreen(this);
 		this.gameScreen = new GameScreen(this);
-		this.optionsScreen = new OptionsScreen(this);
+		this.optionsScreen = new OptionsScreen(this, EntryPoint.MENU_SCREEN);
+		this.inGameOptionsScreen = new OptionsScreen(this, EntryPoint.GAME_SCREEN);
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
@@ -53,7 +55,8 @@ public class Main extends Game implements ApplicationListener {
 	private void refreshScreens() {
 		this.menuScreen = new MenuScreen(this);
 		this.gameScreen = new GameScreen(this);
-		this.optionsScreen = new OptionsScreen(this);
+		this.optionsScreen = new OptionsScreen(this, EntryPoint.MENU_SCREEN);
+		this.inGameOptionsScreen = new OptionsScreen(this, EntryPoint.GAME_SCREEN);
 		this.gameSetupScreen = new GameSetupScreen(this);
 		this.saveLoadManager = new SaveLoadManager(gameScreen);
 		this.miniGameScreen = new MiniGameScreen( this, gameScreen);
@@ -111,6 +114,13 @@ public class Main extends Game implements ApplicationListener {
 	 */
 	public void setOptionsScreen() {
 		this.setScreen(optionsScreen);
+	}
+
+	/**
+	 * change the screen currently being displayed to the in-game options screen
+	 */
+	public void setInGameOptionsScreen() {
+		this.setScreen(inGameOptionsScreen);
 	}
 
 	/**

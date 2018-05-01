@@ -30,6 +30,7 @@ public class Map {
     private GlyphLayout layout = new GlyphLayout();
 
     private Texture troopCountOverlay = new Texture("uiComponents/troopCountOverlay.png");
+    private Texture pvcOutline = new Texture("uiComponents/pvcOutline.png");
 
     private int[] unitsToMove; // units to move from an attacking to conquered sector, 3 index array : [0] amount to move; [1] source sector id ; [2] target sector id
 
@@ -221,7 +222,7 @@ public class Map {
     private void spawnPVC(Stage stage, int defendingSectorId) {
         sectors.get(defendingSectorId).setIsPVCTile(true); //set the taken over tile to be the PVC tile
         DialogFactory.takenOverPVCDialogue(proViceChancellor, stage);
-        sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+        //sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
         proViceChancellor.setPVCSpawned(true);
 
     }
@@ -321,7 +322,9 @@ public class Map {
         {
             defender.setOwnsPVC(false);
             attacker.setOwnsPVC(true);
-            sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
+            // TODO Fix this
+            sectors.get(defendingSectorId).setOwner(attacker);
+            //sectors.get(defendingSectorId).changeSectorColor(com.badlogic.gdx.graphics.Color.GOLD);
             proViceChancellor.startMiniGame();
 
         }
@@ -467,6 +470,10 @@ public class Map {
             if (!sector.isDecor()) { // don't need to draw the amount of units on a decor sector
                 layout.setText(font, text);
 
+                if (sector.getIsPVCTile()){
+                    float pvcOverlaySize = 50.0f;
+                    batch.draw(pvcOutline, sector.getSectorCentreX() - pvcOverlaySize / 2, sector.getSectorCentreY() - pvcOverlaySize / 2, pvcOverlaySize, pvcOverlaySize);
+                }
                 float overlaySize = 40.0f;
                 batch.draw(troopCountOverlay, sector.getSectorCentreX() - overlaySize / 2, sector.getSectorCentreY() - overlaySize / 2, overlaySize, overlaySize);
                 font.draw(batch, layout, sector.getSectorCentreX() - layout.width / 2, sector.getSectorCentreY() + layout.height / 2);

@@ -137,9 +137,7 @@ public class Sector implements ApplicationListener {
 
 
         this.ownerId = player.getId();
-        if(!this.isPVCTile){
-            this.changeSectorColor(player.getSectorColour());
-        }
+        this.changeSectorColor(player.getSectorColour());
         this.allocated = true;
     }
 
@@ -213,11 +211,11 @@ public class Sector implements ApplicationListener {
         int count = 0;
         while (iterator.hasNext()) {
             GangMembers g = iterator.next();
-            if (g.getName().equals("Undergraduate")) {
+            if (g.getName().equals("Postgraduate")) {
                 count++;
             }
         }
-        return count;
+        return this.unitsInSector.size() - count;
     }
 
     /**
@@ -229,11 +227,11 @@ public class Sector implements ApplicationListener {
         int count = 0;
         while (iterator.hasNext()) {
             GangMembers g = iterator.next();
-            if (g.getName().equals("Postgraduate")) {
+            if (g.getName().equals("Undergraduate")) {
                 count++;
             }
         }
-        return count;
+        return this.unitsInSector.size() - count;
     }
 
     /**
@@ -246,8 +244,7 @@ public class Sector implements ApplicationListener {
         while (iterator.hasNext()) {
             GangMembers g = iterator.next();
             if (g.getName().equals("Postgraduate")) {
-                Postgraduates h = (Postgraduates)g;
-                if (h.getAttacked() == false) {
+                if (g.getCastUsed() == false) {
                     return 0;
                 }
                 else {
@@ -269,9 +266,8 @@ public class Sector implements ApplicationListener {
         while (iterator.hasNext()) {
             GangMembers g = iterator.next();
             if (g.getName().equals("Postgraduate")) {
-                Postgraduates h = (Postgraduates)g;
                 System.out.println("Updated");
-                h.setAttacked(status);
+                g.setCastStatus(status);
                 break;
             }
         }
@@ -387,7 +383,7 @@ public class Sector implements ApplicationListener {
      * MODIFIED ASSESSMENT 4 - Changed to add support for pgs
      * Changes the number of units in this sector
      * If there are 0 units in sector then ownerId should be -1 (neutral)
-     * @param amount number of units to change by, (can be negative to subtract units)
+     * @param amount number of units to change by, (can be negative to subtract units
      * @throws IllegalArgumentException if units in sector is below 0
      */
     public void addUndergraduates(int amount) throws IllegalArgumentException {
@@ -402,7 +398,9 @@ public class Sector implements ApplicationListener {
             int count = -amount;
             for (Iterator<GangMembers> iterator = this.unitsInSector.iterator(); iterator.hasNext();) {
                 GangMembers g = iterator.next();
+                //System.out.println(count);
                 if (g.getName().equals("Undergraduate") && count > 0) {
+                    //System.out.println("Removed");
                     iterator.remove();
                     count--;
                 }
