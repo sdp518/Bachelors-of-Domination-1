@@ -42,6 +42,11 @@ public class JSONifier {
         this.saveState = json;
     }
 
+    /**
+     * Modified - ASSESSMENT 4
+     * Returns the game state that was saved as a JSON representation.
+     * @return the game state representing the game that was saved.
+     */
     public GameState getStateFromJSON() {
         GameState gameState = new GameState();
         gameState.currentPhase = this.StringToPhase(this.saveState.get("CurrentPhase").toString());
@@ -125,7 +130,9 @@ public class JSONifier {
     }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * Creates JSON representation of GameState
+     * Does so by using a combination of JSONObjects and JSONArrays
      * @return JSON representation of GameState
      */
     public JSONObject getJSONGameState(){

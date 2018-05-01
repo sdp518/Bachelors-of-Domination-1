@@ -361,7 +361,9 @@ public class GameScreen implements Screen, InputProcessor{
             if (player.hasFreshersFlu()) {
                 for (Sector sector : this.getMap().getSectors().values()) {
                     if (player.getFreshersFluPrevUnits().containsKey(sector.getId())) {
-                        int unitsToAdd = player.getFreshersFluPrevUnits().get(sector.getId()) - sector.getUndergraduatesInSector();
+                        int unitsDefeated = (Math.round(player.getFreshersFluPrevUnits().get(sector.getId())) / 2) - sector.getUndergraduatesInSector();
+                        int unitsToAdd = player.getFreshersFluPrevUnits().get(sector.getId()) - unitsDefeated;
+                        sector.addUndergraduates(sector.getUndergraduatesInSector() * -1);
                         sector.addUndergraduates(unitsToAdd);
                     }
                 }

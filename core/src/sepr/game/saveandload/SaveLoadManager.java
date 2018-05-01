@@ -30,6 +30,7 @@ public class SaveLoadManager {
     public SaveLoadManager(){ }
 
     /**
+     * MODIFIED - ASSESSMENT 4
      * Initializes the SaveLoadManager
      * @param gameScreen GameScreen to save data from
      */
@@ -49,7 +50,8 @@ public class SaveLoadManager {
     }
 
     /**
-     * Load GameState JSON from file
+     * MODIFIED - ASSESSMENT 4
+     * Load all saved GameStates JSON from file
      */
     public void loadFromFile(){
 
@@ -79,7 +81,7 @@ public class SaveLoadManager {
     }
 
     /**
-     * Loads a save file with a given ID
+     * Loads a save game state with a given ID
      * @param id The ID of the save file to access the correct one.
      */
     public void loadSaveByID(int id){
@@ -112,6 +114,12 @@ public class SaveLoadManager {
         this.gameScreen.resetPausedTime();
     }
 
+    /**
+     * NEW - ASSESSMENT 4
+     * Transfers all of the data stored into the game state into the correct place in each sector.
+     * @param fullSectors the list of sectors created by the game.
+     * @param id the id of the save being loaded.
+     */
     private void updateSectors(HashMap<Integer, Sector> fullSectors, int id) {
         Integer[] keys = fullSectors.keySet().toArray(new Integer[fullSectors.size()]);
         Integer[] playerKeys = this.loadedStates[id].players.keySet().toArray(new Integer[this.loadedStates[id].players.size()]);
@@ -143,8 +151,8 @@ public class SaveLoadManager {
     }
 
     /**
-     * Saves to the saves.json file
-     * //@param newSave
+     * MODIFIED - ASSESSMENT 4
+     * Saves all current game states to the saves.json file as a JSON string.
      */
     public void saveToFile() {
         JSONArray allSaves = new JSONArray();
@@ -176,8 +184,9 @@ public class SaveLoadManager {
     }
 
     /**
-     * Save to a save with a given ID
-     * @param id The id given to the save in the process of saving the game.
+     * MODIFIED - ASSESSMENT 4
+     * Save to a save slot with a given ID
+     * @param id The id given to the game state in the process of saving the game.
      * @return true if saving is successful
      */
     public boolean saveByID(int id) {
@@ -197,7 +206,11 @@ public class SaveLoadManager {
         return true;
     }
 
-
+    /**
+     * NEW - ASSESSMENT 4
+     * Gives the current game states stored in the program.
+     * @return A GameState array of all current save games.
+     */
     public GameState[] getLoadedStates() {
         return this.loadedStates;
     }

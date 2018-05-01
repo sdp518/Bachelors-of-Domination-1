@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * NEW CLASS
+ * NEW CLASS - ASSESSMENT 4
  * Save/Load screen to allow the user to save and load the game
  */
 public class LoadScreen implements Screen{

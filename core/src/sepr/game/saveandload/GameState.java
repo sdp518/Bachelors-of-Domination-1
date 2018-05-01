@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Class to store data relating to the current state of the game in preparation for saving
+ * MODIFIED - ASSESSMENT 4
+ * Class to store data relating to the current state of the game in preparation for saving and loading.
+ * Contains only the necessary data for both saving and loading.
  */
 public class GameState {
     public TurnPhaseType currentPhase; // Current phase of the game
