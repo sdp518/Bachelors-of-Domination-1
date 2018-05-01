@@ -229,7 +229,7 @@ public class Sector implements ApplicationListener {
         int count = 0;
         while (iterator.hasNext()) {
             GangMembers g = iterator.next();
-            if (g.getName().equals("Postgraduate")) {
+            if (g.getName().equals("Undergraduate")) {
                 count++;
             }
         }
@@ -401,7 +401,7 @@ public class Sector implements ApplicationListener {
             for (Iterator<GangMembers> iterator = this.unitsInSector.iterator(); iterator.hasNext();) {
                 GangMembers g = iterator.next();
                 //System.out.println(count);
-                if (g.getName().equals("Undergraduates") && count > 0) {
+                if (g.getName().equals("Undergraduate") && count > 0) {
                     //System.out.println("Removed");
                     iterator.remove();
                     count--;
